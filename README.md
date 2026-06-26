@@ -1,0 +1,1 @@
+https://maven.fabricmc.net/docs/yarn-1.20.4+build.3/index.html
