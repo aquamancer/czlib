@@ -12,6 +12,8 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class Czlib implements ClientModInitializer {
 	public static final String MOD_ID = "czlib";
 
@@ -28,10 +30,12 @@ public class Czlib implements ClientModInitializer {
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(
-					ClientCommandManager.literal("sid")
+					ClientCommandManager.literal("openTrinket")
 							.then(ClientCommandManager.argument("syncId", IntegerArgumentType.integer(0))
 									.executes(context -> {
-										TrinketOpener.syncId = IntegerArgumentType.getInteger(context, "syncId");
+										int syncId = IntegerArgumentType.getInteger(context, "syncId");
+//										TrinketOpener.clickPartyHeads(syncId, List.of(8, 8, 8), delay);
+										TrinketOpener.clickPartyHeads1(syncId, List.of(47, 48, 50, 51), 13);
 										return 1;
 									})
 							)
@@ -41,7 +45,6 @@ public class Czlib implements ClientModInitializer {
 							.then(ClientCommandManager.argument("auto", IntegerArgumentType.integer(0))
 									.executes(context -> {
 										int t = IntegerArgumentType.getInteger(context, "auto");
-                                        TrinketOpener.autoClick = t != 0;
 										return 1;
 									})
 							)
@@ -50,14 +53,13 @@ public class Czlib implements ClientModInitializer {
 					ClientCommandManager.literal("delay")
 							.then(ClientCommandManager.argument("delay", IntegerArgumentType.integer(0))
 									.executes(context -> {
-										TrinketOpener.delayMillis = IntegerArgumentType.getInteger(context, "delay");
 										return 1;
 									})
 							)
 			);
 		});
 
-		ClientTickEvents.START_CLIENT_TICK.register((client) -> {
+		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			TrinketOpener.onTick(client);
 		});
 	}

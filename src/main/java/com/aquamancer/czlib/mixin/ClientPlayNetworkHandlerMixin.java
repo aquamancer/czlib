@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
+import com.aquamancer.czlib.trinket.TrinketParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
@@ -22,13 +23,13 @@ public class ClientPlayNetworkHandlerMixin {
         }
     }
 
-    // packet sent on chest open, before onBlockEvent below
     @Inject(at = @At("HEAD"), method = "onInventory(Lnet/minecraft/network/packet/s2c/play/InventoryS2CPacket;)V")
     private void onInventory(InventoryS2CPacket packet, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (packet != null && client.player != null && packet.getSyncId() != 0) {
-//            client.execute(() -> client.player.sendMessage(Text.literal("inventory packet: " + packet.getContents() + " syncid: " + packet.getSyncId())));
-            client.execute(() -> client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision())));
+        if (client != null) {
+            client.execute(() -> {
+                TrinketParser.onInventoryS2CPacket(packet, client);
+            });
         }
     }
 }
