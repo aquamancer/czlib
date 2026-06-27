@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.api;
 
-import com.aquamancer.czlib.api.party.Passive;
+import com.aquamancer.czlib.api.abils.Passive;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.api.party;
+package com.aquamancer.czlib.api.abils;
 
 public class Passive {
     private PassiveName name;

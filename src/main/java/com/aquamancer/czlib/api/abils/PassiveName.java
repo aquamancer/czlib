@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.api.party;
+package com.aquamancer.czlib.api.abils;
 
 import java.util.HashMap;
 import java.util.Map;

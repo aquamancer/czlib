@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.trinket;
 
-import com.aquamancer.czlib.api.party.*;
+import com.aquamancer.czlib.api.abils.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -153,7 +153,12 @@ public class TrinketParser {
         return new PassiveParseResult(passives, curses);
     }
 
-    private static EnumSet<Spec> parseSpecs(List<ItemStack> inv) {
-        return null;
+    private static EnumSet<Spec> parseSpecs(List<ItemStack> inv, boolean hasPride) {
+        if (hasPride) {
+            return EnumSet.allOf(Spec.class);
+        }
+        for (Integer slot : SPEC_SLOTS) {
+
+        }
     }
 }
