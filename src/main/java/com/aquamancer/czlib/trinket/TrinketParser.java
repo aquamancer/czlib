@@ -1,7 +1,6 @@
 package com.aquamancer.czlib.trinket;
 
-import com.aquamancer.czlib.Czlib;
-import com.aquamancer.czlib.Spec;
+import com.aquamancer.czlib.api.party.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -11,7 +10,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -24,8 +22,11 @@ public class TrinketParser {
 
     private static final List<Integer> SPEC_SLOTS = List.of(2, 3, 5, 6);
     private static final int HEAD_SLOT = 4;
+    private static final int PASSIVES_START = 27;
+    private static final int PASSIVES_END = 44;
     private static final List<Integer> PLAYER_HEAD_SLOTS = List.of(47, 48, 50, 51);
 
+    private static final String SPEC_RARITY_SPLIT = " : ";
 
     private static final Item PLAYER_HEAD = Registries.ITEM.get(new Identifier("minecraft", "player_head"));
     private static final Item CURRENTLY_SELECTED_ITEM = Registries.ITEM.get(new Identifier("minecraft", "green_stained_glass_pane"));
@@ -43,6 +44,10 @@ public class TrinketParser {
         if (!headParseResult.success) return;
         String player = headParseResult.names.get(headParseResult.currentlySelected);
         if (player == null) return;
+        PassiveParseResult passiveParseResult = parsePassives(inv);
+        if (passiveParseResult.curses.contains(Curse.PRIDE)) {
+
+        }
 
 
 
@@ -51,9 +56,10 @@ public class TrinketParser {
         if (client.player != null && packet.getSyncId() != 0) {
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
             client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size() + "\n" + inv.stream().map((stack) -> {
-                return stack.getName().getString();
+//                return stack.getName().getString();
 //                return stack.toHoverableText().getString();
-//                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.getString()).toList().toString();
+                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.getString()).toList().toString();
+//                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.toString()).toList();
             }).toList().toString()));
         }
     }
@@ -70,17 +76,17 @@ public class TrinketParser {
         int currentlySelected = -1;
 
         for (Integer slot : PLAYER_HEAD_SLOTS) {
-            // todo optimize for green_stained_glass_pane or player_head before getting tooltip or go by name
+            if (inv.get(slot).getItem() != PLAYER_HEAD && inv.get(slot).getItem() != CURRENTLY_SELECTED_ITEM) continue;
             List<Text> tooltip = inv.get(slot).getTooltip(null, TooltipContext.BASIC);
             if (tooltip.size() < 2) continue;
-            Optional<String> name = parseHeadName(tooltip.get(1).getString());
+            Optional<String> name = parseHeadName(tooltip.get(0).getString());
             if (name.isEmpty()) continue;
             Optional<Double> graveTimer = Optional.empty();
-            String line2 = tooltip.get(2).getString();
+            String line2 = tooltip.get(1).getString();
             if (line2.equalsIgnoreCase("Currently Shown")) {
                 currentlySelected = slot;
                 if (tooltip.size() >= 3) {
-                    graveTimer = parseHeadGraveTimer(tooltip.get(3).getString());
+                    graveTimer = parseHeadGraveTimer(tooltip.get(2).getString());
                 }
             } else {
                 graveTimer = parseHeadGraveTimer(line2);
@@ -113,7 +119,41 @@ public class TrinketParser {
         return Optional.empty();
     }
 
-    private static EnumSet<Spec> parseSpecs(List<ItemStack> inv) {
+    private record PassiveParseResult(List<Passive> passives, List<Curse> curses) {}
+    private static PassiveParseResult parsePassives(List<ItemStack> inv) {
+        List<Passive> passives = new ArrayList<>(PASSIVES_END - PASSIVES_START + 1);
+        List<Curse> curses = new ArrayList<>();
+        for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
+            ItemStack item = inv.get(slot);
+            if (item.getItem() == EMPTY_SLOT || item.isEmpty()) break;
+            String line1 = item.getName().getString();
 
+            Optional<PassiveName> passiveName = PassiveName.toEnum(line1);
+            if (passiveName.isPresent()) {
+                List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
+                if (tooltip.size() < 2) continue;
+                String line2 = tooltip.get(1).getString();
+                int split = line2.indexOf(SPEC_RARITY_SPLIT);
+                if (split <= 0) continue;
+                int rarityStart = split + SPEC_RARITY_SPLIT.length();
+                if (rarityStart == line2.length()) continue;  // no chars after the split
+                Optional<AbilitySpec> spec = AbilitySpec.toEnum(line2.substring(0, split));
+                if (spec.isEmpty()) continue;
+                Optional<Rarity> rarity = Rarity.toEnum(line2.substring(rarityStart));
+                if (rarity.isEmpty()) continue;
+                passives.add(new Passive(passiveName.get(), spec.get(), rarity.get()));
+                continue;
+            }
+            Optional<Curse> curse = Curse.toEnum(line1);
+            if (curse.isPresent()) {
+                curses.add(curse.get());
+                continue;
+            }
+        }
+        return new PassiveParseResult(passives, curses);
+    }
+
+    private static EnumSet<Spec> parseSpecs(List<ItemStack> inv) {
+        return null;
     }
 }

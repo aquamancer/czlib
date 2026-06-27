@@ -1,6 +1,4 @@
-package com.aquamancer.czlib;
-
-import java.util.ArrayList;
+package com.aquamancer.czlib.api;
 
 public class ZenithInstance {
 //    private static ZenithInstance instance;
