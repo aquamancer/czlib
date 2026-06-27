@@ -45,10 +45,9 @@ public class TrinketParser {
         String player = headParseResult.names.get(headParseResult.currentlySelected);
         if (player == null) return;
         PassiveParseResult passiveParseResult = parsePassives(inv);
-        if (passiveParseResult.curses.contains(Curse.PRIDE)) {
-
-        }
-
+        boolean hasPride = passiveParseResult.curses.contains(Curse.PRIDE);
+        EnumSet<Spec> specs = parseSpecs(inv, hasPride);
+        
 
 
 //        parsePlayerHeads(inv, tooltipCache);
@@ -119,10 +118,10 @@ public class TrinketParser {
         return Optional.empty();
     }
 
-    private record PassiveParseResult(List<Passive> passives, List<Curse> curses) {}
+    private record PassiveParseResult(List<Passive> passives, EnumSet<Curse> curses) {}
     private static PassiveParseResult parsePassives(List<ItemStack> inv) {
         List<Passive> passives = new ArrayList<>(PASSIVES_END - PASSIVES_START + 1);
-        List<Curse> curses = new ArrayList<>();
+        EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
         for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
             ItemStack item = inv.get(slot);
             if (item.getItem() == EMPTY_SLOT || item.isEmpty()) break;
@@ -157,8 +156,15 @@ public class TrinketParser {
         if (hasPride) {
             return EnumSet.allOf(Spec.class);
         }
-        for (Integer slot : SPEC_SLOTS) {
 
+        EnumSet<Spec> specs = EnumSet.noneOf(Spec.class);
+        for (Integer slot : SPEC_SLOTS) {
+            String line1 = inv.get(slot).getName().getString();
+            Optional<Spec> spec = Spec.toEnum(line1);
+            if (spec.isPresent()) {
+                specs.add(spec.get());
+            }
         }
+        return specs;
     }
 }
