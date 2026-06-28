@@ -1,10 +1,22 @@
 package com.aquamancer.czlib.api;
 
-import com.aquamancer.czlib.api.abils.Passive;
+import com.aquamancer.czlib.api.abils.*;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class PartyMember {
     private String name;
+    private double graveTimer;
+    private EnumSet<Spec> specs;
     private List<Passive> passives;
+    private EnumSet<Curse> curses;
+    private Aspect aspect;
+    private Actives.Combo combo;
+    private Actives.Right right;
+    private Actives.LeftShift leftShift;
+    private Actives.RightShift rightShift;
+    private EnumSet<Actives.Wildcard> wildcards;
+    private Actives.Bow bow;
+    private Actives.Lifeline lifeline;
 }

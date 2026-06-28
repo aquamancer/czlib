@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum PassiveName {
+public enum Passives {
     ENLIGHTENMENT,
     REJUVENATION,
     SUNDROPS,
@@ -36,9 +36,9 @@ public enum PassiveName {
     DIVERSITY,
     OPPORTUNITY;
 
-    private static final Map<String, PassiveName> fromString = new HashMap<>();
+    private static final Map<String, Passives> fromString = new HashMap<>();
 
-    public static Optional<PassiveName> toEnum(String string) {
+    public static Optional<Passives> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 

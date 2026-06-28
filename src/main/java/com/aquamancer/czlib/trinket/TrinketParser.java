@@ -22,6 +22,13 @@ public class TrinketParser {
 
     private static final List<Integer> SPEC_SLOTS = List.of(2, 3, 5, 6);
     private static final int HEAD_SLOT = 4;
+
+    private static final List<? extends Class<?>> ABILITY_SLOTS = List.of(
+            Aspect.class
+    );
+    private static final int ASPECT_SLOT = 9;
+    private static final int RIGHT
+
     private static final int PASSIVES_START = 27;
     private static final int PASSIVES_END = 44;
     private static final List<Integer> PLAYER_HEAD_SLOTS = List.of(47, 48, 50, 51);
@@ -127,7 +134,7 @@ public class TrinketParser {
             if (item.getItem() == EMPTY_SLOT || item.isEmpty()) break;
             String line1 = item.getName().getString();
 
-            Optional<PassiveName> passiveName = PassiveName.toEnum(line1);
+            Optional<Passives> passiveName = Passives.toEnum(line1);
             if (passiveName.isPresent()) {
                 List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
                 if (tooltip.size() < 2) continue;
@@ -166,5 +173,15 @@ public class TrinketParser {
             }
         }
         return specs;
+    }
+
+    private static Optional<Aspect> parseAspect(List<ItemStack> inv) {
+        return Aspect.toEnum(inv.get(ASPECT_SLOT).getName());
+    }
+
+    private static Enum<?> parseAbilities(List<ItemStack> inv) {
+        for (Class<?> type : ABILITY_SLOTS) {
+
+        }
     }
 }
