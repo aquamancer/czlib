@@ -12,11 +12,11 @@ public class PartyMember {
     private List<Passive> passives;
     private EnumSet<Curse> curses;
     private Aspect aspect;
-    private Actives.Combo combo;
-    private Actives.Right right;
-    private Actives.LeftShift leftShift;
-    private Actives.RightShift rightShift;
-    private EnumSet<Actives.Wildcard> wildcards;
-    private Actives.Bow bow;
-    private Actives.Lifeline lifeline;
+    private Active combo;
+    private Active right;
+    private Active leftShift;
+    private Active rightShift;
+    private List<Active> wildcards;
+    private Active bow;
+    private Active lifeline;
 }

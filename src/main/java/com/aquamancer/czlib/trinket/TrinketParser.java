@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,11 +24,39 @@ public class TrinketParser {
     private static final List<Integer> SPEC_SLOTS = List.of(2, 3, 5, 6);
     private static final int HEAD_SLOT = 4;
 
-    private static final List<? extends Class<?>> ABILITY_SLOTS = List.of(
-            Aspect.class
-    );
     private static final int ASPECT_SLOT = 9;
-    private static final int RIGHT
+    private static final int COMBO_SLOT = 10;
+    private static final int RIGHT_SLOT = 11;
+    private static final int LEFT_SHIFT_SLOT = 12;
+    private static final int RIGHT_SHIFT_SLOT = 13;
+    private static final int WILDCARD_SLOT = 14;
+    private static final int BOW_SLOT = 15;
+    private static final int SWAP_SLOT = 16;
+    private static final int LIFELINE_SLOT = 17;
+
+    private record ActiveSlot(Integer slot, Class<? extends Enum<?>> type) {}
+    private static final List<ActiveSlot> activeSlots = List.of(
+            new ActiveSlot(9, Aspect.class),
+            new ActiveSlot(10, Actives.Combo.class),
+            new ActiveSlot(11, Actives.Right.class),
+            new ActiveSlot(12, Actives.LeftShift.class),
+            new ActiveSlot(13, Actives.RightShift.class),
+            new ActiveSlot(14, Actives.Wildcard.class),
+            new ActiveSlot(15, Actives.Bow.class),
+            new ActiveSlot(16, Actives.Swap.class),
+            new ActiveSlot(17, Actives.Lifeline.class)
+    );
+    private static final Map<Class<? extends Enum<?>>, Function<String, Optional<? extends Enum<?>>>> toEnums = Map.of(
+            Aspect.class, Aspect::toEnum,
+            Actives.Combo.class, Actives.Combo::toEnum,
+            Actives.Right.class, Actives.Right::toEnum,
+            Actives.LeftShift.class, Actives.LeftShift::toEnum,
+            Actives.RightShift.class, Actives.RightShift::toEnum,
+            Actives.Wildcard.class, Actives.Wildcard::toEnum,
+            Actives.Bow.class, Actives.Bow::toEnum,
+            Actives.Swap.class, Actives.Swap::toEnum,
+            Actives.Lifeline.class, Actives.Lifeline::toEnum
+    );
 
     private static final int PASSIVES_START = 27;
     private static final int PASSIVES_END = 44;
@@ -38,6 +67,7 @@ public class TrinketParser {
     private static final Item PLAYER_HEAD = Registries.ITEM.get(new Identifier("minecraft", "player_head"));
     private static final Item CURRENTLY_SELECTED_ITEM = Registries.ITEM.get(new Identifier("minecraft", "green_stained_glass_pane"));
     private static final Item EMPTY_SLOT = Registries.ITEM.get(new Identifier("minecraft", "light_gray_stained_glass_pane"));
+    private static final Item NO_ACTIVE = Registries.ITEM.get(new Identifier("minecraft", "red_stained_glass_pane"));
 
     private static final Pattern GRAVE_TIMER = Pattern.compile("Grave Timer:\\s+(\\d+\\.\\d+)s");
 
@@ -54,6 +84,8 @@ public class TrinketParser {
         PassiveParseResult passiveParseResult = parsePassives(inv);
         boolean hasPride = passiveParseResult.curses.contains(Curse.PRIDE);
         EnumSet<Spec> specs = parseSpecs(inv, hasPride);
+        ActiveParseResult actives = parseActives(inv);
+
         
 
 
@@ -175,13 +207,45 @@ public class TrinketParser {
         return specs;
     }
 
-    private static Optional<Aspect> parseAspect(List<ItemStack> inv) {
-        return Aspect.toEnum(inv.get(ASPECT_SLOT).getName());
-    }
-
-    private static Enum<?> parseAbilities(List<ItemStack> inv) {
-        for (Class<?> type : ABILITY_SLOTS) {
+    private record ActiveParseResult(Optional<Aspect> aspect, Optional<Active<Actives.Combo>> combo, Optional<Actives.Right> right, Optional<Actives.LeftShift> leftShift, Optional<Actives.RightShift> rightShift, Optional<Actives.Wildcard> wildcard, Optional<Actives.Bow> bow, Optional<Actives.Swap> swap, Optional<Actives.Lifeline> lifeline) {}
+    private static List<Active> parseActives(List<ItemStack> inv) {
+        List<Active> actives = new ArrayList<>();
+        for (ActiveSlot activeSlot : activeSlots) {
+            Integer slot = activeSlot.slot;
+            Class<? extends Enum<?>> type = activeSlot.type;
+            if (inv.get(slot).getItem() == NO_ACTIVE) continue;
+            Optional<? extends Enum<?>> name = toEnums.get(type).apply(inv.get(slot).getName().getString());
+            if (name.isEmpty()) continue;
 
         }
+
+
+        if (inv.get(ASPECT_SLOT).getItem() != NO_ACTIVE) aspect = Aspect.toEnum(inv.get(ASPECT_SLOT).getName().getString());
+        if (inv.get(COMBO_SLOT).getItem() != NO_ACTIVE) {
+            Optional<Actives.Combo> active = Actives.Combo.toEnum(inv.get(COMBO_SLOT).getName().getString());
+            if (active.isPresent()) {
+                List<Text> tooltip = inv.get(COMBO_SLOT).getTooltip(null, TooltipContext.BASIC);
+
+            }
+        }
+        if (inv.get(RIGHT_SLOT).getItem() != NO_ACTIVE) right = Actives.Right.toEnum(inv.get(RIGHT_SLOT).getName().getString());
+        if (inv.get(LEFT_SHIFT_SLOT).getItem() != NO_ACTIVE) leftShift = Actives.LeftShift.toEnum(inv.get(LEFT_SHIFT_SLOT).getName().getString());
+        if (inv.get(RIGHT_SHIFT_SLOT).getItem() != NO_ACTIVE) rightShift = Actives.RightShift.toEnum(inv.get(RIGHT_SHIFT_SLOT).getName().getString());
+        if (inv.get(WILDCARD_SLOT).getItem() != NO_ACTIVE) wildcard = Actives.Wildcard.toEnum(inv.get(WILDCARD_SLOT).getName().getString());
+        if (inv.get(BOW_SLOT).getItem() != NO_ACTIVE) bow = Actives.Bow.toEnum(inv.get(BOW_SLOT).getName().getString());
+        if (inv.get(SWAP_SLOT).getItem() != NO_ACTIVE) swap = Actives.Swap.toEnum(inv.get(SWAP_SLOT).getName().getString());
+        if (inv.get(LIFELINE_SLOT).getItem() != NO_ACTIVE) lifeline = Actives.Lifeline.toEnum(inv.get(LIFELINE_SLOT).getName().getString());
+        return new ActiveParseResult(aspect, combo, right, leftShift, rightShift, wildcard, bow, swap, lifeline);
+    }
+
+    private record SpecRarityParseResult(Optional<AbilitySpec> spec, Optional<Rarity> rarity) {}
+    private static SpecRarityParseResult parseSpecRarity(String line) {
+        int split = line.indexOf(SPEC_RARITY_SPLIT);
+        if (split <= 0) return new SpecRarityParseResult(Optional.empty(), Optional.empty());
+        int rarityStart = split + SPEC_RARITY_SPLIT.length();
+        if (rarityStart == line.length()) return new SpecRarityParseResult(Optional.empty(), Optional.empty());  // no chars after split
+        Optional<AbilitySpec> spec = AbilitySpec.toEnum(line.substring(0, split));
+        Optional<Rarity> rarity = Rarity.toEnum(line.substring(rarityStart));
+        return new SpecRarityParseResult(spec, rarity);
     }
 }
