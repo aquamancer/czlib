@@ -1,6 +1,8 @@
 package com.aquamancer.czlib.trinket;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.active.Active;
+import com.aquamancer.czlib.api.abils.active.Actives;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;

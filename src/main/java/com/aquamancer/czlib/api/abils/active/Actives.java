@@ -1,10 +1,13 @@
-package com.aquamancer.czlib.api.abils;
+package com.aquamancer.czlib.api.abils.active;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public final class Actives {
+    public interface ActiveTrigger {
+
+    }
     public enum Combo {
         SOOTHING,
         EARTHEN,
