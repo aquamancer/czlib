@@ -1,14 +1,11 @@
-package com.aquamancer.czlib.api.abils.active;
+package com.aquamancer.czlib.api.abils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public final class Actives {
-    public interface ActiveTrigger {
-
-    }
-    public enum Combo {
+    public enum Combo implements ActiveType {
         SOOTHING,
         EARTHEN,
         VOLCANIC,
@@ -19,21 +16,26 @@ public final class Actives {
 
         private static final Map<String, Combo> fromString = new HashMap<>();
         static {
-            fromString.put("Soothing", SOOTHING);
-            fromString.put("Earthen", EARTHEN);
-            fromString.put("Volcanic", VOLCANIC);
-            fromString.put("Frigid", FRIGID);
-            fromString.put("Dark", DARK);
-            fromString.put("Focused", FOCUSED);
-            fromString.put("Windswept", WINDSWEPT);
+            fromString.put("Soothing Combos", SOOTHING);
+            fromString.put("Earthen Combos", EARTHEN);
+            fromString.put("Volcanic Combos", VOLCANIC);
+            fromString.put("Frigid Combos", FRIGID);
+            fromString.put("Dark Combos", DARK);
+            fromString.put("Focused Combos", FOCUSED);
+            fromString.put("Windswept Combos", WINDSWEPT);
         }
 
         public static Optional<Combo> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.COMBO;
+        }
     }
 
-    public enum Right {
+    public enum Right implements ActiveType {
         WARD_OF_LIGHT,
         BEASTS_CLAW,
         FIREBALL,
@@ -58,9 +60,14 @@ public final class Actives {
         public static Optional<Right> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.RIGHT;
+        }
     }
 
-    public enum LeftShift {
+    public enum LeftShift implements ActiveType {
         RADIANT_BLESSING,
         TAUNT,
         IGNEOUS_RUNE,
@@ -85,9 +92,14 @@ public final class Actives {
         public static Optional<LeftShift> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.LEFT_SHIFT;
+        }
     }
 
-    public enum RightShift {
+    public enum RightShift implements ActiveType {
         BOTTLED_SUNLIGHT,
         IRON_GRIP,
         FLAMESTRIKE,
@@ -112,9 +124,14 @@ public final class Actives {
         public static Optional<RightShift> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.RIGHT_SHIFT;
+        }
     }
 
-    public enum Wildcard {
+    public enum Wildcard implements ActiveType {
         LIGHTNING_BOTTLE,
         ENTRENCH,
         FLAME_SPIRIT,
@@ -140,9 +157,14 @@ public final class Actives {
         public static Optional<Wildcard> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.WILDCARD;
+        }
     }
 
-    public enum Bow {
+    public enum Bow implements ActiveType {
         DIVINE_BEAM,
         EARTHQUAKE,
         PYROBLAST,
@@ -168,9 +190,14 @@ public final class Actives {
         public static Optional<Bow> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.BOW;
+        }
     }
 
-    public enum Swap {
+    public enum Swap implements ActiveType {
         SPARK_OF_INSPIRATION,
         EARTHEN_WRATH,
         VOLCANIC_METEOR,
@@ -198,9 +225,14 @@ public final class Actives {
         public static Optional<Swap> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
         }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.SWAP;
+        }
     }
 
-    public enum Lifeline {
+    public enum Lifeline implements ActiveType {
         ETERNAL_SAVIOR,
         APOCALYPSE,
         CRYOBOX,
@@ -221,6 +253,11 @@ public final class Actives {
 
         public static Optional<Lifeline> toEnum(String string) {
             return Optional.ofNullable(fromString.get(string));
+        }
+
+        @Override
+        public ActiveSlot getTrigger() {
+            return ActiveSlot.LIFELINE;
         }
     }
 }

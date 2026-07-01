@@ -1,8 +1,12 @@
 package com.aquamancer.czlib.trinket;
 
+import com.aquamancer.czlib.api.Party;
+import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
-import com.aquamancer.czlib.api.abils.active.Active;
-import com.aquamancer.czlib.api.abils.active.Actives;
+import com.aquamancer.czlib.api.abils.Active;
+import com.aquamancer.czlib.api.abils.ActiveSlot;
+import com.aquamancer.czlib.api.abils.ActiveType;
+import com.aquamancer.czlib.api.abils.Actives;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
@@ -27,37 +31,17 @@ public class TrinketParser {
     private static final int HEAD_SLOT = 4;
 
     private static final int ASPECT_SLOT = 9;
-    private static final int COMBO_SLOT = 10;
-    private static final int RIGHT_SLOT = 11;
-    private static final int LEFT_SHIFT_SLOT = 12;
-    private static final int RIGHT_SHIFT_SLOT = 13;
-    private static final int WILDCARD_SLOT = 14;
-    private static final int BOW_SLOT = 15;
-    private static final int SWAP_SLOT = 16;
-    private static final int LIFELINE_SLOT = 17;
 
-    private record ActiveSlot(Integer slot, Class<? extends Enum<?>> type) {}
-    private static final List<ActiveSlot> activeSlots = List.of(
-            new ActiveSlot(9, Aspect.class),
-            new ActiveSlot(10, Actives.Combo.class),
-            new ActiveSlot(11, Actives.Right.class),
-            new ActiveSlot(12, Actives.LeftShift.class),
-            new ActiveSlot(13, Actives.RightShift.class),
-            new ActiveSlot(14, Actives.Wildcard.class),
-            new ActiveSlot(15, Actives.Bow.class),
-            new ActiveSlot(16, Actives.Swap.class),
-            new ActiveSlot(17, Actives.Lifeline.class)
-    );
-    private static final Map<Class<? extends Enum<?>>, Function<String, Optional<? extends Enum<?>>>> toEnums = Map.of(
-            Aspect.class, Aspect::toEnum,
-            Actives.Combo.class, Actives.Combo::toEnum,
-            Actives.Right.class, Actives.Right::toEnum,
-            Actives.LeftShift.class, Actives.LeftShift::toEnum,
-            Actives.RightShift.class, Actives.RightShift::toEnum,
-            Actives.Wildcard.class, Actives.Wildcard::toEnum,
-            Actives.Bow.class, Actives.Bow::toEnum,
-            Actives.Swap.class, Actives.Swap::toEnum,
-            Actives.Lifeline.class, Actives.Lifeline::toEnum
+    private record ActiveSlotToParse(Integer slot, ActiveSlot type, Function<String, Optional<? extends Enum<?>>> toEnum) {}
+    private static final List<ActiveSlotToParse> activeSlots = List.of(
+            new ActiveSlotToParse(10, ActiveSlot.COMBO, Actives.Combo::toEnum),
+            new ActiveSlotToParse(11, ActiveSlot.RIGHT, Actives.Right::toEnum),
+            new ActiveSlotToParse(12, ActiveSlot.LEFT_SHIFT, Actives.LeftShift::toEnum),
+            new ActiveSlotToParse(13, ActiveSlot.RIGHT_SHIFT, Actives.RightShift::toEnum),
+            new ActiveSlotToParse(14, ActiveSlot.WILDCARD, Actives.Wildcard::toEnum),
+            new ActiveSlotToParse(15, ActiveSlot.BOW, Actives.Bow::toEnum),
+            new ActiveSlotToParse(16, ActiveSlot.SWAP, Actives.Swap::toEnum),
+            new ActiveSlotToParse(17, ActiveSlot.LIFELINE, Actives.Lifeline::toEnum)
     );
 
     private static final int PASSIVES_START = 27;
@@ -78,20 +62,31 @@ public class TrinketParser {
         List<ItemStack> inv = packet.getContents();
         if (inv.size() != EXPECTED_INV_SIZE) return;
         if (!isDepthsTrinket(inv)) return;
+
         HeadParseResult headParseResult = parsePlayerHeads(inv);
         UpdateManager.getInstance().setHeadsToClick(headParseResult.validHeads);
         if (!headParseResult.success) return;
+
+        Party party = ZenithApi.getInstance().getParty();
+        party.setMembers(Set.copyOf(headParseResult.names.values()));
+        party.setGraveTimers(headParseResult.graveTimers);
+
         String player = headParseResult.names.get(headParseResult.currentlySelected);
-        if (player == null) return;
+        if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
+
         PassiveParseResult passiveParseResult = parsePassives(inv);
+        party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
+
         boolean hasPride = passiveParseResult.curses.contains(Curse.PRIDE);
         EnumSet<Spec> specs = parseSpecs(inv, hasPride);
-        ActiveParseResult actives = parseActives(inv);
+        party.setSpecs(player, specs);
 
-        
+        Optional<Aspect> aspect = parseAspect(inv);
+        party.setAspect(player, aspect.orElse(null));
 
+        List<Map.Entry<ActiveSlot, Active>> actives = parseActives(inv);
+        party.setActives(player, actives);
 
-//        parsePlayerHeads(inv, tooltipCache);
 
         if (client.player != null && packet.getSyncId() != 0) {
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
@@ -108,11 +103,11 @@ public class TrinketParser {
         return parseHeadName(inv.get(HEAD_SLOT).getName().getString()).isPresent();
     }
 
-    private record HeadParseResult(List<Integer> validHeads, Map<Integer, String> names, Map<Integer, Optional<Double>> graveTimers, int currentlySelected, boolean success) {}
+    private record HeadParseResult(List<Integer> validHeads, Map<Integer, String> names, Map<String, Optional<Double>> graveTimers, int currentlySelected, boolean success) {}
     private static HeadParseResult parsePlayerHeads(List<ItemStack> inv) {
         List<Integer> validHeads = new ArrayList<>(PLAYER_HEAD_SLOTS.size());
         Map<Integer, String> names = new HashMap<>(PLAYER_HEAD_SLOTS.size());
-        Map<Integer, Optional<Double>> graveTimers = new HashMap<>(PLAYER_HEAD_SLOTS.size());
+        Map<String, Optional<Double>> graveTimers = new HashMap<>(PLAYER_HEAD_SLOTS.size());
         int currentlySelected = -1;
 
         for (Integer slot : PLAYER_HEAD_SLOTS) {
@@ -134,7 +129,7 @@ public class TrinketParser {
 
             validHeads.add(slot);
             names.put(slot, name.get());
-            graveTimers.put(slot, graveTimer);
+            graveTimers.put(name.get(), graveTimer);
         }
 
         return new HeadParseResult(
@@ -209,35 +204,28 @@ public class TrinketParser {
         return specs;
     }
 
-    private record ActiveParseResult(Optional<Aspect> aspect, Optional<Active<Actives.Combo>> combo, Optional<Actives.Right> right, Optional<Actives.LeftShift> leftShift, Optional<Actives.RightShift> rightShift, Optional<Actives.Wildcard> wildcard, Optional<Actives.Bow> bow, Optional<Actives.Swap> swap, Optional<Actives.Lifeline> lifeline) {}
-    private static List<Active> parseActives(List<ItemStack> inv) {
-        List<Active> actives = new ArrayList<>();
-        for (ActiveSlot activeSlot : activeSlots) {
+    private static Optional<Aspect> parseAspect(List<ItemStack> inv) {
+        return Aspect.toEnum(inv.get(ASPECT_SLOT).getName().getString());
+    }
+
+    // todo handle multiple wildcards
+    private static List<Map.Entry<ActiveSlot, Active>> parseActives(List<ItemStack> inv) {
+        List<Map.Entry<ActiveSlot, Active>> actives = new ArrayList<>();
+        for (ActiveSlotToParse activeSlot : activeSlots) {
             Integer slot = activeSlot.slot;
-            Class<? extends Enum<?>> type = activeSlot.type;
             if (inv.get(slot).getItem() == NO_ACTIVE) continue;
-            Optional<? extends Enum<?>> name = toEnums.get(type).apply(inv.get(slot).getName().getString());
-            if (name.isEmpty()) continue;
+            ItemStack item = inv.get(slot);
+            Optional<? extends Enum<?>> ability = activeSlot.toEnum.apply(item.getName().getString());
+            if (ability.isEmpty()) continue;
+            List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
+            if (tooltip.size() < 2) continue;
+            String line2 = tooltip.get(1).getString();
+            SpecRarityParseResult specAndRarity = parseSpecRarity(line2);
+            if (specAndRarity.spec.isEmpty() || specAndRarity.rarity.isEmpty()) continue;
 
+            actives.add(new AbstractMap.SimpleEntry<>(activeSlot.type, new Active((ActiveType) ability.get(), specAndRarity.spec.get(), specAndRarity.rarity.get())));
         }
-
-
-        if (inv.get(ASPECT_SLOT).getItem() != NO_ACTIVE) aspect = Aspect.toEnum(inv.get(ASPECT_SLOT).getName().getString());
-        if (inv.get(COMBO_SLOT).getItem() != NO_ACTIVE) {
-            Optional<Actives.Combo> active = Actives.Combo.toEnum(inv.get(COMBO_SLOT).getName().getString());
-            if (active.isPresent()) {
-                List<Text> tooltip = inv.get(COMBO_SLOT).getTooltip(null, TooltipContext.BASIC);
-
-            }
-        }
-        if (inv.get(RIGHT_SLOT).getItem() != NO_ACTIVE) right = Actives.Right.toEnum(inv.get(RIGHT_SLOT).getName().getString());
-        if (inv.get(LEFT_SHIFT_SLOT).getItem() != NO_ACTIVE) leftShift = Actives.LeftShift.toEnum(inv.get(LEFT_SHIFT_SLOT).getName().getString());
-        if (inv.get(RIGHT_SHIFT_SLOT).getItem() != NO_ACTIVE) rightShift = Actives.RightShift.toEnum(inv.get(RIGHT_SHIFT_SLOT).getName().getString());
-        if (inv.get(WILDCARD_SLOT).getItem() != NO_ACTIVE) wildcard = Actives.Wildcard.toEnum(inv.get(WILDCARD_SLOT).getName().getString());
-        if (inv.get(BOW_SLOT).getItem() != NO_ACTIVE) bow = Actives.Bow.toEnum(inv.get(BOW_SLOT).getName().getString());
-        if (inv.get(SWAP_SLOT).getItem() != NO_ACTIVE) swap = Actives.Swap.toEnum(inv.get(SWAP_SLOT).getName().getString());
-        if (inv.get(LIFELINE_SLOT).getItem() != NO_ACTIVE) lifeline = Actives.Lifeline.toEnum(inv.get(LIFELINE_SLOT).getName().getString());
-        return new ActiveParseResult(aspect, combo, right, leftShift, rightShift, wildcard, bow, swap, lifeline);
+        return actives;
     }
 
     private record SpecRarityParseResult(Optional<AbilitySpec> spec, Optional<Rarity> rarity) {}

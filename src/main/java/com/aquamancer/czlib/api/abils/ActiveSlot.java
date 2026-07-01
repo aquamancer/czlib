@@ -1,6 +1,6 @@
-package com.aquamancer.czlib.api.abils.active;
+package com.aquamancer.czlib.api.abils;
 
-public enum Trigger {
+public enum ActiveSlot {
     COMBO,
     RIGHT,
     LEFT_SHIFT,
