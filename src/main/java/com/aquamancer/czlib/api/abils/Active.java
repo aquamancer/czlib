@@ -22,4 +22,8 @@ public class Active {
     public Rarity getRarity() {
         return rarity;
     }
+
+    public ActiveSlot getSlot() {
+        return this.ability.getSlot();
+    }
 }

@@ -30,7 +30,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.COMBO;
         }
     }
@@ -62,7 +62,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.RIGHT;
         }
     }
@@ -94,7 +94,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.LEFT_SHIFT;
         }
     }
@@ -126,7 +126,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.RIGHT_SHIFT;
         }
     }
@@ -159,7 +159,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.WILDCARD;
         }
     }
@@ -192,7 +192,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.BOW;
         }
     }
@@ -227,7 +227,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.SWAP;
         }
     }
@@ -256,7 +256,7 @@ public final class Actives {
         }
 
         @Override
-        public ActiveSlot getTrigger() {
+        public ActiveSlot getSlot() {
             return ActiveSlot.LIFELINE;
         }
     }

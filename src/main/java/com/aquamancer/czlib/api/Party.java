@@ -43,16 +43,17 @@ public class Party {
         players.get(player).setAspect(aspect);
     }
 
-    public void setActives(String player, List<Map.Entry<ActiveSlot, Active>> actives) {
+    public void setActives(String player, List<Active> actives) {
         EnumMap<ActiveSlot, Active> nonWildcards = new EnumMap<>(ActiveSlot.class);
         List<Active> wildcards = new ArrayList<>();
-        actives.forEach((active) -> {
-            if (active.getKey() == ActiveSlot.WILDCARD) {
-                wildcards.add(active.getValue());
+        for (Active active : actives) {
+            ActiveSlot slot = active.getSlot();
+            if (slot == ActiveSlot.WILDCARD) {
+                wildcards.add(active);
             } else {
-                nonWildcards.put(active.getKey(), active.getValue());
+                nonWildcards.put(slot, active);
             }
-        });
+        }
 
         players.get(player).setActives(nonWildcards);
         players.get(player).setWildcards(wildcards);

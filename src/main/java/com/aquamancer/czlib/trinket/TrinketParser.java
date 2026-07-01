@@ -84,7 +84,7 @@ public class TrinketParser {
         Optional<Aspect> aspect = parseAspect(inv);
         party.setAspect(player, aspect.orElse(null));
 
-        List<Map.Entry<ActiveSlot, Active>> actives = parseActives(inv);
+        List<Active> actives = parseActives(inv);
         party.setActives(player, actives);
 
 
@@ -209,8 +209,8 @@ public class TrinketParser {
     }
 
     // todo handle multiple wildcards
-    private static List<Map.Entry<ActiveSlot, Active>> parseActives(List<ItemStack> inv) {
-        List<Map.Entry<ActiveSlot, Active>> actives = new ArrayList<>();
+    private static List<Active> parseActives(List<ItemStack> inv) {
+        List<Active> actives = new ArrayList<>();
         for (ActiveSlotToParse activeSlot : activeSlots) {
             Integer slot = activeSlot.slot;
             if (inv.get(slot).getItem() == NO_ACTIVE) continue;
@@ -223,7 +223,7 @@ public class TrinketParser {
             SpecRarityParseResult specAndRarity = parseSpecRarity(line2);
             if (specAndRarity.spec.isEmpty() || specAndRarity.rarity.isEmpty()) continue;
 
-            actives.add(new AbstractMap.SimpleEntry<>(activeSlot.type, new Active((ActiveType) ability.get(), specAndRarity.spec.get(), specAndRarity.rarity.get())));
+            actives.add(new Active((ActiveType) ability.get(), specAndRarity.spec.get(), specAndRarity.rarity.get()));
         }
         return actives;
     }
