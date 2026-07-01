@@ -87,7 +87,6 @@ public class TrinketParser {
         List<Active> actives = parseActives(inv);
         party.setActives(player, actives);
 
-
         if (client.player != null && packet.getSyncId() != 0) {
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
             client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size() + "\n" + inv.stream().map((stack) -> {
