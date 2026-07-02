@@ -26,4 +26,9 @@ public class Active {
     public ActiveSlot getSlot() {
         return this.ability.getSlot();
     }
+
+    @Override
+    public String toString() {
+        return "Active=" + ability + ", Spec=" + spec + ", Rarity=" + rarity;
+    }
 }

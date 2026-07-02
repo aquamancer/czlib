@@ -67,7 +67,7 @@ public class TrinketParser {
         UpdateManager.getInstance().setHeadsToClick(headParseResult.validHeads);
         if (!headParseResult.success) return;
 
-        Party party = ZenithApi.getInstance().getParty();
+        Party party = ZenithApi.getInstance().getPartyManager();
         party.setMembers(Set.copyOf(headParseResult.names.values()));
         party.setGraveTimers(headParseResult.graveTimers);
 
@@ -87,15 +87,15 @@ public class TrinketParser {
         List<Active> actives = parseActives(inv);
         party.setActives(player, actives);
 
-        if (client.player != null && packet.getSyncId() != 0) {
-//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
-            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size() + "\n" + inv.stream().map((stack) -> {
-//                return stack.getName().getString();
-//                return stack.toHoverableText().getString();
-                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.getString()).toList().toString();
-//                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.toString()).toList();
-            }).toList().toString()));
-        }
+//        if (client.player != null && packet.getSyncId() != 0) {
+////            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
+//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size() + "\n" + inv.stream().map((stack) -> {
+////                return stack.getName().getString();
+////                return stack.toHoverableText().getString();
+//                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.getString()).toList().toString();
+////                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.toString()).toList();
+//            }).toList().toString()));
+//        }
     }
 
     private static boolean isDepthsTrinket(List<ItemStack> inv) {

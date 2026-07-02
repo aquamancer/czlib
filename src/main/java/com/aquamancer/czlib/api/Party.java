@@ -11,6 +11,14 @@ public class Party {
 
     Party() {}
 
+    Map<String, PartyMember> getPlayers() {
+        return this.players;
+    }
+
+    Optional<PartyMember> getPlayer(String name) {
+        return Optional.ofNullable(players.get(name));
+    }
+
     public void setMembers(Set<String> names) {
         players.keySet().retainAll(names);
         for (String name : names) {
@@ -57,5 +65,15 @@ public class Party {
 
         players.get(player).setActives(nonWildcards);
         players.get(player).setWildcards(wildcards);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        this.players.forEach((name, player) -> {
+            result.append(player.toString());
+            result.append("\n\n");
+        });
+        return result.toString();
     }
 }

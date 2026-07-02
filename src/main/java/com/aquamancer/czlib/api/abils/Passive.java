@@ -10,4 +10,9 @@ public class Passive {
         this.spec = spec;
         this.rarity = rarity;
     }
+
+    @Override
+    public String toString() {
+        return "Ability=" + name + ", spec=" + spec + ", rarity=" + rarity;
+    }
 }

@@ -5,6 +5,7 @@ import com.aquamancer.czlib.api.abils.*;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 public class PartyMember {
     private final String name;
@@ -44,7 +45,23 @@ public class PartyMember {
         this.actives = actives;
     }
 
-    public void setWildcards(List<Active> wildcards) {
+    void setWildcards(List<Active> wildcards) {
         this.wildcards = wildcards;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("Name=").append(name).append(", Grave=").append(graveTimer).append("s").append("\n");
+        s.append("Specs=").append(specs).append("\n");
+        s.append("Passives=").append(passives).append("\n");
+        s.append("Actives={");
+        for (Map.Entry<ActiveSlot, Active> e : actives.entrySet()) {
+            s.append("\n    ").append(e.getKey()).append("={").append(e.getValue()).append("}");
+        }
+        s.append("\n}\n");
+        s.append("Wildcards=").append(wildcards);
+
+        return s.toString();
     }
 }

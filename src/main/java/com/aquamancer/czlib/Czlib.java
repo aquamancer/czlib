@@ -1,12 +1,16 @@
 package com.aquamancer.czlib;
 
+import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.trinket.TrinketOpener;
+import com.aquamancer.czlib.trinket.UpdateManager;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import org.slf4j.Logger;
@@ -35,7 +39,8 @@ public class Czlib implements ClientModInitializer {
 									.executes(context -> {
 										int syncId = IntegerArgumentType.getInteger(context, "syncId");
 //										TrinketOpener.clickPartyHeads(syncId, List.of(8, 8, 8), delay);
-										TrinketOpener.clickPartyHeads1(syncId, List.of(47, 48, 50, 51), 13);
+//										TrinketOpener.clickPartyHeads1(syncId, UpdateManager.getInstance().headSlotsToClick, 13);
+										MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getPartyManager().toString()));
 										return 1;
 									})
 							)
