@@ -2,6 +2,7 @@ package com.aquamancer.czlib.trinket;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -17,7 +18,6 @@ public class UpdateManager {
 
     private Set<Integer> headSlotsToClick = new HashSet<>(DEFAULT_HEAD_SLOTS);
     private int selfHeadSlot = 0;
-    private int trinketSlot = 13;  // 13 = top row middle of inv
     private int lastScreenSyncId = 0;
 
 
@@ -46,8 +46,13 @@ public class UpdateManager {
 
     // todo make package-private
     public void update() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.player == null) return;
+        int trinketSlot = TrinketLocator.getTrinketSlot();
+        if (trinketSlot == -1) {
+            MinecraftClient client = MinecraftClient.getInstance();
+            if (client == null || client.player == null) return;
+            client.player.sendMessage(Text.literal("Could not find Depths Trinket in inventory"));
+            return;
+        }
         TrinketOpener.clickPartyHeads(lastScreenSyncId, headSlotsToClick, trinketSlot);
     }
 }
