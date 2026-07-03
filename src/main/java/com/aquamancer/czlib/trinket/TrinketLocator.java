@@ -40,6 +40,7 @@ public class TrinketLocator {
         }
         for (int i = INV_START; i <= INV_STOP; i++) {
             if (i == lastTrinketSlot) continue;  // already checked
+            if (inv.get(i).isEmpty()) continue;
             if (inv.get(i).getName().getString().equals(DEPTHS_TRINKET)) {
                 currentTrinketSlot = i;
                 return;
