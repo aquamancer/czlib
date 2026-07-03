@@ -1,8 +1,10 @@
 package com.aquamancer.czlib;
 
 import com.aquamancer.czlib.api.ZenithApi;
+import com.aquamancer.czlib.trinket.ShardTracker;
 import com.aquamancer.czlib.trinket.TrinketOpener;
 import com.aquamancer.czlib.trinket.UpdateManager;
+import com.aquamancer.czlib.trinket.WorldChangeTracker;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -13,11 +15,14 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 
+@ApiStatus.Internal
 public class Czlib implements ClientModInitializer {
 	public static final String MOD_ID = "czlib";
 
@@ -34,38 +39,45 @@ public class Czlib implements ClientModInitializer {
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(
-					ClientCommandManager.literal("openTrinket")
+					ClientCommandManager.literal("trinket")
+							.executes(context -> {
+								UpdateManager.getInstance().update();
+								MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getPartyManager().toString()));
+								return 1;
+							})
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("getShard")
+								.executes(context -> {
+									MinecraftClient client = MinecraftClient.getInstance();
+									if (client == null || client.player == null) return 0;
+									client.player.sendMessage(Text.literal(ShardTracker.getCurrentShard()));
+									return 1;
+								})
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("testTrinket")
 							.then(ClientCommandManager.argument("syncId", IntegerArgumentType.integer(0))
 									.executes(context -> {
-										int syncId = IntegerArgumentType.getInteger(context, "syncId");
-//										TrinketOpener.clickPartyHeads(syncId, List.of(8, 8, 8), delay);
-//										TrinketOpener.clickPartyHeads1(syncId, UpdateManager.getInstance().headSlotsToClick, 13);
-										MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getPartyManager().toString()));
+//										int syncId = IntegerArgumentType.getInteger(context, "syncId");
+//										MinecraftClient.getInstance().player.sendMessage(Text.literal("Opening trinket with syncId: " + MinecraftClient.getInstance().player.currentScreenHandler.syncId));
+//										TrinketOpener.clickPartyHeads1(UpdateManager.getInstance().lastScreenSyncId, Set.of(47, 48, 50, 53), 13);
 										return 1;
 									})
 							)
 			);
 			dispatcher.register(
-					ClientCommandManager.literal("auto")
-							.then(ClientCommandManager.argument("auto", IntegerArgumentType.integer(0))
-									.executes(context -> {
-										int t = IntegerArgumentType.getInteger(context, "auto");
-										return 1;
-									})
-							)
-			);
-			dispatcher.register(
-					ClientCommandManager.literal("delay")
-							.then(ClientCommandManager.argument("delay", IntegerArgumentType.integer(0))
-									.executes(context -> {
-										return 1;
-									})
-							)
+					ClientCommandManager.literal("getTrinket")
+							.executes(context -> {
+//								UpdateManager.getInstance().update();
+								MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getPartyManager().toString()));
+								return 1;
+							})
 			);
 		});
-
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-			TrinketOpener.onTick(client);
+			WorldChangeTracker.onTick(client);
+			ShardTracker.onTick();
 		});
 	}
 

@@ -4,16 +4,12 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.ClientConnection;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -37,11 +33,26 @@ public class TrinketOpener {
         modifiedStacks.put(53, ItemStack.EMPTY);
     }
 
-    private static Queue<ClickSlotC2SPacket> queue = new ArrayDeque<>();
-    private static int delayMillis = 50;
-    private static int counter = delayMillis;
+    public static void clickPartyHeads(int syncId, Set<Integer> slots, int trinketSlot) {
+        for (Integer slot : slots) {
+            openTrinket(trinketSlot);
+            sendPacket(new ClickSlotC2SPacket(
+                    ++syncId,
+                    1,
+                    slot,
+                    0,
+                    SlotActionType.PICKUP,
+                    playerHead,
+                    modifiedStacks
+            ));
+            sendPacket(new CloseHandledScreenC2SPacket(
+                    syncId
+            ));
+            MinecraftClient.getInstance().setScreen(null);
+        }
+    }
 
-    public static void openTrinket(int slot) {
+    private static void openTrinket(int slot) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.player.currentScreenHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
@@ -59,59 +70,6 @@ public class TrinketOpener {
         ));
     }
 
-    public static void clickPartyHeads(int syncId, List<Integer> slots, int fdelayMillis) {
-        delayMillis = fdelayMillis;
-        for (int i = 0; i < Math.min(slots.size(), revisionSequence.size()); i++) {
-            queue.add(new ClickSlotC2SPacket(
-                    syncId,
-                    revisionSequence.get(i),
-                    slots.get(i),
-                    0,
-                    SlotActionType.PICKUP,
-                    playerHead,
-                    modifiedStacks
-            ));
-//            sendPacket(new ClickSlotC2SPacket(
-//                    syncId,
-//                    revisionSequence.get(i),
-//                    slots.get(i),
-//                    0,
-//                    SlotActionType.PICKUP,
-//                    playerHead,
-//                    modifiedStacks
-//            ));
-        }
-    }
-
-    public static void clickPartyHeads1(int syncId, Set<Integer> slots, int trinketSlot) {
-        for (Integer slot : slots) {
-            openTrinket(trinketSlot);
-            sendPacket(new ClickSlotC2SPacket(
-                    syncId++,
-                    1,
-                    slot,
-                    0,
-                    SlotActionType.PICKUP,
-                    playerHead,
-                    modifiedStacks
-            ));
-            sendPacket(new CloseHandledScreenC2SPacket(
-                    syncId
-            ));
-            MinecraftClient.getInstance().setScreen(null);
-        }
-    }
-
-
-    public static void onTick(MinecraftClient client) {
-        if ((counter -= 50) <= 0) {
-            ClickSlotC2SPacket packet = queue.poll();
-            if (packet != null) {
-                sendPacket((ClickSlotC2SPacket) packet);
-            }
-            counter = delayMillis;
-        }
-    }
 
     private static void sendPacket(Packet<?> packet) {
         MinecraftClient client = MinecraftClient.getInstance();

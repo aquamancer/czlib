@@ -58,6 +58,11 @@ public class TrinketParser {
     private static final Pattern GRAVE_TIMER = Pattern.compile("Grave Timer:\\s+(\\d+\\.\\d+)s");
 
     public static void onInventoryS2CPacket(InventoryS2CPacket packet, MinecraftClient client) {
+        if (client.player != null && packet.getSyncId() == 0) {
+            List<ItemStack> inv = packet.getContents();
+//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
+//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size()));
+        }
         if (packet.getSyncId() == 0) return;  // player's inventory
         List<ItemStack> inv = packet.getContents();
         if (inv.size() != EXPECTED_INV_SIZE) return;

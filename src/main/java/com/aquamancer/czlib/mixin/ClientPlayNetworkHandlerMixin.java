@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.mixin;
 
 import com.aquamancer.czlib.trinket.TrinketParser;
+import com.aquamancer.czlib.trinket.UpdateManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
@@ -18,6 +19,7 @@ public class ClientPlayNetworkHandlerMixin {
     private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (packet != null && client.player != null) {
+            UpdateManager.getInstance().onOpenScreenPacket(packet);
             client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId())));
 //            client.execute(() -> client.player.sendMessage(Text.literal(String.valueOf(System.currentTimeMillis()))));
         }
