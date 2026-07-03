@@ -19,7 +19,7 @@ public class TrinketLocator {
     private static InventoryS2CPacket lastInventoryPacket;
     private static boolean cached = false;
     private static int currentTrinketSlot = -1;
-    private static int lastTrinketSlot;
+    private static int lastTrinketSlot = 13;  // "random" guess (most players have the trinket here)
 
     public static int getTrinketSlot() {
         if (!cached) {
@@ -33,7 +33,7 @@ public class TrinketLocator {
         currentTrinketSlot = -1;
         List<ItemStack> inv = lastInventoryPacket.getContents();
         if (lastInventoryPacket == null || inv.size() < EXPECTED_INV_SIZE) return;
-        // look for trinket in lastTrinketSlot first
+        // look for trinket in last known slot first
         if (lastTrinketSlot >= 0 && lastTrinketSlot < inv.size() && inv.get(lastTrinketSlot).getName().getString().equals(DEPTHS_TRINKET)) {
             currentTrinketSlot = lastTrinketSlot;
             return;
