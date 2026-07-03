@@ -60,6 +60,7 @@ public class TrinketParser {
     public static void onInventoryS2CPacket(InventoryS2CPacket packet, MinecraftClient client) {
         if (client.player != null && packet.getSyncId() == 0) {
             List<ItemStack> inv = packet.getContents();
+            client.player.sendMessage(Text.literal("Inventory packet, size " + inv.size() + ": " + inv.stream().map((stack) -> {return stack.getName().getString();}).toList().toString()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size()));
         }

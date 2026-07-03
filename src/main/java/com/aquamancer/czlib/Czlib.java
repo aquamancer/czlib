@@ -1,10 +1,7 @@
 package com.aquamancer.czlib;
 
 import com.aquamancer.czlib.api.ZenithApi;
-import com.aquamancer.czlib.trinket.ShardTracker;
-import com.aquamancer.czlib.trinket.TrinketOpener;
-import com.aquamancer.czlib.trinket.UpdateManager;
-import com.aquamancer.czlib.trinket.WorldChangeTracker;
+import com.aquamancer.czlib.trinket.*;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -71,6 +68,13 @@ public class Czlib implements ClientModInitializer {
 							.executes(context -> {
 //								UpdateManager.getInstance().update();
 								MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getPartyManager().toString()));
+								return 1;
+							})
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("getTrinketSlot")
+							.executes(context -> {
+								MinecraftClient.getInstance().player.sendMessage(Text.literal("Trinket slot=" + TrinketLocator.getTrinketSlot()));
 								return 1;
 							})
 			);

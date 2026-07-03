@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
+import com.aquamancer.czlib.trinket.TrinketLocator;
 import com.aquamancer.czlib.trinket.TrinketParser;
 import com.aquamancer.czlib.trinket.UpdateManager;
 import net.minecraft.client.MinecraftClient;
@@ -31,6 +32,7 @@ public class ClientPlayNetworkHandlerMixin {
         if (client != null) {
             client.execute(() -> {
                 TrinketParser.onInventoryS2CPacket(packet, client);
+                TrinketLocator.onInventoryS2CPacket(packet);
             });
         }
     }
