@@ -21,7 +21,7 @@ public class ClientPlayNetworkHandlerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (packet != null && client.player != null) {
             UpdateManager.getInstance().onOpenScreenPacket(packet);
-            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId())));
+//            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId())));
 //            client.execute(() -> client.player.sendMessage(Text.literal(String.valueOf(System.currentTimeMillis()))));
         }
     }

@@ -5,6 +5,7 @@
 	"mixins": [
 		"ClickSlotMixin",
 		"ClientPlayNetworkHandlerMixin",
+		"MessageHandlerMixin",
 		"PlayerListHudAccessor"
 	],
 	"injectors": {
