@@ -2,20 +2,17 @@ package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PartyMember {
     private final String name;
     private double graveTimer;
-    private EnumSet<Spec> specs;
-    private List<Passive> passives;
-    private EnumSet<Curse> curses;
+    private EnumSet<Spec> specs = EnumSet.noneOf(Spec.class);
+    private Set<Passive> passives = new HashSet<>();
+    private EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
     private Aspect aspect;
-    private EnumMap<ActiveSlot, Active> actives;
-    private List<Active> wildcards;
+    private EnumMap<ActiveSlot, Active> actives = new EnumMap<>(ActiveSlot.class);
+    private Set<Active> wildcards = new HashSet<>();
 
     public PartyMember(String name) {
         this.name = name;
@@ -25,7 +22,7 @@ public class PartyMember {
         this.graveTimer = time;
     }
 
-    void setPassives(List<Passive> passives) {
+    void setPassives(Set<Passive> passives) {
         this.passives = passives;
     }
 
@@ -45,8 +42,36 @@ public class PartyMember {
         this.actives = actives;
     }
 
-    void setWildcards(List<Active> wildcards) {
+    void setWildcards(Set<Active> wildcards) {
         this.wildcards = wildcards;
+    }
+
+    public void setAbility(Passive passive) {
+        this.passives.add(passive);
+    }
+
+    public void setAbility(Curse curse) {
+        this.curses.add(curse);
+    }
+
+    public void setAbility(Active active) {
+        if (active.getSlot() == ActiveSlot.WILDCARD) {
+            this.wildcards.add(active);
+        } else {
+            this.actives.put(active.getSlot(), active);
+        }
+    }
+
+    public void loseAbility(Passives passive) {
+        this.passives.remove(new Passive(passive, null, null));
+    }
+
+    public void loseAbility(Curse curse) {
+        this.curses.remove(curse);
+    }
+
+    public void loseAbility(ActiveType active) {
+        actives.values().removeIf(e -> e.getAbility() == active);
     }
 
     @Override
@@ -54,10 +79,13 @@ public class PartyMember {
         StringBuilder s = new StringBuilder();
         s.append("Name=").append(name).append(", Grave=").append(graveTimer).append("s").append("\n");
         s.append("Specs=").append(specs).append("\n");
+        s.append("Curses=").append(curses).append("\n");
         s.append("Passives=").append(passives).append("\n");
         s.append("Actives={");
-        for (Map.Entry<ActiveSlot, Active> e : actives.entrySet()) {
-            s.append("\n    ").append(e.getKey()).append("={").append(e.getValue()).append("}");
+        if (actives != null) {
+            for (Map.Entry<ActiveSlot, Active> e : actives.entrySet()) {
+                s.append("\n    ").append(e.getKey()).append("={").append(e.getValue()).append("}");
+            }
         }
         s.append("\n}\n");
         s.append("Wildcards=").append(wildcards);

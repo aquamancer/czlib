@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
+import com.aquamancer.czlib.trinket.SelfIdentifier;
 import com.aquamancer.czlib.trinket.TrinketLocator;
 import com.aquamancer.czlib.trinket.TrinketParser;
 import com.aquamancer.czlib.trinket.UpdateManager;
@@ -21,6 +22,7 @@ public class ClientPlayNetworkHandlerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (packet != null && client.player != null) {
             UpdateManager.getInstance().onOpenScreenPacket(packet);
+            SelfIdentifier.onOpenScreenPacket(packet);
 //            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId())));
 //            client.execute(() -> client.player.sendMessage(Text.literal(String.valueOf(System.currentTimeMillis()))));
         }

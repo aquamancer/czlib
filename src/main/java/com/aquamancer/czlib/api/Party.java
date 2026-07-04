@@ -37,7 +37,7 @@ public class Party {
         }
     }
 
-    public void setPassives(String player, List<Passive> passives, EnumSet<Curse> curses) {
+    public void setPassives(String player, Set<Passive> passives, EnumSet<Curse> curses) {
         PartyMember p = players.get(player);
         p.setPassives(passives);
         p.setCurses(curses);
@@ -53,7 +53,7 @@ public class Party {
 
     public void setActives(String player, List<Active> actives) {
         EnumMap<ActiveSlot, Active> nonWildcards = new EnumMap<>(ActiveSlot.class);
-        List<Active> wildcards = new ArrayList<>();
+        Set<Active> wildcards = new HashSet<>();
         for (Active active : actives) {
             ActiveSlot slot = active.getSlot();
             if (slot == ActiveSlot.WILDCARD) {
@@ -65,6 +65,34 @@ public class Party {
 
         players.get(player).setActives(nonWildcards);
         players.get(player).setWildcards(wildcards);
+    }
+
+    public void createMember(String name) {
+        players.computeIfAbsent(name, PartyMember::new);
+    }
+
+    public void updateAbility(String player, Passive passive) {
+        players.get(player).setAbility(passive);
+    }
+
+    public void updateAbility(String player, Curse curse) {
+        players.get(player).setAbility(curse);
+    }
+
+    public void updateAbility(String player, Active active) {
+        players.get(player).setAbility(active);
+    }
+
+    public void loseAbility(String player, Passives passive) {
+        players.get(player).loseAbility(passive);
+    }
+
+    public void loseAbility(String player, Curse curse) {
+        players.get(player).loseAbility(curse);
+    }
+
+    public void loseAbility(String player, ActiveType active) {
+        players.get(player).loseAbility(active);
     }
 
     @Override

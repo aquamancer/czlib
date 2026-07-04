@@ -34,21 +34,24 @@ public class TrinketOpener {
     }
 
     public static void clickPartyHeads(int syncId, Set<Integer> slots, int trinketSlot) {
-        for (Integer slot : slots) {
+        if (slots.isEmpty()) {
             openTrinket(trinketSlot);
-            sendPacket(new ClickSlotC2SPacket(
-                    ++syncId,
-                    1,
-                    slot,
-                    0,
-                    SlotActionType.PICKUP,
-                    playerHead,
-                    modifiedStacks
-            ));
-            sendPacket(new CloseHandledScreenC2SPacket(
-                    syncId
-            ));
-            MinecraftClient.getInstance().setScreen(null);
+        } else {
+            for (Integer slot : slots) {
+                openTrinket(trinketSlot);
+                sendPacket(new ClickSlotC2SPacket(
+                        ++syncId,
+                        1,
+                        slot,
+                        0,
+                        SlotActionType.PICKUP,
+                        playerHead,
+                        modifiedStacks
+                ));
+                sendPacket(new CloseHandledScreenC2SPacket(
+                        syncId
+                ));
+            }
         }
     }
 

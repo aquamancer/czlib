@@ -17,10 +17,7 @@ public class UpdateManager {
     }
 
     private Set<Integer> headSlotsToClick = new HashSet<>(DEFAULT_HEAD_SLOTS);
-    private int selfHeadSlot = 0;
     private int lastScreenSyncId = 0;
-
-
 
     private UpdateManager() {}
 
@@ -42,6 +39,7 @@ public class UpdateManager {
 
     void setHeadsToClick(Collection<Integer> slots) {
         headSlotsToClick = new HashSet<>(slots);
+        headSlotsToClick.remove(SelfIdentifier.getSelfHeadSlot());
     }
 
     // todo make package-private

@@ -5,6 +5,27 @@ import java.util.Map;
 import java.util.Optional;
 
 public final class Actives {
+    public static Optional<? extends ActiveType> toEnum(String s) {
+        Optional<Combo> c = Combo.toEnum(s);
+        if (c.isPresent()) return c;
+        Optional<Right> r = Right.toEnum(s);
+        if (r.isPresent()) return r;
+        Optional<LeftShift> ls = LeftShift.toEnum(s);
+        if (ls.isPresent()) return ls;
+        Optional<RightShift> rs = RightShift.toEnum(s);
+        if (rs.isPresent()) return rs;
+        Optional<Wildcard> wc = Wildcard.toEnum(s);
+        if (wc.isPresent()) return wc;
+        Optional<Bow> b = Bow.toEnum(s);
+        if (b.isPresent()) return b ;
+        Optional<Swap> swap = Swap.toEnum(s);
+        if (swap.isPresent()) return swap;
+        Optional<Lifeline> ll = Lifeline.toEnum(s);
+        if (ll.isPresent()) return ll;
+
+        return Optional.empty();
+    }
+
     public enum Combo implements ActiveType {
         SOOTHING,
         EARTHEN,

@@ -64,8 +64,8 @@ public class ShardTracker {
         return currentShard;
     }
 
-    public static boolean isInZenith() {
-        return currentShard.startsWith("zenith");
+    public static boolean notInZenith() {
+        return !currentShard.startsWith("zenith");
     }
 
 //	public static String getShortShard() {

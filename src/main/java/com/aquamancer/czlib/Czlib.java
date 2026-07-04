@@ -78,6 +78,13 @@ public class Czlib implements ClientModInitializer {
 								return 1;
 							})
 			);
+			dispatcher.register(
+					ClientCommandManager.literal("getSelf")
+							.executes(context -> {
+								MinecraftClient.getInstance().player.sendMessage(Text.literal("Self name=" + SelfIdentifier.getSelfName() + ", slot=" + SelfIdentifier.getSelfHeadSlot()));
+								return 1;
+							})
+			);
 		});
 		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
 			WorldChangeTracker.onTick(client);

@@ -32,7 +32,7 @@ public class TrinketParser {
 
     private static final int ASPECT_SLOT = 9;
 
-    private record ActiveSlotToParse(Integer slot, ActiveSlot type, Function<String, Optional<? extends Enum<?>>> toEnum) {}
+    private record ActiveSlotToParse(Integer slot, ActiveSlot type, Function<String, Optional<? extends ActiveType>> toEnum) {}
     private static final List<ActiveSlotToParse> activeSlots = List.of(
             new ActiveSlotToParse(10, ActiveSlot.COMBO, Actives.Combo::toEnum),
             new ActiveSlotToParse(11, ActiveSlot.RIGHT, Actives.Right::toEnum),
@@ -79,6 +79,8 @@ public class TrinketParser {
 
         String player = headParseResult.names.get(headParseResult.currentlySelected);
         if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
+        SelfIdentifier.onInventoryPacketParsed(headParseResult.currentlySelected, player);
+//        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
 
         PassiveParseResult passiveParseResult = parsePassives(inv);
         party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
@@ -93,7 +95,7 @@ public class TrinketParser {
         List<Active> actives = parseActives(inv);
         party.setActives(player, actives);
 
-//        if (client.player != null && packet.getSyncId() != 0) {
+        if (client.player != null && packet.getSyncId() != 0) {
 ////            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size() + "\n" + inv.stream().map((stack) -> {
 ////                return stack.getName().getString();
@@ -101,7 +103,7 @@ public class TrinketParser {
 //                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.getString()).toList().toString();
 ////                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.toString()).toList();
 //            }).toList().toString()));
-//        }
+        }
     }
 
     private static boolean isDepthsTrinket(List<ItemStack> inv) {
@@ -159,9 +161,9 @@ public class TrinketParser {
         return Optional.empty();
     }
 
-    private record PassiveParseResult(List<Passive> passives, EnumSet<Curse> curses) {}
+    private record PassiveParseResult(Set<Passive> passives, EnumSet<Curse> curses) {}
     private static PassiveParseResult parsePassives(List<ItemStack> inv) {
-        List<Passive> passives = new ArrayList<>(PASSIVES_END - PASSIVES_START + 1);
+        Set<Passive> passives = new HashSet<>(PASSIVES_END - PASSIVES_START + 1);
         EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
         for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
             ItemStack item = inv.get(slot);
@@ -220,7 +222,7 @@ public class TrinketParser {
             Integer slot = activeSlot.slot;
             if (inv.get(slot).getItem() == NO_ACTIVE) continue;
             ItemStack item = inv.get(slot);
-            Optional<? extends Enum<?>> ability = activeSlot.toEnum.apply(item.getName().getString());
+            Optional<? extends ActiveType> ability = activeSlot.toEnum.apply(item.getName().getString());
             if (ability.isEmpty()) continue;
             List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
             if (tooltip.size() < 2) continue;
@@ -228,7 +230,7 @@ public class TrinketParser {
             SpecRarityParseResult specAndRarity = parseSpecRarity(line2);
             if (specAndRarity.spec.isEmpty() || specAndRarity.rarity.isEmpty()) continue;
 
-            actives.add(new Active((ActiveType) ability.get(), specAndRarity.spec.get(), specAndRarity.rarity.get()));
+            actives.add(new Active(ability.get(), specAndRarity.spec.get(), specAndRarity.rarity.get()));
         }
         return actives;
     }
