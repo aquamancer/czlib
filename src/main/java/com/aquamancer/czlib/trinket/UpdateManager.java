@@ -6,7 +6,9 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
-
+/*
+update: on chat message, after closing ability selection, room generated, Ability removed! action bar
+ */
 @ApiStatus.Internal
 public class UpdateManager {
     private static UpdateManager INSTANCE;

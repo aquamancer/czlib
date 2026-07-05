@@ -6,8 +6,8 @@ public class ScreenCanceler {
     private static int screensToCancel = 0;
 
     public static boolean shouldCancelScreen(Screen screen) {
-        String name = screen.getTitle().getString();
         if (screensToCancel <= 0) return false;
+        String name = screen.getTitle().getString();
         if (!name.endsWith("Abilities")) return false;
         screensToCancel--;
         return true;

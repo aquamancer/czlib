@@ -16,7 +16,7 @@ public class ScreenCancelerMixin {
     private void setScreen(@Nullable Screen screen, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (screen == null || client == null || client.player == null) return;
-        client.player.sendMessage(Text.literal(screen.getClass().getCanonicalName()).append(Text.literal(": ")).append(screen.getTitle()));
+//        client.player.sendMessage(Text.literal(screen.getClass().getCanonicalName()).append(Text.literal(": ")).append(screen.getTitle()));
         if (ScreenCanceler.shouldCancelScreen(screen)) {
             ci.cancel();
         }
