@@ -79,6 +79,7 @@ public class PartyMember {
         StringBuilder s = new StringBuilder();
         s.append("Name=").append(name).append(", Grave=").append(graveTimer).append("s").append("\n");
         s.append("Specs=").append(specs).append("\n");
+        s.append("Aspect=").append(aspect).append("\n");
         s.append("Curses=").append(curses).append("\n");
         s.append("Passives=").append(passives).append("\n");
         s.append("Actives={");

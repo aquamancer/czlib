@@ -6,7 +6,8 @@
 		"ClickSlotMixin",
 		"ClientPlayNetworkHandlerMixin",
 		"MessageHandlerMixin",
-		"PlayerListHudAccessor"
+		"PlayerListHudAccessor",
+		"ScreenCancelerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

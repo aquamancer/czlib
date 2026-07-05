@@ -65,6 +65,7 @@ public class ShardTracker {
     }
 
     public static boolean notInZenith() {
+        if (currentShard == null) return true;
         return !currentShard.startsWith("zenith");
     }
 
