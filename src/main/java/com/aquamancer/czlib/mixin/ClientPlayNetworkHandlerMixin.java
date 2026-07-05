@@ -35,6 +35,7 @@ public class ClientPlayNetworkHandlerMixin {
             client.execute(() -> {
                 TrinketParser.onInventoryS2CPacket(packet, client);
                 TrinketLocator.onInventoryS2CPacket(packet);
+//                client.player.sendMessage(Text.literal("Inventory packet syncid=" + packet.getSyncId()));
             });
         }
     }
