@@ -35,11 +35,13 @@ public class TrinketOpener {
 
     public static void clickPartyHeads(int syncId, Set<Integer> slots, int trinketSlot) {
         if (slots.isEmpty()) {
+            ScreenCanceler.cancelFutureScreens(1);
             openTrinket(trinketSlot);
             sendPacket(new CloseHandledScreenC2SPacket(
                     syncId + 1
             ));
         } else {
+            ScreenCanceler.cancelFutureScreens(slots.size());
             for (Integer slot : slots) {
                 openTrinket(trinketSlot);
                 sendPacket(new ClickSlotC2SPacket(

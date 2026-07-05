@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
+import com.aquamancer.czlib.trinket.ScreenCanceler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
@@ -16,5 +17,8 @@ public class ScreenCancelerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (screen == null || client == null || client.player == null) return;
         client.player.sendMessage(Text.literal(screen.getClass().getCanonicalName()).append(Text.literal(": ")).append(screen.getTitle()));
+        if (ScreenCanceler.shouldCancelScreen(screen)) {
+            ci.cancel();
+        }
     }
 }

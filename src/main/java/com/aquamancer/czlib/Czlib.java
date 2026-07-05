@@ -39,7 +39,6 @@ public class Czlib implements ClientModInitializer {
 					ClientCommandManager.literal("trinket")
 							.executes(context -> {
 								UpdateManager.getInstance().update();
-								MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getPartyManager().toString()));
 								return 1;
 							})
 			);
