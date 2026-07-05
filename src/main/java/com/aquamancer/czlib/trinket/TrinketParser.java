@@ -22,6 +22,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.aquamancer.czlib.trinket.TooltipParser.parseSpecRarity;
+
 @ApiStatus.Internal
 public class TrinketParser {
     private static final int TRINKET_SIZE = 6*9;
@@ -175,17 +177,12 @@ public class TrinketParser {
                 List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
                 if (tooltip.size() < 2) continue;
                 String line2 = tooltip.get(1).getString();
-                int split = line2.indexOf(SPEC_RARITY_SPLIT);
-                if (split <= 0) continue;
-                int rarityStart = split + SPEC_RARITY_SPLIT.length();
-                if (rarityStart == line2.length()) continue;  // no chars after the split
-                Optional<AbilitySpec> spec = AbilitySpec.toEnum(line2.substring(0, split));
-                if (spec.isEmpty()) continue;
-                Optional<Rarity> rarity = Rarity.toEnum(line2.substring(rarityStart));
-                if (rarity.isEmpty()) continue;
-                passives.add(new Passive(passiveName.get(), spec.get(), rarity.get()));
+                TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
+                if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) continue;
+                passives.add(new Passive(passiveName.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
                 continue;
             }
+
             Optional<Curse> curse = Curse.toEnum(line1);
             if (curse.isPresent()) {
                 curses.add(curse.get());
@@ -227,22 +224,11 @@ public class TrinketParser {
             List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
             if (tooltip.size() < 2) continue;
             String line2 = tooltip.get(1).getString();
-            SpecRarityParseResult specAndRarity = parseSpecRarity(line2);
-            if (specAndRarity.spec.isEmpty() || specAndRarity.rarity.isEmpty()) continue;
+            TooltipParser.SpecRarityParseResult specAndRarity = parseSpecRarity(line2);
+            if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) continue;
 
-            actives.add(new Active(ability.get(), specAndRarity.spec.get(), specAndRarity.rarity.get()));
+            actives.add(new Active(ability.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
         }
         return actives;
-    }
-
-    private record SpecRarityParseResult(Optional<AbilitySpec> spec, Optional<Rarity> rarity) {}
-    private static SpecRarityParseResult parseSpecRarity(String line) {
-        int split = line.indexOf(SPEC_RARITY_SPLIT);
-        if (split <= 0) return new SpecRarityParseResult(Optional.empty(), Optional.empty());
-        int rarityStart = split + SPEC_RARITY_SPLIT.length();
-        if (rarityStart == line.length()) return new SpecRarityParseResult(Optional.empty(), Optional.empty());  // no chars after split
-        Optional<AbilitySpec> spec = AbilitySpec.toEnum(line.substring(0, split));
-        Optional<Rarity> rarity = Rarity.toEnum(line.substring(rarityStart));
-        return new SpecRarityParseResult(spec, rarity);
     }
 }
