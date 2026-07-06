@@ -39,6 +39,7 @@ public class ChatParser {
         Optional<Passives> passive = Passives.toEnum(ability);
         Optional<Curse> curse = (passive.isPresent()) ? Optional.empty() : Curse.toEnum(ability);
         Optional<? extends ActiveType> active = (curse.isPresent()) ? Optional.empty() : Actives.toEnum(ability);
+        Optional<CelestialGift> gift = (active.isPresent()) ? Optional.empty() : CelestialGift.toEnum(ability);
 
         Party party = ZenithApi.getInstance().getPartyManager();
         party.createMember(player);
@@ -53,6 +54,8 @@ public class ChatParser {
                     party.addAbility(player, curse.get());
                 } else if (active.isPresent() && spec.isPresent() && rarity.isPresent()) {
                     party.addAbility(player, new Active(active.get(), spec.get(), rarity.get()));
+                } else if (gift.isPresent()) {
+                    party.addGift(player, gift.get());
                 }
                 break;
             case "has lost":

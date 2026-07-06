@@ -60,9 +60,11 @@ public class AbilitySelectionParser {
                     Optional<Rarity> rarity = specAndRarity.rarity();
                     if (spec.isEmpty() || rarity.isEmpty()) return;
 
-                    if (active.isPresent()) party.addAbility(self, new Active(active.get(), spec.get(), rarity.get()));
-                    if (passive.isPresent())
+                    if (active.isPresent()) {
+                        party.addAbility(self, new Active(active.get(), spec.get(), rarity.get()));
+                    } else if (passive.isPresent()) {
                         party.addAbility(self, new Passive(passive.get(), spec.get(), rarity.get()));
+                    }
                     return;
                 }
 

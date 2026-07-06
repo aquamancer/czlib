@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api;
 
+import com.aquamancer.czlib.api.event.ZenithApiEvents;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -28,6 +29,7 @@ public class ZenithApi {
     public Optional<PartyMember> getPlayer(String name) {
         return this.party.getPlayer(name);
     }
+
 
     @ApiStatus.Internal
     public Party getPartyManager() {

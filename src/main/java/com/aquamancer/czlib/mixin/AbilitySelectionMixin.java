@@ -17,6 +17,5 @@ public class AbilitySelectionMixin {
     @Inject(at = @At("HEAD"), cancellable = true, method = "onSlotClick(IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V")
     private void onSlotClick(int slot, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo ci) {
         AbilitySelectionParser.onSlotClicked(slot, ((ScreenHandler)(Object) this).getSlot(slot).getStack(), button, actionType);
-        MinecraftClient.getInstance().player.sendMessage(Text.literal("slot clicked: " + slot+",button="+button+",type="+actionType));
     }
 }
