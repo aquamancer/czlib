@@ -46,15 +46,15 @@ public class PartyMember {
         this.wildcards = wildcards;
     }
 
-    public void setAbility(Passive passive) {
+    public void addAbility(Passive passive) {
         this.passives.add(passive);
     }
 
-    public void setAbility(Curse curse) {
+    public void addAbility(Curse curse) {
         this.curses.add(curse);
     }
 
-    public void setAbility(Active active) {
+    public void addAbility(Active active) {
         if (active.getSlot() == ActiveSlot.WILDCARD) {
             this.wildcards.add(active);
         } else {
@@ -72,6 +72,10 @@ public class PartyMember {
 
     public void loseAbility(ActiveType active) {
         actives.values().removeIf(e -> e.getAbility() == active);
+    }
+
+    public void addGift(CelestialGift gift) {
+        // todo cases
     }
 
     @Override

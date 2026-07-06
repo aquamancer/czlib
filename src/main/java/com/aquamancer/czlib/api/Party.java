@@ -71,16 +71,16 @@ public class Party {
         players.computeIfAbsent(name, PartyMember::new);
     }
 
-    public void updateAbility(String player, Passive passive) {
-        players.get(player).setAbility(passive);
+    public void addAbility(String player, Passive passive) {
+        players.get(player).addAbility(passive);
     }
 
-    public void updateAbility(String player, Curse curse) {
-        players.get(player).setAbility(curse);
+    public void addAbility(String player, Curse curse) {
+        players.get(player).addAbility(curse);
     }
 
-    public void updateAbility(String player, Active active) {
-        players.get(player).setAbility(active);
+    public void addAbility(String player, Active active) {
+        players.get(player).addAbility(active);
     }
 
     public void loseAbility(String player, Passives passive) {
@@ -93,6 +93,10 @@ public class Party {
 
     public void loseAbility(String player, ActiveType active) {
         players.get(player).loseAbility(active);
+    }
+
+    public void addGift(String player, CelestialGift gift) {
+        players.get(player).addGift(gift);
     }
 
     @Override

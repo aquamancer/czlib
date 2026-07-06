@@ -48,11 +48,11 @@ public class ChatParser {
             case "upgraded":
             case "downgraded":
                 if (passive.isPresent() && spec.isPresent() && rarity.isPresent()) {
-                    party.updateAbility(player, new Passive(passive.get(), spec.get(), rarity.get()));
+                    party.addAbility(player, new Passive(passive.get(), spec.get(), rarity.get()));
                 } else if (curse.isPresent()) {
-                    party.updateAbility(player, curse.get());
+                    party.addAbility(player, curse.get());
                 } else if (active.isPresent() && spec.isPresent() && rarity.isPresent()) {
-                    party.updateAbility(player, new Active(active.get(), spec.get(), rarity.get()));
+                    party.addAbility(player, new Active(active.get(), spec.get(), rarity.get()));
                 }
                 break;
             case "has lost":
