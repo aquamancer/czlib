@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -22,9 +23,11 @@ public class AbilitySelectionParser {
     private static final int MIDDLE_ROW_START = 9;
     private static final int MIDDLE_ROW_END = 17;
 
-    public static void onSlotClicked(int slot, ItemStack item, int button, SlotActionType slotActionType) {
+    public static void onSlotClicked(int slot, ScreenHandler screenHandler, int button, SlotActionType slotActionType) {
         if (slot < MIDDLE_ROW_START || slot > MIDDLE_ROW_END) return;
+        if (slot < 0 || slot >= screenHandler.getStacks().size()) return;
         if (button != 0 || slotActionType != SlotActionType.PICKUP) return;
+        ItemStack item = screenHandler.getSlot(slot).getStack();
         if (item.getItem() == EMPTY_SLOT || item.isEmpty()) return;
         Screen openedScreen = MinecraftClient.getInstance().currentScreen;
         if (openedScreen == null) return;
