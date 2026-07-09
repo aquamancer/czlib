@@ -15,9 +15,12 @@ import java.util.regex.Pattern;
 public class ChatParser {
     private static final Pattern ABILITY = Pattern.compile("^\\[Zenith Party] (\\w+) (now has|now have|upgraded|downgraded|has lost|lost) ability: (.*?)(?: (?:at|to) (\\w+) level!|!)$");
     private static final Pattern ASPECT = Pattern.compile("^\\[Zenith Party] (\\w+) has selected (Mystery Box|Aspect of the (?:Axe|Bow|Scythe|Sword|Wand)) as their aspect!$");
-    private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Elite Ability|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))!$");
+    private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Ability|Elite Ability|Upgrade|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))?!$");
     private static final Pattern TREE_SELECTION = Pattern.compile("^\\[Zenith Party] You have selected the \\w+ tree!$");
-    private static final Pattern PURGING_STONE_WHEEL = Pattern.compile("^\\[Zenith Party] (\\w+) downgraded all their abilities by a level!$");
+    private static final Pattern PURGING_STONE_WHEEL = Pattern.compile("^\\[Zenith Party] (?:Unlucky! )?(\\w+) downgraded all (?:your|their) abilities by a level!$");
+    private static final Pattern WHEEL_UPGRADE_2 = Pattern.compile("^\\[Zenith Party] (\\w+) (?:has )?upgraded all (?:your|their) abilities by two levels!$");
+    private static final Pattern WHEEL_REROLLS = Pattern.compile("^\\[Zenith Party] (\\w+) gained (\\d+) rerolls!$");
+    private static final Pattern WHEEL_SPEC = Pattern.compile("^\\[Zenith Party] (\\w+) unlocked the (\\w+) tree!$");
 
     public static void onChatMessage(Text message) {
         if (ShardTracker.notInZenith()) return;

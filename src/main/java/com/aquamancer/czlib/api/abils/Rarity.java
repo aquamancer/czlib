@@ -34,4 +34,13 @@ public enum Rarity {
             case UNCOMMON, COMMON -> COMMON;
         };
     }
+
+    public static Rarity upgradeBy2(Rarity rarity) {
+        return switch (rarity) {
+            case TWISTED -> TWISTED;
+            case RARE, EPIC, LEGENDARY -> LEGENDARY;
+            case UNCOMMON -> EPIC;
+            case COMMON -> RARE;
+        };
+    }
 }
