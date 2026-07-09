@@ -35,6 +35,15 @@ public enum Rarity {
         };
     }
 
+    public static Rarity megahammer(Rarity rarity) {
+        return switch (rarity) {
+            case TWISTED -> TWISTED;
+            case LEGENDARY -> LEGENDARY;
+            case EPIC, UNCOMMON, COMMON -> EPIC;
+            case RARE -> RARE;
+        };
+    }
+
     public static Rarity upgradeBy2(Rarity rarity) {
         return switch (rarity) {
             case TWISTED -> TWISTED;

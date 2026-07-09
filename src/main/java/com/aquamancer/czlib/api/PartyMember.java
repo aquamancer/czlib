@@ -4,6 +4,8 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class PartyMember {
     private final String name;
@@ -82,55 +84,27 @@ public class PartyMember {
         }
     }
 
-    // todo replace these with replaceAll and handle wildcards
-    void downgradeAll() {
-        Collection<Active> oldActives = List.copyOf(this.actives.values());
-        this.actives.clear();
-        for (Active old : oldActives) {
-            Active replacement = new Active(old.getAbility(), old.getSpec(), Rarity.downgrade(old.getRarity()));
-            if (old.getSlot() == ActiveSlot.WILDCARD) {
-                this.wildcards.add(replacement);
-            } else {
-                this.actives.put(replacement.getSlot(), replacement);
-            }
-        }
+    private void replaceAll(Function<Active, Active> active, Function<Passive, Passive> passive) {
+        this.actives.replaceAll((k, v) -> {
+            return active.apply(v);
+        });
+        this.wildcards = this.wildcards.stream().map(active).collect(Collectors.toSet());
+        this.passives = this.passives.stream().map(passive).collect(Collectors.toSet());
+    }
 
-        Collection<Passive> oldPassives = List.copyOf(this.passives);
-        this.passives.clear();
-        for (Passive old : oldPassives) {
-            this.passives.add(new Passive(old.getAbility(), old.getSpec(), Rarity.downgrade(old.getRarity())));
-        }
+    private void replaceAll(Function<Rarity, Rarity> newRarity) {
+        this.replaceAll(
+                (old) -> new Active(old.getAbility(), old.getSpec(), newRarity.apply(old.getRarity())),
+                (old) -> new Passive(old.getAbility(), old.getSpec(), newRarity.apply(old.getRarity()))
+        );
+    }
+
+    void downgradeAll() {
+        this.replaceAll(Rarity::downgrade);
     }
 
     void megaHammer() {
-        Collection<Active> oldActives = List.copyOf(this.actives.values());
-        this.actives.clear();
-        for (Active old : oldActives) {
-            Active replacement;
-            if (old.getRarity() == Rarity.COMMON || old.getRarity() == Rarity.UNCOMMON) {
-                replacement = new Active(old.getAbility(), old.getSpec(), Rarity.EPIC);
-            } else {
-                replacement = old;
-            }
-
-            if (old.getSlot() == ActiveSlot.WILDCARD) {
-                this.wildcards.add(replacement);
-            } else {
-                this.actives.put(replacement.getSlot(), replacement);
-            }
-        }
-
-        Collection<Passive> oldPassives = List.copyOf(this.passives);
-        this.passives.clear();
-        for (Passive old : oldPassives) {
-            Passive replacement;
-            if (old.getRarity() == Rarity.COMMON || old.getRarity() == Rarity.UNCOMMON) {
-                replacement = new Passive(old.getAbility(), old.getSpec(), Rarity.EPIC);
-            } else {
-                replacement = old;
-            }
-            this.passives.add(replacement);
-        }
+        this.replaceAll(Rarity::megahammer);
     }
 
     void invertSpecs() {
