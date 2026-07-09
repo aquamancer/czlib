@@ -99,7 +99,13 @@ public class PartyMember {
         Collection<Active> oldActives = List.copyOf(this.actives.values());
         this.actives.clear();
         for (Active old : oldActives) {
-            Active replacement = new Active(old.getAbility(), old.getSpec(), Rarity.EPIC);
+            Active replacement;
+            if (old.getRarity() == Rarity.COMMON || old.getRarity() == Rarity.UNCOMMON) {
+                replacement = new Active(old.getAbility(), old.getSpec(), Rarity.EPIC);
+            } else {
+                replacement = old;
+            }
+
             if (old.getSlot() == ActiveSlot.WILDCARD) {
                 this.wildcards.add(replacement);
             } else {
@@ -110,13 +116,23 @@ public class PartyMember {
         Collection<Passive> oldPassives = List.copyOf(this.passives);
         this.passives.clear();
         for (Passive old : oldPassives) {
-            this.passives.add(new Passive(old.getAbility(), old.getSpec(), Rarity.EPIC));
+            Passive replacement;
+            if (old.getRarity() == Rarity.COMMON || old.getRarity() == Rarity.UNCOMMON) {
+                replacement = new Passive(old.getAbility(), old.getSpec(), Rarity.EPIC);
+            } else {
+                replacement = old;
+            }
+            this.passives.add(replacement);
         }
+    }
+
+    void invertSpecs() {
+        this.specs = EnumSet.complementOf(this.specs);
     }
 
     void addGift(Gifts gift) {
         switch (gift) {
-            // persistent gifts (add to set)
+            // gifts that are passives
             case NORTHERN_STAR:
             case BOTTOMLESS_BOWL:
             case WILD_CARD:
@@ -125,16 +141,22 @@ public class PartyMember {
             case PILLAR_OF_LIGHT:
             case BROKEN_CLOCK:
             case TREASURE_MAP:
-            case KALEIDOSCOPIC_LENS:
             case CALLICARPAS_POINTED_HAT:
-            case VENOM_OF_THE_BROODMOTHER:
             case RAINBOW_GEODE:
             case CRACKED_IDOL:
                 this.gifts.add(new Gift(gift, Gifts.getDefaultValue(gift)));
                 break;
-            // avoid another regex in chatparser by just going off of
+            // gifts not fully handled by chat or gui
+            case KALEIDOSCOPIC_LENS:
+                this.invertSpecs();
+                break;
+            case VENOM_OF_THE_BROODMOTHER:
+                break;
             case MEGA_HAMMER:
                 this.megaHammer();
+                break;
+            case POETS_QUILL:
+                // requires a trinket parse to determine its effect for other players
                 break;
             // all other gifts are one-off and fully handled by separate chat messages or gui screens
         }
