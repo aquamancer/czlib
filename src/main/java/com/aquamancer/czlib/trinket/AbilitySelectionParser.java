@@ -3,13 +3,13 @@ package com.aquamancer.czlib.trinket;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Gifts;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
-import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
@@ -76,7 +76,7 @@ public class AbilitySelectionParser {
                     party.addAbility(self, curse.get());
                     return;
                 }
-                Optional<CelestialGift> gift = CelestialGift.toEnum(ability);
+                Optional<Gifts> gift = Gifts.toEnum(ability);
                 if (gift.isPresent()) {
                     party.addGift(self, gift.get());
                     return;

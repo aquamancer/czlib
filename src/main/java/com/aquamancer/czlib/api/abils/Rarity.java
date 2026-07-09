@@ -24,4 +24,14 @@ public enum Rarity {
     public static Optional<Rarity> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
+
+    public static Rarity downgrade(Rarity rarity) {
+        return switch (rarity) {
+            case TWISTED -> TWISTED;
+            case LEGENDARY -> EPIC;
+            case EPIC -> RARE;
+            case RARE -> UNCOMMON;
+            case UNCOMMON, COMMON -> COMMON;
+        };
+    }
 }

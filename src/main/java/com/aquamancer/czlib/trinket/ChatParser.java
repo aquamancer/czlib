@@ -3,6 +3,7 @@ package com.aquamancer.czlib.trinket;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Gifts;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -14,6 +15,9 @@ import java.util.regex.Pattern;
 public class ChatParser {
     private static final Pattern ABILITY = Pattern.compile("^\\[Zenith Party] (\\w+) (now has|now have|upgraded|downgraded|has lost|lost) ability: (.*?)(?: (?:at|to) (\\w+) level!|!)$");
     private static final Pattern ASPECT = Pattern.compile("^\\[Zenith Party] (\\w+) has selected (Mystery Box|Aspect of the (?:Axe|Bow|Scythe|Sword|Wand)) as their aspect!$");
+    private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Elite Ability|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))!$");
+    private static final Pattern TREE_SELECTION = Pattern.compile("^\\[Zenith Party] You have selected the \\w+ tree!$");
+    private static final Pattern PURGING_STONE_WHEEL = Pattern.compile("^\\[Zenith Party] (\\w+) downgraded all their abilities by a level!$");
 
     public static void onChatMessage(Text message) {
         if (ShardTracker.notInZenith()) return;
@@ -39,7 +43,7 @@ public class ChatParser {
         Optional<Passives> passive = Passives.toEnum(ability);
         Optional<Curse> curse = (passive.isPresent()) ? Optional.empty() : Curse.toEnum(ability);
         Optional<? extends ActiveType> active = (curse.isPresent()) ? Optional.empty() : Actives.toEnum(ability);
-        Optional<CelestialGift> gift = (active.isPresent()) ? Optional.empty() : CelestialGift.toEnum(ability);
+        Optional<Gifts> gift = (active.isPresent()) ? Optional.empty() : Gifts.toEnum(ability);
 
         Party party = ZenithApi.getInstance().getPartyManager();
         party.createMember(player);

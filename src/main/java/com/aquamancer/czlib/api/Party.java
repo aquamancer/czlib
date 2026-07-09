@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Gifts;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -95,7 +96,7 @@ public class Party {
         players.get(player).loseAbility(active);
     }
 
-    public void addGift(String player, CelestialGift gift) {
+    public void addGift(String player, Gifts gift) {
         players.get(player).addGift(gift);
     }
 

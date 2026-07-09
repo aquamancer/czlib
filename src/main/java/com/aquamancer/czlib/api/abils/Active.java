@@ -1,9 +1,9 @@
 package com.aquamancer.czlib.api.abils;
 
 public class Active {
-    private ActiveType ability;
-    private AbilitySpec spec;
-    private Rarity rarity;
+    private final ActiveType ability;
+    private final AbilitySpec spec;
+    private final Rarity rarity;
 
     public Active(ActiveType ability, AbilitySpec spec, Rarity rarity) {
         this.ability = ability;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum CelestialGift {
+public enum Gifts {
     TWISTED_SCROLL,
     FORSAKEN_GRIMOIRE,
     PRISMATIC_CUBE,
@@ -29,10 +29,16 @@ public enum CelestialGift {
     CRACKED_IDOL,
     ORB_OF_DARKNESS;
 
-    private static final Map<String, CelestialGift> fromString = new HashMap<>();
+    private static final Map<String, Gifts> fromString = new HashMap<>();
+    private static final Map<Gifts, Integer> defaultCounters = new HashMap<>();
 
-    public static Optional<CelestialGift> toEnum(String string) {
+    public static Optional<Gifts> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static int getDefaultValue(Gifts gift) {
+        Integer v = defaultCounters.get(gift);
+        return (v == null) ? 0 : v;
     }
 
     static {
@@ -59,5 +65,9 @@ public enum CelestialGift {
         fromString.put("Rainbow Geode", RAINBOW_GEODE);
         fromString.put("Cracked Idol", CRACKED_IDOL);
         fromString.put("Orb of Darkness", ORB_OF_DARKNESS);
+
+        defaultCounters.put(NORTHERN_STAR, 4);
+        defaultCounters.put(CALLICARPAS_POINTED_HAT, 3);
+        defaultCounters.put(RAINBOW_GEODE, 3);
     }
 }

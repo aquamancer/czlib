@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Gifts;
 
 import java.util.*;
 
@@ -13,6 +14,7 @@ public class PartyMember {
     private Aspect aspect;
     private EnumMap<ActiveSlot, Active> actives = new EnumMap<>(ActiveSlot.class);
     private Set<Active> wildcards = new HashSet<>();
+    private Set<Gift> gifts = new HashSet();
 
     public PartyMember(String name) {
         this.name = name;
@@ -46,15 +48,15 @@ public class PartyMember {
         this.wildcards = wildcards;
     }
 
-    public void addAbility(Passive passive) {
+    void addAbility(Passive passive) {
         this.passives.add(passive);
     }
 
-    public void addAbility(Curse curse) {
+    void addAbility(Curse curse) {
         this.curses.add(curse);
     }
 
-    public void addAbility(Active active) {
+    void addAbility(Active active) {
         if (active.getSlot() == ActiveSlot.WILDCARD) {
             this.wildcards.add(active);
         } else {
@@ -62,20 +64,66 @@ public class PartyMember {
         }
     }
 
-    public void loseAbility(Passives passive) {
+    void loseAbility(Passives passive) {
         this.passives.remove(new Passive(passive, null, null));
     }
 
-    public void loseAbility(Curse curse) {
+    void loseAbility(Curse curse) {
         this.curses.remove(curse);
     }
 
-    public void loseAbility(ActiveType active) {
+    void loseAbility(ActiveType active) {
         actives.values().removeIf(e -> e.getAbility() == active);
     }
 
-    public void addGift(CelestialGift gift) {
-        // todo cases
+    void downgradeAll() {
+        Collection<Active> oldActives = List.copyOf(this.actives.values());
+        this.actives.clear();
+        for (Active old : oldActives) {
+            Active replacement = new Active(old.getAbility(), old.getSpec(), Rarity.downgrade(old.getRarity()));
+            if (old.getSlot() == ActiveSlot.WILDCARD) {
+                this.wildcards.add(replacement);
+            } else {
+                this.actives.put(replacement.getSlot(), replacement);
+            }
+        }
+
+        Collection<Passive> oldPassives = List.copyOf(this.passives);
+        this.passives.clear();
+        for (Passive old : oldPassives) {
+            this.passives.add(new Passive(old.getAbility(), old.getSpec(), Rarity.downgrade(old.getRarity())));
+        }
+    }
+
+    void megaHammer() {
+
+    }
+
+    void addGift(Gifts gift) {
+        switch (gift) {
+            // persistent gifts (add to set)
+            case NORTHERN_STAR:
+            case BOTTOMLESS_BOWL:
+            case WILD_CARD:
+            case AVARICIOUS_PENDANT:
+            case COMB_OF_SELECTION:
+            case PILLAR_OF_LIGHT:
+            case BROKEN_CLOCK:
+            case TREASURE_MAP:
+            case KALEIDOSCOPIC_LENS:
+            case CALLICARPAS_POINTED_HAT:
+            case VENOM_OF_THE_BROODMOTHER:
+            case RAINBOW_GEODE:
+            case CRACKED_IDOL:
+                this.gifts.add(new Gift(gift, Gifts.getDefaultValue(gift)));
+                break;
+            // one-off gifts that are not handled by other chat (other players) or gui (self)
+            case MEGA_HAMMER:
+                break;
+            case POETS_QUILL:
+                break;
+            // all other gifts are one-off and fully handled by separate chat messages or gui screens
+        }
     }
 
     @Override

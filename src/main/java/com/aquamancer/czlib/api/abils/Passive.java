@@ -1,14 +1,26 @@
 package com.aquamancer.czlib.api.abils;
 
 public class Passive {
-    private Passives ability;
-    private AbilitySpec spec;
-    private Rarity rarity;
+    private final Passives ability;
+    private final AbilitySpec spec;
+    private final Rarity rarity;
 
     public Passive(Passives ability, AbilitySpec spec, Rarity rarity) {
         this.ability = ability;
         this.spec = spec;
         this.rarity = rarity;
+    }
+
+    public Passives getAbility() {
+        return ability;
+    }
+
+    public AbilitySpec getSpec() {
+        return spec;
+    }
+
+    public Rarity getRarity() {
+        return rarity;
     }
 
     @Override
