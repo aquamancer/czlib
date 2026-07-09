@@ -82,6 +82,7 @@ public class PartyMember {
         }
     }
 
+    // todo replace these with replaceAll and handle wildcards
     void downgradeAll() {
         Collection<Active> oldActives = List.copyOf(this.actives.values());
         this.actives.clear();
