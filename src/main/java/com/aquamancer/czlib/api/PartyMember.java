@@ -132,10 +132,9 @@ public class PartyMember {
             case CRACKED_IDOL:
                 this.gifts.add(new Gift(gift, Gifts.getDefaultValue(gift)));
                 break;
-            // one-off gifts that are not handled by other chat (other players) or gui (self)
+            // avoid another regex in chatparser by just going off of
             case MEGA_HAMMER:
-                break;
-            case POETS_QUILL:
+                this.megaHammer();
                 break;
             // all other gifts are one-off and fully handled by separate chat messages or gui screens
         }
