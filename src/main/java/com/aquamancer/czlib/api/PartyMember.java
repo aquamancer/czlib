@@ -74,6 +74,12 @@ public class PartyMember {
 
     void loseAbility(ActiveType active) {
         actives.values().removeIf(e -> e.getAbility() == active);
+        // todo verify removing convergence removes all wildcards
+        if (active == Actives.Wildcard.CONVERGENCE) {
+            wildcards.clear();
+        } else {
+            wildcards.removeIf(e -> e.getAbility() == active);
+        }
     }
 
     void downgradeAll() {
