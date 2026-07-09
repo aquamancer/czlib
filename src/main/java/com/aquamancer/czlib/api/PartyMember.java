@@ -96,7 +96,22 @@ public class PartyMember {
     }
 
     void megaHammer() {
+        Collection<Active> oldActives = List.copyOf(this.actives.values());
+        this.actives.clear();
+        for (Active old : oldActives) {
+            Active replacement = new Active(old.getAbility(), old.getSpec(), Rarity.EPIC);
+            if (old.getSlot() == ActiveSlot.WILDCARD) {
+                this.wildcards.add(replacement);
+            } else {
+                this.actives.put(replacement.getSlot(), replacement);
+            }
+        }
 
+        Collection<Passive> oldPassives = List.copyOf(this.passives);
+        this.passives.clear();
+        for (Passive old : oldPassives) {
+            this.passives.add(new Passive(old.getAbility(), old.getSpec(), Rarity.EPIC));
+        }
     }
 
     void addGift(Gifts gift) {
