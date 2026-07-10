@@ -16,6 +16,17 @@ public class ZenithApiInternalEvents {
             }
     );
 
+    public static final Event<WorldChanged> WORLD_CHANGED = EventFactory.createArrayBacked(
+            WorldChanged.class,
+            (listeners) -> {
+                return () -> {
+                    for (WorldChanged listener : listeners) {
+                        listener.onWorldChanged();
+                    }
+                };
+            }
+    );
+
     public static final Event<EnterZenithShard> ENTER_ZENITH_SHARD = EventFactory.createArrayBacked(
             EnterZenithShard.class,
             (listeners) -> {
@@ -41,6 +52,11 @@ public class ZenithApiInternalEvents {
     @FunctionalInterface
     public interface RoomSpawned {
         void onRoomSpawned(Rooms room, boolean wildcard);
+    }
+
+    @FunctionalInterface
+    public interface WorldChanged {
+        void onWorldChanged();
     }
 
     @FunctionalInterface

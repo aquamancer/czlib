@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.internal;
 
+import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.world.World;
 
@@ -15,17 +16,7 @@ public class WorldChangeTracker {
         World currentWorld = client.world;
         if (lastWorld != currentWorld) {
             lastWorld = currentWorld;
-            onWorldChange(currentWorld);
-        }
-    }
-
-    public static void register(Consumer<World> callback) {
-        listeners.add(callback);
-    }
-
-    private static void onWorldChange(World newWorld) {
-        for (Consumer<World> callback : listeners) {
-            callback.accept(newWorld);
+            ZenithApiInternalEvents.WORLD_CHANGED.invoker().onWorldChanged();
         }
     }
 }

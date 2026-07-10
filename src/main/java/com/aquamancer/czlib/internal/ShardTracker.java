@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ShardTracker {
-    private static final Pattern SHARD_REGEX = Pattern.compile(".*<(?<shard>[-\\w]*)>.*");
+    private static final Pattern SHARD_REGEX = Pattern.compile("shard:\\s*<([-\\w])>.*");
     private static final int ATTEMPTS_UNTIL_TIMEOUT = 5;
     private static final int ATTEMPT_INTERVAL_TICKS = 500 / 20;
     private static final int FIRST_ATTEMPT_DELAY_TICKS = 200 / 20;
@@ -22,7 +22,7 @@ public class ShardTracker {
     private static @Nullable String previousValidShard;
 
     static {
-        WorldChangeTracker.register((world) -> updateCurrentShard());
+        ZenithApiInternalEvents.WORLD_CHANGED.register(ShardTracker::updateCurrentShard);
     }
 
     public static void updateCurrentShard() {
@@ -70,7 +70,7 @@ public class ShardTracker {
         String header = headerText.getString();
         Matcher matcher = SHARD_REGEX.matcher(header);
         if (matcher.matches()) {
-            String newShard = matcher.group("shard");
+            String newShard = matcher.group(1);
             if (newShard != null && !newShard.isBlank()) {
                 return newShard;
             }
@@ -90,10 +90,6 @@ public class ShardTracker {
     public static boolean isZenithShard(String shard) {
         return shard != null && shard.startsWith("zenith");
     }
-
-//	public static String getShortShard() {
-//		return getCurrentShard().replaceFirst("-\\d+$", "");
-//	}
 
     private ShardTracker() {}
 }
