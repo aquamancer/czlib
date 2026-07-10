@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
-import com.aquamancer.czlib.trinket.ChatParser;
+import com.aquamancer.czlib.internal.ChatParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.message.MessageHandler;
 import net.minecraft.text.Text;

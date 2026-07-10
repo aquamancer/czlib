@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;

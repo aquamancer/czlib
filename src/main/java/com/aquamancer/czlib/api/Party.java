@@ -96,6 +96,27 @@ public class Party {
         players.get(player).loseAbility(active);
     }
 
+    public void addSpec(String player, Spec spec) {
+        players.computeIfPresent(player, (k, v) -> {
+            v.addSpec(spec);
+            return v;
+        });
+    }
+
+    public void downgradeAll(String player) {
+        players.computeIfPresent(player, (k, v) -> {
+            v.downgradeAll();
+            return v;
+        });
+    }
+
+    public void upgradeBy2(String player) {
+        players.computeIfPresent(player, (k, v) -> {
+            v.upgradeBy2();
+            return v;
+        });
+    }
+
     public void addGift(String player, Gifts gift) {
         players.get(player).addGift(gift);
     }

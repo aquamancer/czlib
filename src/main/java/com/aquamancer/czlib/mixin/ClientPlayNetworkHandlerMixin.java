@@ -1,14 +1,13 @@
 package com.aquamancer.czlib.mixin;
 
-import com.aquamancer.czlib.trinket.SelfIdentifier;
-import com.aquamancer.czlib.trinket.TrinketLocator;
-import com.aquamancer.czlib.trinket.TrinketParser;
-import com.aquamancer.czlib.trinket.UpdateManager;
+import com.aquamancer.czlib.internal.SelfIdentifier;
+import com.aquamancer.czlib.internal.TrinketLocator;
+import com.aquamancer.czlib.internal.TrinketParser;
+import com.aquamancer.czlib.internal.UpdateManager;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

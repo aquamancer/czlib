@@ -1,9 +1,11 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
+import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -17,16 +19,28 @@ public class ChatParser {
     private static final Pattern ASPECT = Pattern.compile("^\\[Zenith Party] (\\w+) has selected (Mystery Box|Aspect of the (?:Axe|Bow|Scythe|Sword|Wand)) as their aspect!$");
     private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Ability|Elite Ability|Upgrade|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))?!$");
     private static final Pattern TREE_SELECTION = Pattern.compile("^\\[Zenith Party] You have selected the \\w+ tree!$");
+    private static final Pattern BOSS_CONQUER = Pattern.compile("^\\[Zenith Party] You received a Celestial Gift for clearing the floor! Check your Trinket to claim the gift.$");
     private static final Pattern PURGING_STONE_WHEEL = Pattern.compile("^\\[Zenith Party] (?:Unlucky! )?(\\w+) downgraded all (?:your|their) abilities by a level!$");
     private static final Pattern WHEEL_UPGRADE_2 = Pattern.compile("^\\[Zenith Party] (\\w+) (?:has )?upgraded all (?:your|their) abilities by two levels!$");
     private static final Pattern WHEEL_REROLLS = Pattern.compile("^\\[Zenith Party] (\\w+) gained (\\d+) rerolls!$");
     private static final Pattern WHEEL_SPEC = Pattern.compile("^\\[Zenith Party] (\\w+) unlocked the (\\w+) tree!$");
 
     public static void onChatMessage(Text message) {
-        if (ShardTracker.notInZenith()) return;
+        if (!ShardTracker.inZenithShard()) return;
         String line = message.getString();
         if (parseAbility(line)) return;
         if (parseAspect(line)) return;
+        if (parseWheel(line)) return;
+    }
+
+    private static boolean parseRoom(String line) {
+        Matcher matcher = ROOM.matcher(line);
+        if (!matcher.matches()) return false;
+        Optional<Rooms> room = Rooms.toEnum(matcher.group(1));
+        if (room.isEmpty()) return true;
+
+        ZenithApiInternalEvents.ROOM_SPAWNED.invoker().onRoomSpawned(room.get(), matcher.group(2) != null);
+        return true;
     }
 
     private static boolean parseAbility(String line) {
@@ -41,7 +55,6 @@ public class ChatParser {
         String ability = matcher.group(3);
         Optional<Rarity> rarity = Rarity.toEnum(matcher.group(4));
         Optional<AbilitySpec> spec = AbilitySpec.fromAbilityName(ability);
-
 
         Optional<Passives> passive = Passives.toEnum(ability);
         Optional<Curse> curse = (passive.isPresent()) ? Optional.empty() : Curse.toEnum(ability);
@@ -90,5 +103,30 @@ public class ChatParser {
         party.createMember(player);
         party.setAspect(player, aspect.get());
         return true;
+    }
+
+    private static boolean parseWheel(String line) {
+        Matcher matcher1 = PURGING_STONE_WHEEL.matcher(line);
+        Party party = ZenithApi.getInstance().getPartyManager();
+        if (matcher1.matches()) {
+            String player = matcher1.group(1);
+            party.downgradeAll(player);
+            return true;
+        }
+        Matcher matcher2 = WHEEL_UPGRADE_2.matcher(line);
+        if (matcher2.matches()) {
+            String player = matcher2.group(1);
+            party.upgradeBy2(player);
+            return true;
+        }
+        Matcher matcher3 = WHEEL_SPEC.matcher(line);
+        if (matcher3.matches()) {
+            String player = matcher3.group(1);
+            Optional<Spec> spec = Spec.toEnum(matcher3.group(2));
+            if (spec.isEmpty()) return true;
+            party.addSpec(player, spec.get());
+            return true;
+        }
+        return false;
     }
 }

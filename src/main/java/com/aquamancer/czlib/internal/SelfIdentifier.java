@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
@@ -13,7 +13,7 @@ public class SelfIdentifier {
     private static String selfName = "";
 
     public static void onOpenScreenPacket(OpenScreenS2CPacket packet) {
-        if (ShardTracker.notInZenith()) return;
+        if (!ShardTracker.inZenithShard()) return;
         if (packet.getName().getString().equals(SELF_TITLE)) {
             listening = true;
         }

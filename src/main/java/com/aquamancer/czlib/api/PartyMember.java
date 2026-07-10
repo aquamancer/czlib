@@ -2,6 +2,8 @@ package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
+import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 
 import java.util.*;
 import java.util.function.Function;
@@ -16,10 +18,30 @@ public class PartyMember {
     private Aspect aspect;
     private EnumMap<ActiveSlot, Active> actives = new EnumMap<>(ActiveSlot.class);
     private Set<Active> wildcards = new HashSet<>();
-    private Set<Gift> gifts = new HashSet();
+    private EnumMap<Gifts, Gift> gifts = new EnumMap<>(Gifts.class);
 
     public PartyMember(String name) {
         this.name = name;
+
+        ZenithApiInternalEvents.ROOM_SPAWNED.register((room, wildcard) -> {
+            gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
+                if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
+                    if (v.decrement() <= 0) {
+                        return null;
+                    }
+                }
+                return v;
+            });
+
+            gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
+                if (wildcard) {
+                    v.increment();
+                }
+                return v;
+            });
+
+
+        });
     }
 
     void setGraveTimer(double time) {
@@ -84,12 +106,14 @@ public class PartyMember {
         }
     }
 
-    private void replaceAll(Function<Active, Active> active, Function<Passive, Passive> passive) {
-        this.actives.replaceAll((k, v) -> {
-            return active.apply(v);
-        });
-        this.wildcards = this.wildcards.stream().map(active).collect(Collectors.toSet());
-        this.passives = this.passives.stream().map(passive).collect(Collectors.toSet());
+    void addSpec(Spec spec) {
+        this.specs.add(spec);
+    }
+
+    private void replaceAll(Function<Active, Active> newActive, Function<Passive, Passive> newPassive) {
+        this.actives.replaceAll((k, v) -> newActive.apply(v));
+        this.wildcards = this.wildcards.stream().map(newActive).collect(Collectors.toSet());
+        this.passives = this.passives.stream().map(newPassive).collect(Collectors.toSet());
     }
 
     private void replaceAll(Function<Rarity, Rarity> newRarity) {
@@ -105,6 +129,10 @@ public class PartyMember {
 
     void megaHammer() {
         this.replaceAll(Rarity::megahammer);
+    }
+
+    void upgradeBy2() {
+        this.replaceAll(Rarity::upgradeBy2);
     }
 
     void invertSpecs() {
@@ -125,7 +153,7 @@ public class PartyMember {
             case CALLICARPAS_POINTED_HAT:
             case RAINBOW_GEODE:
             case CRACKED_IDOL:
-                this.gifts.add(new Gift(gift, Gifts.getDefaultValue(gift)));
+                this.gifts.put(gift, new Gift(gift, Gifts.getDefaultValue(gift)));
                 break;
             // gifts not fully handled by chat or gui
             case KALEIDOSCOPIC_LENS:

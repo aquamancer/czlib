@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
 import net.minecraft.client.gui.screen.Screen;
 

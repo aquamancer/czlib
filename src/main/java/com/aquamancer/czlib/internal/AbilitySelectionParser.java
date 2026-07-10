@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;

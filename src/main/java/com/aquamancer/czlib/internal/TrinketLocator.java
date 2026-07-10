@@ -1,9 +1,7 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;

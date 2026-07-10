@@ -1,4 +1,4 @@
-package com.aquamancer.czlib.trinket;
+package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.aquamancer.czlib.trinket.TooltipParser.parseSpecRarity;
+import static com.aquamancer.czlib.internal.TooltipParser.parseSpecRarity;
 
 @ApiStatus.Internal
 public class TrinketParser {

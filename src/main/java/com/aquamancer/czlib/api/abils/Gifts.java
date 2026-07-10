@@ -1,8 +1,14 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public enum Gifts {
     TWISTED_SCROLL,
@@ -31,6 +37,7 @@ public enum Gifts {
 
     private static final Map<String, Gifts> fromString = new HashMap<>();
     private static final Map<Gifts, Integer> defaultCounters = new HashMap<>();
+    private static final Map<Gifts, BiFunction<Rooms, Boolean, Boolean>> roomConditions = new HashMap<>();
 
     public static Optional<Gifts> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));
@@ -69,5 +76,13 @@ public enum Gifts {
         defaultCounters.put(NORTHERN_STAR, 4);
         defaultCounters.put(CALLICARPAS_POINTED_HAT, 3);
         defaultCounters.put(RAINBOW_GEODE, 3);
+
+        roomConditions.put(NORTHERN_STAR, (room, wildcard) -> {
+            return (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE);
+        });
+        roomConditions.put(WILD_CARD, (room, wildcard) -> {
+            return wildcard;
+        });
+
     }
 }

@@ -23,6 +23,18 @@ public class Gift {
         this.counter = counter;
     }
 
+    public int getCounter() {
+        return this.counter;
+    }
+
+    public int decrement() {
+        return --this.counter;
+    }
+
+    public int increment() {
+        return ++this.counter;
+    }
+
     @Override
     public boolean equals(Object o2) {
         if (this == o2) return true;
