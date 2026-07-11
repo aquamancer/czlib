@@ -7,14 +7,23 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class Gift {
+    private static final EnumSet<Rooms> TREASURE_MAP_ROOMS = EnumSet.of(
+            Rooms.ABILITY,
+            Rooms.ABILITY_ELITE,
+            Rooms.UPGRADE,
+            Rooms.UPGRADE_ELITE,
+            Rooms.UTILITY,
+            Rooms.BOSS
+    );
+
     private final Gifts gift;
     private int counter;
-    private Set<Rooms> treasureMap;
+    private EnumSet<Rooms> treasureMap;
 
     public Gift(Gifts gift) {
         this.gift = gift;
         if (gift == Gifts.TREASURE_MAP) {
-            treasureMap = EnumSet.allOf(Rooms.class);
+            treasureMap = EnumSet.copyOf(TREASURE_MAP_ROOMS);
         }
     }
 

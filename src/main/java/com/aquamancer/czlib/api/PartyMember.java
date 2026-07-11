@@ -2,8 +2,8 @@ package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
+import com.aquamancer.czlib.api.event.ZenithApiEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
-import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 
 import java.util.*;
 import java.util.function.Function;
@@ -23,7 +23,7 @@ public class PartyMember {
     public PartyMember(String name) {
         this.name = name;
 
-        ZenithApiInternalEvents.ROOM_SPAWNED.register((room, wildcard) -> {
+        ZenithApiEvents.ROOM_SPAWNED.register((room, wildcard) -> {
             gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
                 if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
                     if (v.decrement() <= 0) {

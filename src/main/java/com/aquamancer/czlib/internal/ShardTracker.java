@@ -45,10 +45,10 @@ public class ShardTracker {
                 remainingAttempts = 0;
                 if (!currentShard.equals(previousValidShard)) {  // does not call events after DC'ing+reconnecting mid-run
                     if (isZenithShard(previousValidShard)) {
-                        ZenithApiInternalEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
+                        com.aquamancer.czlib.api.event.ZenithApiEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
                     }
                     if (isZenithShard(currentShard)) {
-                        ZenithApiInternalEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
+                        com.aquamancer.czlib.api.event.ZenithApiEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
                     }
                 }
             }

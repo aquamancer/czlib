@@ -121,6 +121,10 @@ public class Party {
         players.get(player).addGift(gift);
     }
 
+    void clear() {
+        this.players.clear();
+    }
+
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder();

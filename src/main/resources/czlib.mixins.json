@@ -8,7 +8,8 @@
 		"ClientPlayNetworkHandlerMixin",
 		"MessageHandlerMixin",
 		"PlayerListHudAccessor",
-		"ScreenCancelerMixin"
+		"ScreenCancelerMixin",
+		"ScreenCloseMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

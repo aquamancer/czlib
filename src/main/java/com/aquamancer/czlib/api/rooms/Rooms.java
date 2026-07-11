@@ -4,14 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-// changing this will affect Gift Treasure Map
 public enum Rooms {
     ABILITY,
     ABILITY_ELITE,
     UPGRADE,
     UPGRADE_ELITE,
     UTILITY,
-    BOSS;
+    BOSS,
+    // custom
+    TREE_SELECT,
+    ABILITY_SELECT,
+    BOSS_CLEANSE,
+    PRE_FLOOR;
 
     private static Map<String, Rooms> fromString = new HashMap<>();
 
