@@ -10,8 +10,10 @@ import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -33,13 +35,11 @@ public class TrinketOpener {
         modifiedStacks.put(53, ItemStack.EMPTY);
     }
 
-    public static void clickPartyHeads(int syncId, Set<Integer> slots, int trinketSlot) {
-        if (slots.isEmpty()) {
+    public static void openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
+        if (slots == null || slots.isEmpty()) {
             ScreenCanceler.cancelFutureScreens(1);
             openTrinket(trinketSlot);
-            sendPacket(new CloseHandledScreenC2SPacket(
-                    syncId + 1
-            ));
+            sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
         } else {
             ScreenCanceler.cancelFutureScreens(slots.size());
             for (Integer slot : slots) {
@@ -64,6 +64,7 @@ public class TrinketOpener {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.player.currentScreenHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
+        client.player.sendMessage(Text.literal("clicking slot="+slot));
 
         Int2ObjectMap<ItemStack> modifiedStacks = new Int2ObjectOpenHashMap<>();
         modifiedStacks.put(slot, ItemStack.EMPTY);

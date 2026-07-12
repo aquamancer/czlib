@@ -16,6 +16,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -50,8 +51,6 @@ public class TrinketParser {
     private static final int PASSIVES_END = 44;
     private static final List<Integer> PLAYER_HEAD_SLOTS = List.of(47, 48, 50, 51);
 
-    private static final String SPEC_RARITY_SPLIT = " : ";
-
     private static final Item PLAYER_HEAD = Registries.ITEM.get(new Identifier("minecraft", "player_head"));
     private static final Item CURRENTLY_SELECTED_ITEM = Registries.ITEM.get(new Identifier("minecraft", "green_stained_glass_pane"));
     private static final Item EMPTY_SLOT = Registries.ITEM.get(new Identifier("minecraft", "light_gray_stained_glass_pane"));
@@ -60,28 +59,28 @@ public class TrinketParser {
     private static final Pattern GRAVE_TIMER = Pattern.compile("Grave Timer:\\s+(\\d+\\.\\d+)s");
 
     public static void onInventoryS2CPacket(InventoryS2CPacket packet, MinecraftClient client) {
-//        if (client.player != null && packet.getSyncId() == 0) {
+        if (client.player != null && packet.getSyncId() != 0) {
 //            List<ItemStack> inv = packet.getContents();
-//            client.player.sendMessage(Text.literal("Inventory packet, size " + inv.size() + ": " + inv.stream().map((stack) -> {return stack.getName().getString();}).toList().toString()));
+//            client.player.sendMessage(Text.literal("Inventory packet, syncId="+packet.getSyncId()+",size=" + inv.size() + ": " + inv.stream().map((stack) -> {return stack.getName().getString();}).toList().toString()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size()));
-//        }
+        }
         if (packet.getSyncId() == 0) return;  // player's inventory
         List<ItemStack> inv = packet.getContents();
         if (inv.size() != EXPECTED_INV_SIZE) return;
         if (!isDepthsTrinket(inv)) return;
 
         HeadParseResult headParseResult = parsePlayerHeads(inv);
-        UpdateManager.getInstance().setHeadsToClick(headParseResult.validHeads);
+        UpdateManager.getInstance().setHeadNames(headParseResult.names);
         if (!headParseResult.success) return;
 
         Party party = ZenithApi.getInstance().getPartyManager();
-        party.setMembers(Set.copyOf(headParseResult.names.values()));
+        party.setMembers(headParseResult.names.keySet());
         party.setGraveTimers(headParseResult.graveTimers);
 
-        String player = headParseResult.names.get(headParseResult.currentlySelected);
+        String player = headParseResult.currentlySelected.orElse(null);
         if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
-        SelfIdentifier.onInventoryPacketParsed(headParseResult.currentlySelected, player);
+        SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player));
 //        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
 
         PassiveParseResult passiveParseResult = parsePassives(inv);
@@ -112,12 +111,12 @@ public class TrinketParser {
         return parseHeadName(inv.get(HEAD_SLOT).getName().getString()).isPresent();
     }
 
-    private record HeadParseResult(List<Integer> validHeads, Map<Integer, String> names, Map<String, Optional<Double>> graveTimers, int currentlySelected, boolean success) {}
+    private record HeadParseResult(List<Integer> validHeads, Map<String, Integer> names, Map<String, Optional<Double>> graveTimers, Optional<String> currentlySelected, boolean success) {}
     private static HeadParseResult parsePlayerHeads(List<ItemStack> inv) {
         List<Integer> validHeads = new ArrayList<>(PLAYER_HEAD_SLOTS.size());
-        Map<Integer, String> names = new HashMap<>(PLAYER_HEAD_SLOTS.size());
+        Map<String, Integer> names = new HashMap<>(PLAYER_HEAD_SLOTS.size());
         Map<String, Optional<Double>> graveTimers = new HashMap<>(PLAYER_HEAD_SLOTS.size());
-        int currentlySelected = -1;
+        String currentlySelected = null;
 
         for (Integer slot : PLAYER_HEAD_SLOTS) {
             if (inv.get(slot).getItem() != PLAYER_HEAD && inv.get(slot).getItem() != CURRENTLY_SELECTED_ITEM) continue;
@@ -127,8 +126,8 @@ public class TrinketParser {
             if (name.isEmpty()) continue;
             Optional<Double> graveTimer = Optional.empty();
             String line2 = tooltip.get(1).getString();
-            if (line2.equalsIgnoreCase("Currently Shown")) {
-                currentlySelected = slot;
+            if (line2.equals("Currently Shown")) {
+                currentlySelected = name.get();
                 if (tooltip.size() >= 3) {
                     graveTimer = parseHeadGraveTimer(tooltip.get(2).getString());
                 }
@@ -137,7 +136,7 @@ public class TrinketParser {
             }
 
             validHeads.add(slot);
-            names.put(slot, name.get());
+            names.put(name.get(), slot);
             graveTimers.put(name.get(), graveTimer);
         }
 
@@ -145,7 +144,7 @@ public class TrinketParser {
                 validHeads,
                 names,
                 graveTimers,
-                currentlySelected,
+                Optional.ofNullable(currentlySelected),
                 !validHeads.isEmpty()
         );
     }

@@ -34,6 +34,9 @@ public class ChatParser {
     public static void onChatMessage(Text message) {
         if (!ShardTracker.inZenithShard()) return;
         String line = message.getString();
+        if (line.startsWith("[Zenith Party]")) {
+            UpdateManager.getInstance().onZenithChatMessage();
+        }
         if (parseAbility(line)) return;
         if (parseRoom(line)) return;
         if (parseBossCleanseRoom(line)) return;

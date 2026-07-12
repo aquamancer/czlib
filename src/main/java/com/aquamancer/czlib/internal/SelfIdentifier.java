@@ -19,7 +19,7 @@ public class SelfIdentifier {
         }
     }
 
-    public static void onInventoryPacketParsed(int headSlot, String name) {
+    public static void onInventoryPacketParsed(String name, int headSlot) {
         if (listening) {
             selfHeadSlot = headSlot;
             selfName = name;
@@ -38,5 +38,10 @@ public class SelfIdentifier {
             selfName = client.player.getName().getString();
         }
         return selfName;
+    }
+
+    public static boolean isSelf(String name) {
+        if (name == null) return false;
+        return name.equals(selfName);
     }
 }

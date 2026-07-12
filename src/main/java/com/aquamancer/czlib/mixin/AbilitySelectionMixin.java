@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.mixin;
 
 import com.aquamancer.czlib.internal.AbilitySelectionParser;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;

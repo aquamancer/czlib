@@ -10,10 +10,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ShardTracker {
-    private static final Pattern SHARD_REGEX = Pattern.compile("shard:\\s*<([-\\w])>.*");
+//    private static final Pattern SHARD_REGEX = Pattern.compile("shard:\\s*<([-\\w])>.*");
+    private static final Pattern SHARD_REGEX = Pattern.compile(".*<(?<shard>[-\\w]*)>.*");
     private static final int ATTEMPTS_UNTIL_TIMEOUT = 5;
-    private static final int ATTEMPT_INTERVAL_TICKS = 500 / 20;
-    private static final int FIRST_ATTEMPT_DELAY_TICKS = 250 / 20;
+    private static final int ATTEMPT_INTERVAL_TICKS = 20;
+    private static final int FIRST_ATTEMPT_DELAY_TICKS = 10;
 
     private static int remainingAttempts = 0;
     private static int ticksUntilAttempt = ATTEMPT_INTERVAL_TICKS;

@@ -8,6 +8,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +24,7 @@ public class ClientPlayNetworkHandlerMixin {
         if (packet != null && client.player != null) {
             UpdateManager.getInstance().onOpenScreenPacket(packet);
             SelfIdentifier.onOpenScreenPacket(packet);
-//            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId())));
+//            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId()+"type="+packet.getScreenHandlerType())));
 //            client.execute(() -> client.player.sendMessage(Text.literal(String.valueOf(System.currentTimeMillis()))));
         }
     }
@@ -34,7 +36,17 @@ public class ClientPlayNetworkHandlerMixin {
             client.execute(() -> {
                 TrinketParser.onInventoryS2CPacket(packet, client);
                 TrinketLocator.onInventoryS2CPacket(packet);
-//                client.player.sendMessage(Text.literal("Inventory packet syncid=" + packet.getSyncId()));
+            });
+        }
+    }
+
+
+    @Inject(at = @At("HEAD"), method = "onOverlayMessage(Lnet/minecraft/network/packet/s2c/play/OverlayMessageS2CPacket;)V")
+    private void onActionBarMessage(OverlayMessageS2CPacket packet, CallbackInfo ci) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client != null) {
+            client.execute(() -> {
+                UpdateManager.getInstance().onActionBarMessage(packet.getMessage());
             });
         }
     }

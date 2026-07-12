@@ -35,7 +35,7 @@ public class Czlib implements ClientModInitializer {
 			dispatcher.register(
 					ClientCommandManager.literal("trinket")
 							.executes(context -> {
-								UpdateManager.getInstance().update();
+								UpdateManager.getInstance().update(SelfIdentifier.getSelfName());
 								return 1;
 							})
 			);
@@ -78,6 +78,12 @@ public class Czlib implements ClientModInitializer {
 					ClientCommandManager.literal("getSelf")
 							.executes(context -> {
 								MinecraftClient.getInstance().player.sendMessage(Text.literal("Self name=" + SelfIdentifier.getSelfName() + ", slot=" + SelfIdentifier.getSelfHeadSlot()));
+								return 1;
+							})
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("vzcall")
+							.executes(context -> {
 								return 1;
 							})
 			);
