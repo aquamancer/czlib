@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.internal;
 
+import com.aquamancer.czlib.api.event.ZenithApiEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
@@ -19,6 +20,7 @@ public class UpdateManager {
     static {
         ZenithApiInternalEvents.WORLD_CHANGED.register(() -> getInstance().onWorldChange());
         ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
+        ZenithApiEvents.EXIT_ZENITH_SHARD.register((p, c) -> getInstance().ticksSinceParse.clear());
     }
 
     private Map<String, Integer> headNames = new HashMap<>(4);
@@ -26,8 +28,10 @@ public class UpdateManager {
 
 
     private static final int CHAT_UPDATE_DELAY_TICKS = 20;
+    private static final int MIN_TICKS_BETWEEN_PARSE = 1;
 
     private int ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
+    private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
     // update rules
     public void onManualScreenClose(Screen closedScreen) {
         if (closedScreen == null) return;
@@ -50,12 +54,31 @@ public class UpdateManager {
     }
 
     public void onTick() {
+        if (!ShardTracker.inZenithShard()) return;
+        for (Map.Entry<String, Integer> entry : ticksSinceParse.entrySet()) {
+            entry.setValue(entry.getValue() + 1);
+        }
+
         if (ticksUntilUpdate == 0) {
             this.updateAll();
             ticksUntilUpdate--;  // go to -1 to indicate idling
         } else if (ticksUntilUpdate > 0) {
             ticksUntilUpdate--;
         }
+    }
+
+    public boolean shouldParseTrinketPacket(String player) {
+        Integer elapsed = ticksSinceParse.get(player);
+        if (elapsed == null) {
+            ticksSinceParse.put(player, 0);
+            return true;
+        } else {
+            if (elapsed >= MIN_TICKS_BETWEEN_PARSE) {
+                ticksSinceParse.put(player, 0);  // assume parser will parse
+                return true;
+            }
+        }
+        return false;
     }
 
     // internals

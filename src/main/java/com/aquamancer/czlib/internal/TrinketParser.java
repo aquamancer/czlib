@@ -16,7 +16,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -80,8 +79,9 @@ public class TrinketParser {
 
         String player = headParseResult.currentlySelected.orElse(null);
         if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
+        if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
         SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player));
-//        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
+        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
 
         PassiveParseResult passiveParseResult = parsePassives(inv);
         party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
