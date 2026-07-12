@@ -25,6 +25,7 @@ public class Passive {
 
     public boolean deepEquals(Passive o2) {
         if (o2 == null) return false;
+        if (this == o2) return true;
         return this.ability == o2.ability
                 && this.spec == o2.spec
                 && this.rarity == o2.rarity;

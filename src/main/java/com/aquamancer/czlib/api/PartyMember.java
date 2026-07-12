@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api;
 
+import com.aquamancer.czlib.Czlib;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
@@ -18,7 +19,7 @@ public class PartyMember {
     private EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
     private Aspect aspect;
     private EnumMap<ActiveSlot, Active> actives = new EnumMap<>(ActiveSlot.class);
-    private Set<Active> wildcards = new HashSet<>();
+    private EnumMap<Actives.Wildcard, Active> wildcards = new EnumMap<>(Actives.Wildcard.class);
     private EnumMap<Gifts, Gift> gifts = new EnumMap<>(Gifts.class);
 
     public PartyMember(String name) {
@@ -40,110 +41,177 @@ public class PartyMember {
                 }
                 return v;
             });
-
-
         });
     }
 
     void setGraveTimer(double time) {
-        if (this.graveTimer != time) {
+        double old = this.graveTimer;
+        this.graveTimer = time;
+
+        if (this.graveTimer != old) {
             ZenithApiUpdateEvents.GRAVE_TIMER.invoker().onGraveTimerUpdate(this.name);
         }
-        this.graveTimer = time;
     }
 
     void setPassives(EnumMap<Passives, Passive> passives) {
-        boolean changed = this.passives.size() != passives.size()
+        EnumMap<Passives, Passive> old = this.passives;
+        this.passives = passives;
+
+        boolean changed = this.passives.size() != old.size()
                 || this.passives.entrySet().stream().anyMatch((entry) -> {
-                    Passive other = passives.get(entry.getKey());
+                    Passive other = old.get(entry.getKey());
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
             ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
         }
-
-        this.passives = passives;
     }
 
     void setCurses(EnumSet<Curse> curses) {
-        if (!this.curses.equals(curses)) {
+        EnumSet<Curse> old = this.curses;
+        this.curses = curses;
+
+        if (!this.curses.equals(old)) {
             ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this.name);
         }
-        this.curses = curses;
     }
 
     void setSpecs(EnumSet<Spec> specs) {
-        if (!this.specs.equals(specs)) {
+        EnumSet<Spec> old = this.specs;
+        this.specs = specs;
+
+        if (!this.specs.equals(old)) {
             ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
         }
-        this.specs = specs;
     }
 
     void setAspect(Aspect aspect) {
-        if (this.aspect != aspect) {
+        Aspect old = this.aspect;
+        this.aspect = aspect;
+
+        if (this.aspect != old) {
             ZenithApiUpdateEvents.ASPECT.invoker().onAspectUpdate(this.name);
         }
-        this.aspect = aspect;
     }
 
     public void setActives(List<Active> actives) {
         EnumMap<ActiveSlot, Active> nonWildcards = new EnumMap<>(ActiveSlot.class);
-        Set<Active> wildcards = new HashSet<>();
+        EnumMap<Actives.Wildcard, Active> wildcards = new EnumMap<>(Actives.Wildcard.class);
         for (Active active : actives) {
             ActiveSlot slot = active.getSlot();
-            if (slot == ActiveSlot.WILDCARD) {
-                wildcards.add(active);
+            if (slot == ActiveSlot.WILDCARD && active.getAbility() instanceof Actives.Wildcard wildcard) {
+                if (active.getAbility() == Actives.Wildcard.CONVERGENCE) {
+                    // do not replace other existing wildcards if convergence is present
+                    // gui/chat will be the source of rarities
+                    wildcards.putAll(this.wildcards);
+                }
+                wildcards.put(wildcard, active);
             } else {
-                nonWildcards.put(slot, active);
+                nonWildcards.put(active.getSlot(), active);
             }
         }
 
+        EnumMap<ActiveSlot, Active> oldActives = this.actives;
+        EnumMap<Actives.Wildcard, Active> oldWildcards = this.wildcards;
         this.actives = nonWildcards;
         this.wildcards = wildcards;
+
+        boolean changed = this.actives.size() != oldActives.size()
+                || this.wildcards.size() != oldWildcards.size()
+                || this.actives.entrySet().stream().anyMatch((entry) -> {
+                    Active other = oldActives.get(entry.getKey());
+                    return other == null || !entry.getValue().deepEquals(other);
+                })
+                || this.wildcards.entrySet().stream().anyMatch((entry) -> {
+                    Active other = oldWildcards.get(entry.getKey());
+                    return other == null || !entry.getValue().deepEquals(other);
+                });
+        if (changed) {
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+        }
+
     }
 
     void addAbility(Passive passive) {
-        this.passives.put(passive.getAbility(), passive);
+        Passive old = this.passives.put(passive.getAbility(), passive);
+
+        if (old == null || !old.deepEquals(passive)) {
+            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
+        }
     }
 
     void addAbility(Curse curse) {
-        this.curses.add(curse);
+        if (this.curses.add(curse)) {
+            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this.name);
+        }
     }
 
     void addAbility(Active active) {
-        if (active.getSlot() == ActiveSlot.WILDCARD) {
-            this.wildcards.add(active);
+        if (active.getSlot() == ActiveSlot.WILDCARD && active.getAbility() instanceof Actives.Wildcard wildcard) {
+            Active old = this.wildcards.put(wildcard, active);
+            if (old == null || !old.deepEquals(active)) {
+                ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            }
         } else {
-            this.actives.put(active.getSlot(), active);
+            Active old = this.actives.put(active.getSlot(), active);
+            if (old == null || !old.deepEquals(active)) {
+                ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            }
         }
     }
 
     void loseAbility(Passives passive) {
-        this.passives.remove(new Passive(passive, null, null));
+        Passive old = this.passives.remove(passive);
+        if (old != null) {
+            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
+        }
     }
 
     void loseAbility(Curse curse) {
-        this.curses.remove(curse);
+        if (this.curses.remove(curse)) {
+            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this.name);
+        }
     }
 
     void loseAbility(ActiveType active) {
-        actives.values().removeIf(e -> e.getAbility() == active);
-        // todo verify removing convergence removes all wildcards
-        if (active == Actives.Wildcard.CONVERGENCE) {
-            wildcards.clear();
-        } else {
-            wildcards.removeIf(e -> e.getAbility() == active);
+        if (actives.values().removeIf(e -> e.getAbility() == active)) {
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            return;
+        }
+
+        if (active instanceof Actives.Wildcard) {
+            if (active == Actives.Wildcard.CONVERGENCE) {
+                wildcards.clear();
+                ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            } else {
+                if (wildcards.remove(active) != null) {
+                    ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+                }
+            }
         }
     }
 
     void addSpec(Spec spec) {
-        this.specs.add(spec);
+        if (this.specs.add(spec)) {
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+        }
+    }
+
+    void invertSpecs() {
+        this.specs = EnumSet.complementOf(this.specs);
+
+        if (!this.specs.equals(EnumSet.allOf(Spec.class))) {
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+        }
     }
 
     private void replaceAll(Function<Active, Active> newActive, Function<Passive, Passive> newPassive) {
         this.actives.replaceAll((k, v) -> newActive.apply(v));
-        this.wildcards = this.wildcards.stream().map(newActive).collect(Collectors.toSet());
+        this.wildcards.replaceAll((k, v) -> newActive.apply(v));
         this.passives.replaceAll((k, v) -> newPassive.apply(v));
+
+        ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+        ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
     }
 
     private void replaceAll(Function<Rarity, Rarity> newRarity) {
@@ -165,10 +233,6 @@ public class PartyMember {
         this.replaceAll(Rarity::upgradeBy2);
     }
 
-    void invertSpecs() {
-        this.specs = EnumSet.complementOf(this.specs);
-    }
-
     void addGift(Gifts gift) {
         switch (gift) {
             // gifts that are passives
@@ -184,6 +248,7 @@ public class PartyMember {
             case RAINBOW_GEODE:
             case CRACKED_IDOL:
                 this.gifts.put(gift, new Gift(gift, Gifts.getDefaultValue(gift)));
+                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
                 break;
             // gifts not fully handled by chat or gui
             case KALEIDOSCOPIC_LENS:

@@ -36,6 +36,7 @@ public class TrinketOpener {
     }
 
     public static void openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
+        if (trinketSlot < 9) return;  // inventory starts at slot 9
         if (slots == null || slots.isEmpty()) {
             ScreenCanceler.cancelFutureScreens(1);
             openTrinket(trinketSlot);

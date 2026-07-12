@@ -211,7 +211,8 @@ public class TrinketParser {
         return Aspect.toEnum(inv.get(ASPECT_SLOT).getName().getString());
     }
 
-    // todo handle multiple wildcards
+    // multiple wildcards via convergence is handled by not having convergence replace previous wildcards
+    // parsed via gui/chat
     private static List<Active> parseActives(List<ItemStack> inv) {
         List<Active> actives = new ArrayList<>();
         for (ActiveSlotToParse activeSlot : activeSlots) {
