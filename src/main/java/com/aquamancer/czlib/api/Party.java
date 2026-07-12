@@ -38,7 +38,7 @@ public class Party {
         }
     }
 
-    public void setPassives(String player, Set<Passive> passives, EnumSet<Curse> curses) {
+    public void setPassives(String player, EnumMap<Passives, Passive> passives, EnumSet<Curse> curses) {
         PartyMember p = players.get(player);
         p.setPassives(passives);
         p.setCurses(curses);
@@ -53,19 +53,7 @@ public class Party {
     }
 
     public void setActives(String player, List<Active> actives) {
-        EnumMap<ActiveSlot, Active> nonWildcards = new EnumMap<>(ActiveSlot.class);
-        Set<Active> wildcards = new HashSet<>();
-        for (Active active : actives) {
-            ActiveSlot slot = active.getSlot();
-            if (slot == ActiveSlot.WILDCARD) {
-                wildcards.add(active);
-            } else {
-                nonWildcards.put(slot, active);
-            }
-        }
-
-        players.get(player).setActives(nonWildcards);
-        players.get(player).setWildcards(wildcards);
+        players.get(player).setActives(actives);
     }
 
     public void createMember(String name) {

@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.internal;
 
-import com.aquamancer.czlib.api.event.ZenithApiEvents;
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
@@ -20,7 +20,7 @@ public class UpdateManager {
     static {
         ZenithApiInternalEvents.WORLD_CHANGED.register(() -> getInstance().onWorldChange());
         ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
-        ZenithApiEvents.EXIT_ZENITH_SHARD.register((p, c) -> getInstance().ticksSinceParse.clear());
+        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> getInstance().ticksSinceParse.clear());
     }
 
     private Map<String, Integer> headNames = new HashMap<>(4);

@@ -23,6 +23,13 @@ public class Passive {
         return rarity;
     }
 
+    public boolean deepEquals(Passive o2) {
+        if (o2 == null) return false;
+        return this.ability == o2.ability
+                && this.spec == o2.spec
+                && this.rarity == o2.rarity;
+    }
+
     @Override
     public boolean equals(Object o2) {
         if (this == o2) return true;

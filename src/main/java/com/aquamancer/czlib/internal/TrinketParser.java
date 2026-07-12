@@ -162,9 +162,9 @@ public class TrinketParser {
         return Optional.empty();
     }
 
-    private record PassiveParseResult(Set<Passive> passives, EnumSet<Curse> curses) {}
+    private record PassiveParseResult(EnumMap<Passives, Passive> passives, EnumSet<Curse> curses) {}
     private static PassiveParseResult parsePassives(List<ItemStack> inv) {
-        Set<Passive> passives = new HashSet<>(PASSIVES_END - PASSIVES_START + 1);
+        EnumMap<Passives, Passive> passives = new EnumMap<>(Passives.class);
         EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
         for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
             ItemStack item = inv.get(slot);
@@ -178,7 +178,7 @@ public class TrinketParser {
                 String line2 = tooltip.get(1).getString();
                 TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
                 if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) continue;
-                passives.add(new Passive(passiveName.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
+                passives.put(passiveName.get(), new Passive(passiveName.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
                 continue;
             }
 

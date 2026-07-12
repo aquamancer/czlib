@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.api;
 
-import com.aquamancer.czlib.api.event.ZenithApiEvents;
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -16,8 +16,8 @@ public class ZenithApi {
     private Rooms currentRoom = Rooms.TREE_SELECT;
 
     private ZenithApi() {
-        ZenithApiEvents.ENTER_ZENITH_SHARD.register((p, c) -> this.reset());
-        ZenithApiEvents.ROOM_SPAWNED.register((room, isWildcard) -> {
+        ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> this.reset());
+        ZenithApiStateEvents.ROOM_SPAWNED.register((room, isWildcard) -> {
             if (room != Rooms.BOSS_CLEANSE) {
                 this.room++;
             }
@@ -28,7 +28,7 @@ public class ZenithApi {
                 this.currentRoom = room;
             }
         });
-        ZenithApiEvents.SENT_TO_NEXT_FLOOR.register(() -> {
+        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register(() -> {
             this.floor++;
             this.room = 0;
             this.currentRoom = Rooms.PRE_FLOOR;

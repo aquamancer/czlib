@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.internal;
 
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.aquamancer.czlib.mixin.PlayerListHudAccessor;
 import net.minecraft.client.MinecraftClient;
@@ -46,10 +47,10 @@ public class ShardTracker {
                 remainingAttempts = 0;
                 if (!currentShard.equals(previousValidShard)) {  // does not call events after DC'ing+reconnecting mid-run
                     if (isZenithShard(previousValidShard)) {
-                        com.aquamancer.czlib.api.event.ZenithApiEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
+                        ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
                     }
                     if (isZenithShard(currentShard)) {
-                        com.aquamancer.czlib.api.event.ZenithApiEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
+                        ZenithApiStateEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
                     }
                 }
             }

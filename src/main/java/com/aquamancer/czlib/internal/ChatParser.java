@@ -4,7 +4,7 @@ import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
-import com.aquamancer.czlib.api.event.ZenithApiEvents;
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -117,7 +117,7 @@ public class ChatParser {
             room = Rooms.BOSS_CLEANSE;
         }
 
-        ZenithApiEvents.ROOM_SPAWNED.invoker().onRoomSpawned(room, matcher.group(2) != null);
+        ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomSpawned(room, matcher.group(2) != null);
         bossCleanseRoomFlag = false;
         return true;
     }
@@ -132,7 +132,7 @@ public class ChatParser {
     private static boolean parseNextFloor(String line) {
         Matcher matcher = NEXT_FLOOR.matcher(line);
         if (!matcher.matches()) return false;
-        ZenithApiEvents.SENT_TO_NEXT_FLOOR.invoker().onSentToNextFloor();
+        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.invoker().onSentToNextFloor();
         return true;
     }
 

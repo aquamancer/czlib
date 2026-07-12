@@ -1,11 +1,10 @@
 package com.aquamancer.czlib.api.event;
 
-import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
-public class ZenithApiEvents {
+public class ZenithApiStateEvents {
     public static final Event<RoomSpawned> ROOM_SPAWNED = EventFactory.createArrayBacked(
             RoomSpawned.class,
             (listeners) -> {
