@@ -20,12 +20,24 @@ public class UpdateManager {
     static {
         ZenithApiInternalEvents.WORLD_CHANGED.register(() -> getInstance().onWorldChange());
         ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
-        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> getInstance().ticksSinceParse.clear());
+        ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
+            getInstance().enabled = true;
+        });
+        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
+            getInstance().ticksSinceParse.clear();
+            getInstance().headNames.clear();
+            getInstance().enabled = false;
+        });
+        ZenithApiStateEvents.SENT_TO_LOOTROOM.register(() -> {
+            getInstance().ticksSinceParse.clear();
+            getInstance().headNames.clear();
+            getInstance().enabled = false;
+        });
     }
 
+    private boolean enabled = false;
     private Map<String, Integer> headNames = new HashMap<>(4);
     private int lastScreenSyncId = 0;
-
 
     private static final int CHAT_UPDATE_DELAY_TICKS = 20;
     private static final int MIN_TICKS_BETWEEN_PARSE = 1;
@@ -34,6 +46,8 @@ public class UpdateManager {
     private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
     // update rules
     public void onManualScreenClose(Screen closedScreen) {
+        if (!enabled) return;
+
         if (closedScreen == null) return;
         String title = closedScreen.getTitle().getString();
         if (title.equals("Crafting") || title.equals("Current Abilities")) return;
@@ -41,12 +55,16 @@ public class UpdateManager {
     }
 
     public void onActionBarMessage(Text message) {
+        if (!enabled) return;
+
         if (message.getString().equals("Ability removed!")) {
             this.update(SelfIdentifier.getSelfName());
         }
     }
 
     public void onZenithChatMessage() {
+        if (!enabled) return;
+
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
         client.player.sendMessage(Text.literal("Zenith chat message"));
@@ -54,6 +72,7 @@ public class UpdateManager {
     }
 
     public void onTick() {
+        if (!enabled) return;
         if (!ShardTracker.inZenithShard()) return;
         for (Map.Entry<String, Integer> entry : ticksSinceParse.entrySet()) {
             entry.setValue(entry.getValue() + 1);
@@ -139,6 +158,10 @@ public class UpdateManager {
         client.player.sendMessage(Text.literal("Attempting trinket update for: " + player +", clicking slots: "+slotsToClick));
 
         TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
+    }
+
+    private void openVzc(Collection<String> names) {
+
     }
 
     private UpdateManager() {}

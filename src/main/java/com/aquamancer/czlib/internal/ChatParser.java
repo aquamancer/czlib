@@ -27,7 +27,7 @@ public class ChatParser {
     private static final Pattern WHEEL_UPGRADE_2 = Pattern.compile("^\\[Zenith Party] (\\w+) (?:has )?upgraded all (?:your|their) abilities by two levels!$");
     private static final Pattern WHEEL_REROLLS = Pattern.compile("^\\[Zenith Party] (\\w+) gained (\\d+) rerolls!$");
     private static final Pattern WHEEL_SPEC = Pattern.compile("^\\[Zenith Party] (\\w+) unlocked the (\\w+) tree!$");
-    private static final Pattern PLAYER_DEATH = Pattern.compile("^(\\w+)");
+    private static final Pattern SENT_TO_LOOTROOM = Pattern.compile("^\\[Zenith Party] Sending you to loot room.*");
 
     // BOSS_CLEANSE_ROOM message is always sent with but always before "Spawned new Boss room" when opening the cleanse room
     // set a flag to indicate the next "Spawned new Boss room" is the cleanse room, not an actual boss room
@@ -161,5 +161,12 @@ public class ChatParser {
             return true;
         }
         return false;
+    }
+
+    private static boolean parseLootroom(String line) {
+        Matcher matcher = SENT_TO_LOOTROOM.matcher(line);
+        if (!matcher.matches()) return false;
+
+        return true;
     }
 }

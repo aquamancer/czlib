@@ -55,6 +55,16 @@ public class ZenithApiStateEvents {
                 };
             }
     );
+    public static final Event<SentToLootroom> SENT_TO_LOOTROOM = EventFactory.createArrayBacked(
+            SentToLootroom.class,
+            (listeners) -> {
+                return () -> {
+                    for (SentToLootroom listener : listeners) {
+                        listener.onSentToLootroom();
+                    }
+                };
+            }
+    );
 
     @FunctionalInterface
     public interface RoomSpawned {
@@ -75,5 +85,9 @@ public class ZenithApiStateEvents {
     @FunctionalInterface
     public interface GraveSpawned {
         void onGraveSpawn(String deadPlayer);
+    }
+    @FunctionalInterface
+    public interface SentToLootroom {
+        void onSentToLootroom();
     }
 }

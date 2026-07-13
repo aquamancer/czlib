@@ -45,13 +45,13 @@ public class ShardTracker {
             currentShard = newShard;
             if (currentShard != null) {
                 remainingAttempts = 0;
-                if (!currentShard.equals(previousValidShard)) {  // does not call events after DC'ing+reconnecting mid-run
+                if (!currentShard.equals(previousValidShard)) {
                     if (isZenithShard(previousValidShard)) {
                         ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
                     }
-                    if (isZenithShard(currentShard)) {
-                        ZenithApiStateEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
-                    }
+                }
+                if (isZenithShard(currentShard)) {
+                    ZenithApiStateEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
                 }
             }
             ticksUntilAttempt = ATTEMPT_INTERVAL_TICKS;
