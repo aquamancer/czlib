@@ -70,6 +70,7 @@ public enum Gifts {
         fromString.put("Cracked Idol", CRACKED_IDOL);
         fromString.put("Orb of Darkness", ORB_OF_DARKNESS);
 
+        defaultCounters.put(CRACKED_IDOL, 1);
         defaultCounters.put(NORTHERN_STAR, 4);
         defaultCounters.put(CALLICARPAS_POINTED_HAT, 3);
         defaultCounters.put(RAINBOW_GEODE, 3);

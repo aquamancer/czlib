@@ -1,9 +1,11 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.Czlib;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class Gift {
@@ -18,7 +20,10 @@ public class Gift {
 
     private final Gifts gift;
     private int counter;
+
+    // dont want to make more classes
     private EnumSet<Rooms> treasureMap;
+    private Spec callisPointedHat;
 
     public Gift(Gifts gift) {
         this.gift = gift;
@@ -32,6 +37,16 @@ public class Gift {
         this.counter = counter;
     }
 
+    public Gift(Spec callisPointedHat) {
+        this.gift = Gifts.CALLICARPAS_POINTED_HAT;
+        this.callisPointedHat = callisPointedHat;
+        this.counter = Gifts.getDefaultValue(Gifts.CALLICARPAS_POINTED_HAT);
+    }
+
+    public Gifts getGift() {
+        return this.gift;
+    }
+
     public int getCounter() {
         return this.counter;
     }
@@ -42,6 +57,22 @@ public class Gift {
 
     public int increment() {
         return ++this.counter;
+    }
+
+    public Optional<EnumSet<Rooms>> getTreasureMapRemaining() {
+        if (this.gift != Gifts.TREASURE_MAP) {
+            Czlib.LOGGER.error("Treasure map field queried on Gift of type Gifts: {}", this.gift);
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.treasureMap);
+    }
+
+    public Optional<Spec> getCallisPointedHat() {
+        if (this.gift != Gifts.CALLICARPAS_POINTED_HAT) {
+            Czlib.LOGGER.error("Callicarpa's Hat spec field queried on Gift of type Gifts: {}", this.gift);
+            return Optional.empty();
+        }
+        return Optional.ofNullable(this.callisPointedHat);
     }
 
     @Override

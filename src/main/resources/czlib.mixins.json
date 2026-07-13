@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"AbilitySelectionMixin",
+		"BossBarMixin",
 		"ClickSlotMixin",
 		"ClientPlayNetworkHandlerMixin",
 		"MessageHandlerMixin",

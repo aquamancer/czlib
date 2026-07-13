@@ -91,6 +91,13 @@ public class Party {
         });
     }
 
+    public void loseSpec(String player, Spec spec) {
+        players.computeIfPresent(player, (k, v) -> {
+            v.loseSpec(spec);
+            return v;
+        });
+    }
+
     public void downgradeAll(String player) {
         players.computeIfPresent(player, (k, v) -> {
             v.downgradeAll();
@@ -106,6 +113,10 @@ public class Party {
     }
 
     public void addGift(String player, Gifts gift) {
+        players.get(player).addGift(gift);
+    }
+
+    public void addGift(String player, Gift gift) {
         players.get(player).addGift(gift);
     }
 

@@ -45,6 +45,16 @@ public class ZenithApiStateEvents {
                 };
             }
     );
+    public static final Event<GraveSpawned> GRAVE_SPAWNED = EventFactory.createArrayBacked(
+            GraveSpawned.class,
+            (listeners) -> {
+                return (deadPlayer) -> {
+                    for (GraveSpawned listener : listeners) {
+                        listener.onGraveSpawn(deadPlayer);
+                    }
+                };
+            }
+    );
 
     @FunctionalInterface
     public interface RoomSpawned {
@@ -61,5 +71,9 @@ public class ZenithApiStateEvents {
     @FunctionalInterface
     public interface ExitZenithShard {
         void onExitZenithShard(String previous, String current);
+    }
+    @FunctionalInterface
+    public interface GraveSpawned {
+        void onGraveSpawn(String deadPlayer);
     }
 }

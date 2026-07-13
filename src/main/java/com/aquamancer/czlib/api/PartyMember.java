@@ -6,6 +6,7 @@ import com.aquamancer.czlib.api.abils.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.internal.SelfIdentifier;
 
 import java.util.*;
 import java.util.function.Function;
@@ -28,6 +29,7 @@ public class PartyMember {
         ZenithApiStateEvents.ROOM_SPAWNED.register((room, wildcard) -> {
             gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
                 if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
+                    ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
                     if (v.decrement() <= 0) {
                         return null;
                     }
@@ -37,10 +39,19 @@ public class PartyMember {
 
             gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
                 if (wildcard) {
+                    ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
                     v.increment();
                 }
                 return v;
             });
+        });
+        ZenithApiStateEvents.GRAVE_SPAWNED.register((deadPlayer) -> {
+            if (this.name.equals(deadPlayer)) {
+                this.gifts.computeIfPresent(Gifts.CRACKED_IDOL, (k, v) -> {
+                    ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
+                    return null;
+                });
+            }
         });
     }
 
@@ -197,6 +208,12 @@ public class PartyMember {
         }
     }
 
+    void loseSpec(Spec spec) {
+        if (this.specs.remove(spec)) {
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+        }
+    }
+
     void invertSpecs() {
         this.specs = EnumSet.complementOf(this.specs);
 
@@ -244,8 +261,8 @@ public class PartyMember {
             case PILLAR_OF_LIGHT:
             case BROKEN_CLOCK:
             case TREASURE_MAP:
-            case CALLICARPAS_POINTED_HAT:
             case RAINBOW_GEODE:
+            case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui will call addGift(Gift) with a tree and replace this
             case CRACKED_IDOL:
                 this.gifts.put(gift, new Gift(gift, Gifts.getDefaultValue(gift)));
                 ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
@@ -261,9 +278,14 @@ public class PartyMember {
                 break;
             case POETS_QUILL:
                 // requires a trinket parse to determine its effect for other players
+                // gui handles poet's quill for self
                 break;
             // all other gifts are one-off and fully handled by separate chat messages or gui screens
         }
+    }
+
+    void addGift(Gift gift) {
+        this.gifts.put(gift.getGift(), gift);
     }
 
     @Override

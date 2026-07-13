@@ -5,7 +5,9 @@ import com.aquamancer.czlib.internal.TrinketLocator;
 import com.aquamancer.czlib.internal.TrinketParser;
 import com.aquamancer.czlib.internal.UpdateManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
@@ -47,6 +49,15 @@ public class ClientPlayNetworkHandlerMixin {
         if (client != null) {
             client.execute(() -> {
                 UpdateManager.getInstance().onActionBarMessage(packet.getMessage());
+            });
+        }
+    }
+
+    @Inject(at = @At("HEAD"), method = "onBossBar(Lnet/minecraft/network/packet/s2c/play/BossBarS2CPacket;)V")
+    private void onBossBarPacket(BossBarS2CPacket packet, CallbackInfo ci) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client != null) {
+            client.execute(() -> {
             });
         }
     }

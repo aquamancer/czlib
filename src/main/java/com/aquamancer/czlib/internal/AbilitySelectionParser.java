@@ -32,24 +32,15 @@ public class AbilitySelectionParser {
         Screen openedScreen = MinecraftClient.getInstance().currentScreen;
         if (openedScreen == null) return;
         String title = openedScreen.getTitle().getString();
-        switch (title) {
-            case "Select an Aspect": {
-                String ability = item.getName().getString();
-                String self = SelfIdentifier.getSelfName();
-                Party party = ZenithApi.getInstance().getPartyManager();
-                party.createMember(self);
 
-                Optional<Aspect> aspect = Aspect.toEnum(ability);
-                if (aspect.isPresent()) party.setAspect(self, aspect.get());
-                break;
-            }
+        String self = SelfIdentifier.getSelfName();
+        Party party = ZenithApi.getInstance().getPartyManager();
+        switch (title) {
             case "Select an Ability":
             case "Select an Upgrade":
             case "Grimoire (Select Ability)":
             case "Regret (Replace Curse)": {
                 String ability = item.getName().getString();
-                String self = SelfIdentifier.getSelfName();
-                Party party = ZenithApi.getInstance().getPartyManager();
                 party.createMember(self);
 
                 Optional<? extends ActiveType> active = Actives.toEnum(ability);
@@ -81,15 +72,35 @@ public class AbilitySelectionParser {
                     party.addGift(self, gift.get());
                     return;
                 }
-            }
-            case "Webbing (Select Player)":
-                // no reliable way to track webbing
                 break;
-            case "Pointed Hat (Select Tree)":
+            }
+            case "Select an Aspect": {
+                String ability = item.getName().getString();
+                party.createMember(self);
 
+                Optional<Aspect> aspect = Aspect.toEnum(ability);
+                if (aspect.isPresent()) party.setAspect(self, aspect.get());
+                break;
+            }
+            case "Poet's Quill (Remove Tree)": {
+                Optional<Spec> removed = Spec.toEnum(item.getName().getString());
+                if (removed.isEmpty()) return;
+                party.loseSpec(self, removed.get());
+                break;
+            }
+            case "Poet's Quill (Replace Tree)": {
+                Optional<Spec> gained = Spec.toEnum(item.getName().getString());
+                if (gained.isEmpty()) return;
+                party.addSpec(self, gained.get());
+                break;
+            }
+            case "Pointed Hat (Select Tree)":
+                Optional<Spec> tree = Spec.toEnum(item.getName().getString());
+                if (tree.isEmpty()) return;
+                party.addGift(self, new Gift(tree.get()));
+                break;
+            case "Webbing (Select Player)":
             case "Grimoire (Select Tree)":
-            case "Poet's Quill (Remove Tree)":
-            case "Poet's Quill (Replace Tree)":
             case "Prismatic Cube (Replace)":
             case "Regret (Remove Curse)":
         }

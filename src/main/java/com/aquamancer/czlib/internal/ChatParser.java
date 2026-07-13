@@ -6,6 +6,7 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -26,6 +27,7 @@ public class ChatParser {
     private static final Pattern WHEEL_UPGRADE_2 = Pattern.compile("^\\[Zenith Party] (\\w+) (?:has )?upgraded all (?:your|their) abilities by two levels!$");
     private static final Pattern WHEEL_REROLLS = Pattern.compile("^\\[Zenith Party] (\\w+) gained (\\d+) rerolls!$");
     private static final Pattern WHEEL_SPEC = Pattern.compile("^\\[Zenith Party] (\\w+) unlocked the (\\w+) tree!$");
+    private static final Pattern PLAYER_DEATH = Pattern.compile("^(\\w+)");
 
     // BOSS_CLEANSE_ROOM message is always sent with but always before "Spawned new Boss room" when opening the cleanse room
     // set a flag to indicate the next "Spawned new Boss room" is the cleanse room, not an actual boss room
