@@ -81,7 +81,7 @@ public class TrinketParser {
         if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
         if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
         SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player));
-        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
+//        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
 
         PassiveParseResult passiveParseResult = parsePassives(inv);
         party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);

@@ -67,7 +67,6 @@ public class UpdateManager {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
-        client.player.sendMessage(Text.literal("Zenith chat message"));
         this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
     }
 
@@ -131,7 +130,7 @@ public class UpdateManager {
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
         slotsToClick.remove(SelfIdentifier.getSelfHeadSlot());
-        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick));
+//        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick));
         TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }
     // todo make private
@@ -155,7 +154,7 @@ public class UpdateManager {
             client.player.sendMessage(Text.literal("Could not find Depths Trinket in inventory"));
             return;
         }
-        client.player.sendMessage(Text.literal("Attempting trinket update for: " + player +", clicking slots: "+slotsToClick));
+//        client.player.sendMessage(Text.literal("Attempting trinket update for: " + player +", clicking slots: "+slotsToClick));
 
         TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }

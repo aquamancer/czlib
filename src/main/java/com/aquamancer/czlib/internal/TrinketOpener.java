@@ -65,7 +65,6 @@ public class TrinketOpener {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.player.currentScreenHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
-        client.player.sendMessage(Text.literal("clicking slot="+slot));
 
         Int2ObjectMap<ItemStack> modifiedStacks = new Int2ObjectOpenHashMap<>();
         modifiedStacks.put(slot, ItemStack.EMPTY);

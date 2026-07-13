@@ -24,9 +24,9 @@ public class BossBarMixin {
     private Text name;
     @Inject(at=@At("HEAD"), method="accept")
     private void onBossBarAdd(UUID uuid, BossBarS2CPacket.Consumer consumer, CallbackInfo ci) {
-        MinecraftClient.getInstance().player.sendMessage(Text.literal("new boss bar="+name.getString()));
         Matcher matcher = GRAVE.matcher(name.getString());
         if (!matcher.matches()) return;
         ZenithApiStateEvents.GRAVE_SPAWNED.invoker().onGraveSpawn(matcher.group(1));
+        MinecraftClient.getInstance().player.sendMessage(Text.literal(matcher.group(1) + " died!"));
     }
 }

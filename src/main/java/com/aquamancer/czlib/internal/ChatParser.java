@@ -44,6 +44,7 @@ public class ChatParser {
         if (parseBossCleanseRoom(line)) return;
         if (parseNextFloor(line)) return;
         if (parseAspect(line)) return;
+        if (parseLootroom(line)) return;
         if (parseWheel(line)) return;
     }
 
@@ -166,7 +167,7 @@ public class ChatParser {
     private static boolean parseLootroom(String line) {
         Matcher matcher = SENT_TO_LOOTROOM.matcher(line);
         if (!matcher.matches()) return false;
-
+        ZenithApiStateEvents.SENT_TO_LOOTROOM.invoker().onSentToLootroom();
         return true;
     }
 }
