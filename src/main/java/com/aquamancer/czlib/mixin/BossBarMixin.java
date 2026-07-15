@@ -27,6 +27,5 @@ public class BossBarMixin {
         Matcher matcher = GRAVE.matcher(name.getString());
         if (!matcher.matches()) return;
         ZenithApiStateEvents.GRAVE_SPAWNED.invoker().onGraveSpawn(matcher.group(1));
-        MinecraftClient.getInstance().player.sendMessage(Text.literal(matcher.group(1) + " died!"));
     }
 }

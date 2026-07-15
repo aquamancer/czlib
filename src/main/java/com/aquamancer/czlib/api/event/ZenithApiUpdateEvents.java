@@ -67,6 +67,15 @@ public class ZenithApiUpdateEvents {
             }
     );
 
+    public static Event<VzcUpdate> VZC = EventFactory.createArrayBacked(
+            VzcUpdate.class,
+            (listeners) -> (player) -> {
+                for (VzcUpdate listener : listeners) {
+                    listener.onVzcUpdate(player);
+                }
+            }
+    );
+
 
     @FunctionalInterface
     public interface ActiveUpdate {
@@ -101,5 +110,10 @@ public class ZenithApiUpdateEvents {
     @FunctionalInterface
     public interface GiftUpdate {
         void onGiftUpdate(String player);
+    }
+
+    @FunctionalInterface
+    public interface VzcUpdate {
+        void onVzcUpdate(String player);
     }
 }

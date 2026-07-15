@@ -22,6 +22,7 @@ public class PartyMember {
     private EnumMap<ActiveSlot, Active> actives = new EnumMap<>(ActiveSlot.class);
     private EnumMap<Actives.Wildcard, Active> wildcards = new EnumMap<>(Actives.Wildcard.class);
     private EnumMap<Gifts, Gift> gifts = new EnumMap<>(Gifts.class);
+    private EnumMap<AbilitySpec, Integer> charmLines = new EnumMap<>(AbilitySpec.class);
 
     public PartyMember(String name) {
         this.name = name;
@@ -288,6 +289,20 @@ public class PartyMember {
         this.gifts.put(gift.getGift(), gift);
     }
 
+    void setCharmLines(EnumMap<AbilitySpec, Integer> charmLines) {
+        EnumMap<AbilitySpec, Integer> old = this.charmLines;
+        this.charmLines = charmLines;
+
+        boolean changed = this.charmLines.size() != old.size()
+                || this.charmLines.entrySet().stream().anyMatch((entry) -> {
+                    Integer other = old.get(entry.getKey());
+                    return !entry.getValue().equals(other);
+                });
+        if (changed) {
+            ZenithApiUpdateEvents.VZC.invoker().onVzcUpdate(this.name);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -307,6 +322,7 @@ public class PartyMember {
             s.append("null\n");
         }
         s.append("Wildcards=").append(wildcards);
+        s.append("\n").append("Charm lines=").append(charmLines);
 
         return s.toString();
     }

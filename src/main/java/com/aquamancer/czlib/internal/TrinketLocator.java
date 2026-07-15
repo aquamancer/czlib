@@ -76,13 +76,24 @@ public class TrinketLocator {
             cached = false;
             lastTrinketSlot = currentTrinketSlot;
         } else {
-            slotOffsets.computeIfPresent(client.player.currentScreenHandler.getType(), (k, slot) -> {
-                lastInventoryPacket = packet;
-                offset = slot;
-                cached = false;
-                lastTrinketSlot = currentTrinketSlot;
-                return slot;
-            });
+            try {
+                slotOffsets.computeIfPresent(client.player.currentScreenHandler.getType(), (k, slot) -> {
+                    lastInventoryPacket = packet;
+                    offset = slot;
+                    cached = false;
+                    lastTrinketSlot = currentTrinketSlot;
+                    return slot;
+                });
+            } catch (UnsupportedOperationException ignored) {
+                // ScreenHandler.class
+//                public ScreenHandlerType<?> getType() {
+//                    if (this.type == null) {
+//                        throw new UnsupportedOperationException("Unable to construct this menu by type");
+//                    } else {
+//                        return this.type;
+//                    }
+//                }
+            }
         }
     }
 }

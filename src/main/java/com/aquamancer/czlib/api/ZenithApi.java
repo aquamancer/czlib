@@ -47,6 +47,10 @@ public class ZenithApi {
         return this.party.getPlayer(name);
     }
 
+    public boolean isPartyMember(String name) {
+        return this.party.getPlayer(name).isPresent();
+    }
+
     @ApiStatus.Internal
     public Party getPartyManager() {
         return this.party;

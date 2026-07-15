@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
+import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
@@ -32,6 +33,11 @@ public class UpdateManager {
             getInstance().ticksSinceParse.clear();
             getInstance().headNames.clear();
             getInstance().enabled = false;
+        });
+
+        ZenithApiStateEvents.ROOM_SPAWNED.register((r, w) -> {
+            MinecraftClient client = MinecraftClient.getInstance();
+            getInstance().openVzc(getInstance().headNames.keySet());
         });
     }
 
@@ -160,7 +166,14 @@ public class UpdateManager {
     }
 
     private void openVzc(Collection<String> names) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player == null || client.player.networkHandler == null) return;
+        if (client.currentScreen instanceof HandledScreen) return;
 
+        ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
+        for (String name : names) {
+            client.player.networkHandler.sendChatCommand("vzc " + name);
+        }
     }
 
     private UpdateManager() {}

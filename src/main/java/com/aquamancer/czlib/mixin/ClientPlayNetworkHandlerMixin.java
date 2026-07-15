@@ -1,9 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
-import com.aquamancer.czlib.internal.SelfIdentifier;
-import com.aquamancer.czlib.internal.TrinketLocator;
-import com.aquamancer.czlib.internal.TrinketParser;
-import com.aquamancer.czlib.internal.UpdateManager;
+import com.aquamancer.czlib.internal.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -26,6 +23,7 @@ public class ClientPlayNetworkHandlerMixin {
         if (packet != null && client.player != null) {
             UpdateManager.getInstance().onOpenScreenPacket(packet);
             SelfIdentifier.onOpenScreenPacket(packet);
+            VzcParser.onOpenScreenPacket(packet);
 //            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId()+"type="+packet.getScreenHandlerType())));
 //            client.execute(() -> client.player.sendMessage(Text.literal(String.valueOf(System.currentTimeMillis()))));
         }
@@ -38,6 +36,7 @@ public class ClientPlayNetworkHandlerMixin {
             client.execute(() -> {
                 TrinketParser.onInventoryS2CPacket(packet, client);
                 TrinketLocator.onInventoryS2CPacket(packet);
+                VzcParser.onInventoryPacket(packet);
             });
         }
     }

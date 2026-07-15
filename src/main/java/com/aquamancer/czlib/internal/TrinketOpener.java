@@ -38,11 +38,11 @@ public class TrinketOpener {
     public static void openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
         if (trinketSlot < 9) return;  // inventory starts at slot 9
         if (slots == null || slots.isEmpty()) {
-            ScreenCanceler.cancelFutureScreens(1);
+            ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
             openTrinket(trinketSlot);
             sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
         } else {
-            ScreenCanceler.cancelFutureScreens(slots.size());
+            ScreenCanceler.cancelFutureScreens(slots.size(), ScreenCanceler.Type.TRINKET);
             for (Integer slot : slots) {
                 openTrinket(trinketSlot);
                 sendPacket(new ClickSlotC2SPacket(

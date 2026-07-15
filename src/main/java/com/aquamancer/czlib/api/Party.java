@@ -120,6 +120,10 @@ public class Party {
         players.get(player).addGift(gift);
     }
 
+    public void setCharmLines(String player, EnumMap<AbilitySpec, Integer> charmLines) {
+        players.get(player).setCharmLines(charmLines);
+    }
+
     void clear() {
         this.players.clear();
     }
