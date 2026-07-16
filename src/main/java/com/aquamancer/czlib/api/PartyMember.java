@@ -46,6 +46,7 @@ public class PartyMember {
                 return v;
             });
         });
+        // todo move this to Party?
         ZenithApiStateEvents.GRAVE_SPAWNED.register((deadPlayer) -> {
             if (this.name.equals(deadPlayer)) {
                 this.gifts.computeIfPresent(Gifts.CRACKED_IDOL, (k, v) -> {

@@ -4,10 +4,8 @@ import com.aquamancer.czlib.internal.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
-import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.s2c.play.*;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -52,11 +50,15 @@ public class ClientPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(at = @At("HEAD"), method = "onBossBar(Lnet/minecraft/network/packet/s2c/play/BossBarS2CPacket;)V")
-    private void onBossBarPacket(BossBarS2CPacket packet, CallbackInfo ci) {
+    // called on armor/mainhand swaps for other players and entering render distance
+    @Inject(at = @At(value="INVOKE", target="Lnet/minecraft/network/packet/s2c/play/EntityEquipmentUpdateS2CPacket;getEquipmentList()Ljava/util/List;"),
+            method = "onEntityEquipmentUpdate(Lnet/minecraft/network/packet/s2c/play/EntityEquipmentUpdateS2CPacket;)V"
+    )
+    private void onArmorChange(EntityEquipmentUpdateS2CPacket packet, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client != null) {
             client.execute(() -> {
+                UpdateManager.getInstance().onArmorChange(packet, client);
             });
         }
     }

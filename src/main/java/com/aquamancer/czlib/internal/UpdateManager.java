@@ -1,12 +1,19 @@
 package com.aquamancer.czlib.internal;
 
+import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
@@ -75,6 +82,19 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
     }
+
+    public void onArmorChange(EntityEquipmentUpdateS2CPacket packet, MinecraftClient client) {
+        if (client.world == null) return;
+        Entity entity = client.world.getEntityById(packet.getId());
+        if (!(entity instanceof PlayerEntity player)) return;
+        String name = player.getName().getString();
+        if (!ZenithApi.getInstance().isPartyMember(name)) return;
+        List<Pair<EquipmentSlot, ItemStack>> changed = packet.getEquipmentList();
+        // player only changed held item
+        if (changed.size() == 1 && changed.get(0).getFirst() == EquipmentSlot.MAINHAND) return;
+        openVzc(Collections.singleton(name));
+    }
+
 
     public void onTick() {
         if (!enabled) return;
