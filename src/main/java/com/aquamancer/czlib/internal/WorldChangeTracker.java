@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class WorldChangeTracker {
-    private static final List<Consumer<World>> listeners = new ArrayList<>();
     private static World lastWorld;
 
     public static void onTick(MinecraftClient client) {
