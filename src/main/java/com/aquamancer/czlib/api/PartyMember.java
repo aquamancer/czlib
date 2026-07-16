@@ -1,16 +1,15 @@
 package com.aquamancer.czlib.api;
 
-import com.aquamancer.czlib.Czlib;
 import com.aquamancer.czlib.api.abils.*;
-import com.aquamancer.czlib.api.abils.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
-import com.aquamancer.czlib.internal.SelfIdentifier;
 
-import java.util.*;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class PartyMember {
     private final String name;

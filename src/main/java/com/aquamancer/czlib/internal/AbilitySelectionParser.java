@@ -3,7 +3,6 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
-import com.aquamancer.czlib.api.abils.Gifts;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;

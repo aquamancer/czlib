@@ -4,10 +4,6 @@ import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-
 public class WorldChangeTracker {
     private static World lastWorld;
 

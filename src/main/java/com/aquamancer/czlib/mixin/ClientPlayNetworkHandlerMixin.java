@@ -2,11 +2,11 @@ package com.aquamancer.czlib.mixin;
 
 import com.aquamancer.czlib.internal.*;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.BossBarHud;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.packet.s2c.play.*;
-import net.minecraft.text.Text;
+import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
+import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

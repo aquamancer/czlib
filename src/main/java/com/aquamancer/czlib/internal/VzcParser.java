@@ -3,7 +3,6 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.Czlib;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.AbilitySpec;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,11 +14,9 @@ import net.minecraft.util.Identifier;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class VzcParser {
     private static final Pattern TITLE = Pattern.compile("(\\w+)'s Charms$");

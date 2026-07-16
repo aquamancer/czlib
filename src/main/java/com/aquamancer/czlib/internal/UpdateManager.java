@@ -2,7 +2,6 @@ package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
-import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

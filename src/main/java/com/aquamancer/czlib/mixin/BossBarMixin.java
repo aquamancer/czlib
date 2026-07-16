@@ -1,7 +1,6 @@
 package com.aquamancer.czlib.mixin;
 
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
