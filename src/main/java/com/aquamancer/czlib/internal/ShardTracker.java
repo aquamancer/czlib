@@ -3,6 +3,7 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.aquamancer.czlib.mixin.PlayerListHudAccessor;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +25,7 @@ public class ShardTracker {
     private static @Nullable String previousValidShard;
 
     static {
+        ClientTickEvents.START_CLIENT_TICK.register((client) -> onTick());
         ZenithApiInternalEvents.WORLD_CHANGED.register(ShardTracker::updateCurrentShard);
     }
 

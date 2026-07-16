@@ -86,10 +86,6 @@ public class Czlib implements ClientModInitializer {
 							})
 			);
 		});
-		ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-			WorldChangeTracker.onTick(client);
-			ShardTracker.onTick();
-		});
 	}
 
 	public static Identifier id(String path) {
