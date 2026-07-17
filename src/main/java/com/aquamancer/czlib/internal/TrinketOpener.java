@@ -35,37 +35,40 @@ public class TrinketOpener {
         modifiedStacks.put(53, ItemStack.EMPTY);
     }
 
-    public static void openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
-        if (trinketSlot < 9) return;  // inventory starts at slot 9
+    public static int openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
+        if (trinketSlot < 9) return syncId;  // inventory starts at slot 9
         if (slots == null || slots.isEmpty()) {
-            openTrinket(trinketSlot);
-            sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
+            if (openTrinket(trinketSlot)) {
+                sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
+                ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
+            }
         } else {
             for (Integer slot : slots) {
-                openTrinket(trinketSlot);
-                sendPacket(new ClickSlotC2SPacket(
-                        ++syncId,
-                        1,
-                        slot,
-                        0,
-                        SlotActionType.PICKUP,
-                        playerHead,
-                        modifiedStacks
-                ));
-                sendPacket(new CloseHandledScreenC2SPacket(
-                        syncId
-                ));
+                if (openTrinket(trinketSlot)) {
+                    sendPacket(new ClickSlotC2SPacket(
+                            ++syncId,
+                            1,
+                            slot,
+                            0,
+                            SlotActionType.PICKUP,
+                            playerHead,
+                            modifiedStacks
+                    ));
+                    sendPacket(new CloseHandledScreenC2SPacket(
+                            syncId
+                    ));
+                    ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
+                }
             }
         }
+        return syncId;
     }
 
-    private static void openTrinket(int slot) {
-        if (slot < 9) return;
+    private static boolean openTrinket(int slot) {
+        if (slot < 9) return false;
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null || client.player.currentScreenHandler == null) return;
-        if (client.currentScreen instanceof HandledScreen) return;
-
-        ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
+        if (client == null || client.player == null || client.player.currentScreenHandler == null) return false;
+        if (client.currentScreen instanceof HandledScreen) return false;
 
         Int2ObjectMap<ItemStack> modifiedStacks = new Int2ObjectOpenHashMap<>();
         modifiedStacks.put(slot, ItemStack.EMPTY);
@@ -78,8 +81,8 @@ public class TrinketOpener {
                 depthsTrinket,
                 modifiedStacks
         ));
+        return true;
     }
-
 
     private static void sendPacket(Packet<?> packet) {
         MinecraftClient client = MinecraftClient.getInstance();

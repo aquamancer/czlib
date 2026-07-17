@@ -41,7 +41,9 @@ public class ScreenCanceler {
     }
 
     static void cancelFutureScreens(int count, Type type) {
-        screensToCancel.put(type, count);
+        screensToCancel.compute(type, (k, v) -> {
+            return (v == null) ? count : v + count;
+        });
         ticksUntilTimeout = TICKS_UNTIL_TIMEOUT;
     }
 

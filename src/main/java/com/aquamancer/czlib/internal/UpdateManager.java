@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.text.Text;
@@ -156,7 +157,7 @@ public class UpdateManager {
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
         slotsToClick.remove(SelfIdentifier.getSelfHeadSlot());
 //        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick));
-        TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
+        this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }
     // todo make private
     public void update(String player) {
@@ -181,7 +182,7 @@ public class UpdateManager {
         }
 //        client.player.sendMessage(Text.literal("Attempting trinket update for: " + player +", clicking slots: "+slotsToClick));
 
-        TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
+        this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }
 
     public void openVzc(Collection<String> names) {
@@ -192,6 +193,13 @@ public class UpdateManager {
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
             client.player.networkHandler.sendChatCommand("vzc " + name);
+        }
+        if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection() != null) {
+            client.getNetworkHandler().getConnection().send(
+                    new CloseHandledScreenC2SPacket(
+                            this.lastScreenSyncId += names.size()
+                    )
+            );
         }
     }
 
