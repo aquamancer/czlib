@@ -3,6 +3,7 @@ package com.aquamancer.czlib;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.internal.*;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -13,6 +14,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 @ApiStatus.Internal
 public class Czlib implements ClientModInitializer {
@@ -81,9 +84,12 @@ public class Czlib implements ClientModInitializer {
 			);
 			dispatcher.register(
 					ClientCommandManager.literal("vzcall")
+							.then(ClientCommandManager.argument("args", StringArgumentType.greedyString())
 							.executes(context -> {
+								String raw = StringArgumentType.getString(context, "args");
+								UpdateManager.getInstance().openVzc(Arrays.stream(raw.split("\\s+")).toList());
 								return 1;
-							})
+							}))
 			);
 		});
 	}

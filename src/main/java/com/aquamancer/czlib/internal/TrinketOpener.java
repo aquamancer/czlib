@@ -38,11 +38,9 @@ public class TrinketOpener {
     public static void openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
         if (trinketSlot < 9) return;  // inventory starts at slot 9
         if (slots == null || slots.isEmpty()) {
-            ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
             openTrinket(trinketSlot);
             sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
         } else {
-            ScreenCanceler.cancelFutureScreens(slots.size(), ScreenCanceler.Type.TRINKET);
             for (Integer slot : slots) {
                 openTrinket(trinketSlot);
                 sendPacket(new ClickSlotC2SPacket(
@@ -62,9 +60,12 @@ public class TrinketOpener {
     }
 
     private static void openTrinket(int slot) {
+        if (slot < 9) return;
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.player.currentScreenHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
+
+        ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
 
         Int2ObjectMap<ItemStack> modifiedStacks = new Int2ObjectOpenHashMap<>();
         modifiedStacks.put(slot, ItemStack.EMPTY);

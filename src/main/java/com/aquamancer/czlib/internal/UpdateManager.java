@@ -184,7 +184,7 @@ public class UpdateManager {
         TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }
 
-    private void openVzc(Collection<String> names) {
+    public void openVzc(Collection<String> names) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
