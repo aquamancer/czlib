@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
@@ -19,13 +20,25 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
-/*
-update: on chat message, after closing ability selection, room generated, Ability removed! action bar
- */
+
 @ApiStatus.Internal
 public class UpdateManager {
     private static UpdateManager INSTANCE;
-    static {
+
+    private boolean enabled = false;
+    private Map<String, Integer> headNames = new HashMap<>(4);
+    private int lastScreenSyncId = 0;
+
+    private static final int CHAT_UPDATE_DELAY_TICKS = 4*20;
+    private static final int MIN_TICKS_BETWEEN_FULL_UPDATE = 8*20;
+    private static final int MIN_TICKS_BETWEEN_PARSE = 1;
+
+    private int ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
+    private int ticksSinceFullUpdate = 0;
+    private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
+    private boolean sendCloseVzc = false;
+
+    public static void init() {
         ZenithApiInternalEvents.WORLD_CHANGED.register(() -> getInstance().onWorldChange());
         ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
@@ -43,20 +56,10 @@ public class UpdateManager {
         });
 
         ZenithApiStateEvents.ROOM_SPAWNED.register((r, w) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
             getInstance().openVzc(getInstance().headNames.keySet());
         });
     }
 
-    private boolean enabled = false;
-    private Map<String, Integer> headNames = new HashMap<>(4);
-    private int lastScreenSyncId = 0;
-
-    private static final int CHAT_UPDATE_DELAY_TICKS = 20;
-    private static final int MIN_TICKS_BETWEEN_PARSE = 1;
-
-    private int ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
-    private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
     // update rules
     public void onManualScreenClose(Screen closedScreen) {
         if (!enabled) return;
@@ -99,16 +102,20 @@ public class UpdateManager {
     public void onTick() {
         if (!enabled) return;
         if (!ShardTracker.inZenithShard()) return;
+        if (sendCloseVzc) {
+            sendCloseVzc = false;
+            sendPacket(new CloseHandledScreenC2SPacket(this.lastScreenSyncId));
+        }
         for (Map.Entry<String, Integer> entry : ticksSinceParse.entrySet()) {
             entry.setValue(entry.getValue() + 1);
         }
-
         if (ticksUntilUpdate == 0) {
             this.updateAll();
             ticksUntilUpdate--;  // go to -1 to indicate idling
         } else if (ticksUntilUpdate > 0) {
             ticksUntilUpdate--;
         }
+        ticksSinceFullUpdate++;
     }
 
     public boolean shouldParseTrinketPacket(String player) {
@@ -151,19 +158,25 @@ public class UpdateManager {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
-
+        if (ScreenCanceler.isCancelingScreens()) return;
+        if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
+            ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
+        }
 
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
         slotsToClick.remove(SelfIdentifier.getSelfHeadSlot());
 //        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick));
         this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
+        this.ticksUntilUpdate = -1;
+        this.ticksSinceFullUpdate = 0;
     }
     // todo make private
     public void update(String player) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
+        if (ScreenCanceler.isCancelingScreens()) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {
@@ -189,18 +202,32 @@ public class UpdateManager {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
+        if (ScreenCanceler.isCancelingScreens()) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
             client.player.networkHandler.sendChatCommand("vzc " + name);
         }
+        this.lastScreenSyncId += names.size();
+        // have to send closescreens2cpacket on the next tick because of race.
+        // server defers commands to main thread instead of handling in network thread
+        // so sending closescreens2cpacket instantly is too early
+        sendCloseVzc = true;
+        this.ticksSinceFullUpdate = 0;
+    }
+
+    public static void sendPacket(Packet<?> packet) {
+        MinecraftClient client = MinecraftClient.getInstance();
         if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection() != null) {
             client.getNetworkHandler().getConnection().send(
-                    new CloseHandledScreenC2SPacket(
-                            this.lastScreenSyncId += names.size()
-                    )
+                    packet
             );
         }
+    }
+
+    // todo remove
+    public boolean isEnabled() {
+        return enabled;
     }
 
     private UpdateManager() {}

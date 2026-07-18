@@ -6,10 +6,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.world.World;
 
 public class WorldChangeTracker {
-    static {
+    private static World lastWorld;
+
+    public static void init() {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> onTick(client));
     }
-    private static World lastWorld;
 
     public static void onTick(MinecraftClient client) {
         World currentWorld = client.world;

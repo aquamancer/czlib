@@ -24,7 +24,7 @@ public class ShardTracker {
     private static @Nullable String currentShard;
     private static @Nullable String previousValidShard;
 
-    static {
+    public static void init() {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> onTick());
         ZenithApiInternalEvents.WORLD_CHANGED.register(ShardTracker::updateCurrentShard);
     }
@@ -74,7 +74,7 @@ public class ShardTracker {
         String header = headerText.getString();
         Matcher matcher = SHARD_REGEX.matcher(header);
         if (matcher.matches()) {
-            String newShard = matcher.group(1);
+            String newShard = matcher.group("shard");
             if (newShard != null && !newShard.isBlank()) {
                 return newShard;
             }

@@ -8,7 +8,8 @@ import java.util.EnumMap;
 public class ScreenCanceler {
     public enum Type { TRINKET, VZC }
     private static final int TICKS_UNTIL_TIMEOUT = 40;
-    static {
+
+    public static void init() {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> onTick());
     }
 
@@ -53,5 +54,10 @@ public class ScreenCanceler {
         } else if (ticksUntilTimeout > 0) {
             ticksUntilTimeout--;
         }
+    }
+
+    public static boolean isCancelingScreens() {
+        if (screensToCancel.isEmpty()) return false;
+        return screensToCancel.values().stream().anyMatch(i -> i > 0);
     }
 }

@@ -5,6 +5,7 @@
 	"mixins": [
 		"AbilitySelectionMixin",
 		"BossBarMixin",
+		"ClientConnectionMixin",
 		"ClientPlayNetworkHandlerMixin",
 		"MessageHandlerMixin",
 		"PlayerListHudAccessor",

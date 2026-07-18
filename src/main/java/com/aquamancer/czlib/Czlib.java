@@ -7,7 +7,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -31,6 +30,12 @@ public class Czlib implements ClientModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		// register events
+		WorldChangeTracker.init();
+		UpdateManager.init();
+		ShardTracker.init();
+		ScreenCanceler.init();
 
 		ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
 			dispatcher.register(
@@ -90,6 +95,13 @@ public class Czlib implements ClientModInitializer {
 								UpdateManager.getInstance().openVzc(Arrays.stream(raw.split("\\s+")).toList());
 								return 1;
 							}))
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("isUpdating")
+							.executes(context -> {
+								MinecraftClient.getInstance().player.sendMessage(Text.literal("enabled="+UpdateManager.getInstance().isEnabled()));
+								return 1;
+							})
 			);
 		});
 	}

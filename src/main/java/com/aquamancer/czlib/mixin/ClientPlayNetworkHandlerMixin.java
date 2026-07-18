@@ -7,6 +7,7 @@ import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,13 +18,16 @@ public class ClientPlayNetworkHandlerMixin {
     @Inject(at = @At("HEAD"), method = "onOpenScreen(Lnet/minecraft/network/packet/s2c/play/OpenScreenS2CPacket;)V")
     private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
-        if (packet != null && client.player != null) {
-            UpdateManager.getInstance().onOpenScreenPacket(packet);
-            SelfIdentifier.onOpenScreenPacket(packet);
-            VzcParser.onOpenScreenPacket(packet);
+        client.execute(() -> {
+            if (packet != null && client.player != null) {
+                UpdateManager.getInstance().onOpenScreenPacket(packet);
+                SelfIdentifier.onOpenScreenPacket(packet);
+                VzcParser.onOpenScreenPacket(packet);
 //            client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId()+"type="+packet.getScreenHandlerType())));
-//            client.execute(() -> client.player.sendMessage(Text.literal(String.valueOf(System.currentTimeMillis()))));
-        }
+                long now = System.nanoTime();
+                client.execute(() -> client.player.sendMessage(Text.literal("open screen "+packet.getName()+": "+now)));
+            }
+        });
     }
 
     @Inject(at = @At("HEAD"), method = "onInventory(Lnet/minecraft/network/packet/s2c/play/InventoryS2CPacket;)V")

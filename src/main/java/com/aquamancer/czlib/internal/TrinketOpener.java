@@ -39,13 +39,13 @@ public class TrinketOpener {
         if (trinketSlot < 9) return syncId;  // inventory starts at slot 9
         if (slots == null || slots.isEmpty()) {
             if (openTrinket(trinketSlot)) {
-                sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
+                UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
                 ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
             }
         } else {
             for (Integer slot : slots) {
                 if (openTrinket(trinketSlot)) {
-                    sendPacket(new ClickSlotC2SPacket(
+                    UpdateManager.sendPacket(new ClickSlotC2SPacket(
                             ++syncId,
                             1,
                             slot,
@@ -54,7 +54,7 @@ public class TrinketOpener {
                             playerHead,
                             modifiedStacks
                     ));
-                    sendPacket(new CloseHandledScreenC2SPacket(
+                    UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(
                             syncId
                     ));
                     ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
@@ -72,7 +72,7 @@ public class TrinketOpener {
 
         Int2ObjectMap<ItemStack> modifiedStacks = new Int2ObjectOpenHashMap<>();
         modifiedStacks.put(slot, ItemStack.EMPTY);
-        sendPacket(new ClickSlotC2SPacket(
+        UpdateManager.sendPacket(new ClickSlotC2SPacket(
                 0,
                 client.player.currentScreenHandler.getRevision(),
                 slot,
@@ -82,11 +82,5 @@ public class TrinketOpener {
                 modifiedStacks
         ));
         return true;
-    }
-
-    private static void sendPacket(Packet<?> packet) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.getNetworkHandler() == null || client.getNetworkHandler().getConnection() == null) return;
-        client.getNetworkHandler().getConnection().send(packet);
     }
 }
