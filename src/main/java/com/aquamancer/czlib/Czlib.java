@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Set;
 
 @ApiStatus.Internal
 public class Czlib implements ClientModInitializer {
@@ -59,8 +60,8 @@ public class Czlib implements ClientModInitializer {
 							.then(ClientCommandManager.argument("syncId", IntegerArgumentType.integer(0))
 									.executes(context -> {
 //										int syncId = IntegerArgumentType.getInteger(context, "syncId");
-//										MinecraftClient.getInstance().player.sendMessage(Text.literal("Opening trinket with syncId: " + MinecraftClient.getInstance().player.currentScreenHandler.syncId));
-//										TrinketOpener.clickPartyHeads1(UpdateManager.getInstance().lastScreenSyncId, Set.of(47, 48, 50, 53), 13);
+										MinecraftClient.getInstance().player.sendMessage(Text.literal("Opening trinket with syncId: " + MinecraftClient.getInstance().player.currentScreenHandler.syncId));
+										TrinketOpener.openAndClickHeads(Set.of(47, 48, 50, 53), TrinketLocator.getTrinketSlot(), MinecraftClient.getInstance().player.currentScreenHandler.syncId);
 										return 1;
 									})
 							)
@@ -100,6 +101,13 @@ public class Czlib implements ClientModInitializer {
 					ClientCommandManager.literal("isUpdating")
 							.executes(context -> {
 								MinecraftClient.getInstance().player.sendMessage(Text.literal("enabled="+UpdateManager.getInstance().isEnabled()));
+								return 1;
+							})
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("clearTrinket")
+							.executes(context -> {
+								ZenithApi.getInstance().getPartyManager().setMembers(Set.of());
 								return 1;
 							})
 			);

@@ -20,6 +20,9 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @ApiStatus.Internal
 public class UpdateManager {
@@ -87,6 +90,7 @@ public class UpdateManager {
     }
 
     public void onArmorChange(EntityEquipmentUpdateS2CPacket packet, MinecraftClient client) {
+        if (!enabled) return;
         if (client.world == null) return;
         Entity entity = client.world.getEntityById(packet.getId());
         if (!(entity instanceof PlayerEntity player)) return;
@@ -95,6 +99,9 @@ public class UpdateManager {
         List<Pair<EquipmentSlot, ItemStack>> changed = packet.getEquipmentList();
         // player only changed held item
         if (changed.size() == 1 && changed.get(0).getFirst() == EquipmentSlot.MAINHAND) return;
+        Stream<ItemStack> stacks = changed.stream().map(Pair::getSecond);
+        if (stacks.allMatch(ItemStack::isEmpty)) return;
+
         openVzc(Collections.singleton(name));
     }
 
@@ -166,7 +173,7 @@ public class UpdateManager {
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
         slotsToClick.remove(SelfIdentifier.getSelfHeadSlot());
-//        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick));
+        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick+", starting syncid="+this.lastScreenSyncId+",current screenhandler syncid="+client.player.currentScreenHandler.syncId));
         this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
         this.ticksUntilUpdate = -1;
         this.ticksSinceFullUpdate = 0;
@@ -219,9 +226,7 @@ public class UpdateManager {
     public static void sendPacket(Packet<?> packet) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection() != null) {
-            client.getNetworkHandler().getConnection().send(
-                    packet
-            );
+            client.getNetworkHandler().getConnection().send(packet);
         }
     }
 
