@@ -42,7 +42,7 @@ public class AbilitySelectionParser {
                 String ability = item.getName().getString();
                 party.createMember(self);
 
-                Optional<? extends ActiveType> active = Actives.toEnum(ability);
+                Optional<Actives> active = Actives.fromString(ability);
                 Optional<Passives> passive = (active.isPresent()) ? Optional.empty() : Passives.toEnum(ability);
                 if (active.isPresent() || passive.isPresent()) {
                     List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);

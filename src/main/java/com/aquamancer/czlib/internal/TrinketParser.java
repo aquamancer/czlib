@@ -30,17 +30,7 @@ public class TrinketParser {
 
     private static final int ASPECT_SLOT = 9;
 
-    private record ActiveSlotToParse(Integer slot, ActiveSlot type, Function<String, Optional<? extends ActiveType>> toEnum) {}
-    private static final List<ActiveSlotToParse> activeSlots = List.of(
-            new ActiveSlotToParse(10, ActiveSlot.COMBO, Actives.Combo::toEnum),
-            new ActiveSlotToParse(11, ActiveSlot.RIGHT, Actives.Right::toEnum),
-            new ActiveSlotToParse(12, ActiveSlot.LEFT_SHIFT, Actives.LeftShift::toEnum),
-            new ActiveSlotToParse(13, ActiveSlot.RIGHT_SHIFT, Actives.RightShift::toEnum),
-            new ActiveSlotToParse(14, ActiveSlot.WILDCARD, Actives.Wildcard::toEnum),
-            new ActiveSlotToParse(15, ActiveSlot.BOW, Actives.Bow::toEnum),
-            new ActiveSlotToParse(16, ActiveSlot.SWAP, Actives.Swap::toEnum),
-            new ActiveSlotToParse(17, ActiveSlot.LIFELINE, Actives.Lifeline::toEnum)
-    );
+    private static final Set<Integer> activeSlots = Set.of(10, 11, 12, 13, 14, 15, 16, 17);
 
     private static final int PASSIVES_START = 27;
     private static final int PASSIVES_END = 44;
@@ -88,7 +78,7 @@ public class TrinketParser {
         Optional<Aspect> aspect = parseAspect(inv);
         party.setAspect(player, aspect.orElse(null));
 
-        List<Active> actives = parseActives(inv);
+        Set<Active> actives = parseActives(inv);
         party.setActives(player, actives);
 
         if (client.player != null && packet.getSyncId() != 0) {
@@ -208,13 +198,12 @@ public class TrinketParser {
 
     // multiple wildcards via convergence is handled by not having convergence replace previous wildcards
     // parsed via gui/chat
-    private static List<Active> parseActives(List<ItemStack> inv) {
-        List<Active> actives = new ArrayList<>();
-        for (ActiveSlotToParse activeSlot : activeSlots) {
-            Integer slot = activeSlot.slot;
+    private static Set<Active> parseActives(List<ItemStack> inv) {
+        Set<Active> actives = new HashSet<>();
+        for (Integer slot : activeSlots) {
             if (inv.get(slot).getItem() == NO_ACTIVE) continue;
             ItemStack item = inv.get(slot);
-            Optional<? extends ActiveType> ability = activeSlot.toEnum.apply(item.getName().getString());
+            Optional<Actives> ability = Actives.fromString(item.getName().getString());
             if (ability.isEmpty()) continue;
             List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
             if (tooltip.size() < 2) continue;

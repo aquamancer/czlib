@@ -61,7 +61,7 @@ public class ChatParser {
 
         Optional<Passives> passive = Passives.toEnum(ability);
         Optional<Curse> curse = (passive.isPresent()) ? Optional.empty() : Curse.toEnum(ability);
-        Optional<? extends ActiveType> active = (curse.isPresent()) ? Optional.empty() : Actives.toEnum(ability);
+        Optional<Actives> active = (curse.isPresent()) ? Optional.empty() : Actives.fromString(ability);
         Optional<Gifts> gift = (active.isPresent()) ? Optional.empty() : Gifts.toEnum(ability);
 
         Party party = ZenithApi.getInstance().getPartyManager();

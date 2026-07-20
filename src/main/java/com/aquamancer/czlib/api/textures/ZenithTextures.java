@@ -43,82 +43,82 @@ public class ZenithTextures {
 
     static {
         // Actives.Combo
-        register(Actives.Combo.SOOTHING, Items.HONEYCOMB, "Soothing Combos");
-        register(Actives.Combo.EARTHEN, Items.WOODEN_SWORD, "Earthen Combos");
-        register(Actives.Combo.VOLCANIC, Items.BLAZE_ROD, "Volcanic Combos");
-        register(Actives.Combo.FRIGID, Items.BLUE_DYE, "Frigid Combos");
-        register(Actives.Combo.DARK, Items.FLINT, "Dark Combos");
-        register(Actives.Combo.FOCUSED, Items.SPECTRAL_ARROW, "Focused Combos");
-        register(Actives.Combo.WINDSWEPT, Items.WHITE_CANDLE, "Windswept Combos");
+        register(Actives.SOOTHING, Items.HONEYCOMB, "Soothing Combos");
+        register(Actives.EARTHEN, Items.WOODEN_SWORD, "Earthen Combos");
+        register(Actives.VOLCANIC, Items.BLAZE_ROD, "Volcanic Combos");
+        register(Actives.FRIGID, Items.BLUE_DYE, "Frigid Combos");
+        register(Actives.DARK, Items.FLINT, "Dark Combos");
+        register(Actives.FOCUSED, Items.SPECTRAL_ARROW, "Focused Combos");
+        register(Actives.WINDSWEPT, Items.WHITE_CANDLE, "Windswept Combos");
 
         // Actives.Right
-        register(Actives.Right.WARD_OF_LIGHT, Items.LANTERN, "Ward of Light");
-        register(Actives.Right.BEASTS_CLAW, Items.WOODEN_HOE, "Beast's Claw");
-        register(Actives.Right.FIREBALL, Items.FIREWORK_STAR, "Fireball");
-        register(Actives.Right.ICE_LANCE, Items.SNOWBALL, "Ice Lance");
-        register(Actives.Right.ADVANCING_SHADOWS, Items.WITHER_SKELETON_SKULL, "Advancing Shadows");
-        register(Actives.Right.SIDEARM, Items.CROSSBOW, "Sidearm");
-        register(Actives.Right.WIND_WALK, Items.WHITE_DYE, "Wind Walk");
-        register(Actives.Right.SOLAR_RAY, Items.END_ROD, "Solar Ray");
+        register(Actives.WARD_OF_LIGHT, Items.LANTERN, "Ward of Light");
+        register(Actives.BEASTS_CLAW, Items.WOODEN_HOE, "Beast's Claw");
+        register(Actives.FIREBALL, Items.FIREWORK_STAR, "Fireball");
+        register(Actives.ICE_LANCE, Items.SNOWBALL, "Ice Lance");
+        register(Actives.ADVANCING_SHADOWS, Items.WITHER_SKELETON_SKULL, "Advancing Shadows");
+        register(Actives.SIDEARM, Items.CROSSBOW, "Sidearm");
+        register(Actives.WIND_WALK, Items.WHITE_DYE, "Wind Walk");
+        register(Actives.SOLAR_RAY, Items.END_ROD, "Solar Ray");
 
         // Actives.LeftShift
-        register(Actives.LeftShift.RADIANT_BLESSING, Items.SUNFLOWER, "Radiant Blessing");
-        register(Actives.LeftShift.TAUNT, Items.GOLDEN_CHESTPLATE, "Taunt");
-        register(Actives.LeftShift.IGNEOUS_RUNE, Items.BLAZE_POWDER, "Igneous Rune");
-        register(Actives.LeftShift.SNOWSTORM, Items.ICE, "Snowstorm");
-        register(Actives.LeftShift.CLOAK_OF_SHADOWS, Items.BLACK_CONCRETE, "Cloak of Shadows");
-        register(Actives.LeftShift.SCRAPSHOT, Items.NETHERITE_SCRAP, "Scrapshot");
-        register(Actives.LeftShift.GUARDING_BOLT, Items.HORN_CORAL, "Guarding Bolt");
-        register(Actives.LeftShift.ENCORE, Items.JUKEBOX, "Encore");
+        register(Actives.RADIANT_BLESSING, Items.SUNFLOWER, "Radiant Blessing");
+        register(Actives.TAUNT, Items.GOLDEN_CHESTPLATE, "Taunt");
+        register(Actives.IGNEOUS_RUNE, Items.BLAZE_POWDER, "Igneous Rune");
+        register(Actives.SNOWSTORM, Items.ICE, "Snowstorm");
+        register(Actives.CLOAK_OF_SHADOWS, Items.BLACK_CONCRETE, "Cloak of Shadows");
+        register(Actives.SCRAPSHOT, Items.NETHERITE_SCRAP, "Scrapshot");
+        register(Actives.GUARDING_BOLT, Items.HORN_CORAL, "Guarding Bolt");
+        register(Actives.ENCORE, Items.JUKEBOX, "Encore");
 
         // Actives.RightShift
-        register(Actives.RightShift.BOTTLED_SUNLIGHT, Items.HONEY_BOTTLE, "Bottled Sunlight");
-        register(Actives.RightShift.IRON_GRIP, Items.IRON_ORE, "Iron Grip");
-        register(Actives.RightShift.FLAMESTRIKE, Items.FLINT_AND_STEEL, "Flamestrike");
-        register(Actives.RightShift.ICE_BARRIER, Items.PRISMARINE_WALL, "Ice Barrier");
-        register(Actives.RightShift.BLADE_FLURRY, Items.IRON_SWORD, "Blade Flurry");
-        register(Actives.RightShift.FIREWORK_BLAST, Items.FIREWORK_ROCKET, "Firework Blast");
-        register(Actives.RightShift.AEROBLAST, Items.PHANTOM_MEMBRANE, "Aeroblast");
-        register(Actives.RightShift.CHROMA_BLADE, Items.DIAMOND_SWORD, "Chroma Blade");
+        register(Actives.BOTTLED_SUNLIGHT, Items.HONEY_BOTTLE, "Bottled Sunlight");
+        register(Actives.IRON_GRIP, Items.IRON_ORE, "Iron Grip");
+        register(Actives.FLAMESTRIKE, Items.FLINT_AND_STEEL, "Flamestrike");
+        register(Actives.ICE_BARRIER, Items.PRISMARINE_WALL, "Ice Barrier");
+        register(Actives.BLADE_FLURRY, Items.IRON_SWORD, "Blade Flurry");
+        register(Actives.FIREWORK_BLAST, Items.FIREWORK_ROCKET, "Firework Blast");
+        register(Actives.AEROBLAST, Items.PHANTOM_MEMBRANE, "Aeroblast");
+        register(Actives.CHROMA_BLADE, Items.DIAMOND_SWORD, "Chroma Blade");
 
         // Actives.Wildcard
-        register(Actives.Wildcard.LIGHTNING_BOTTLE, Items.BREWING_STAND, "Lightning Bottle");
-        register(Actives.Wildcard.ENTRENCH, Items.SOUL_SAND, "Entrench");
-        register(Actives.Wildcard.FLAME_SPIRIT, Items.SOUL_CAMPFIRE, "Flame Spirit");
-        register(Actives.Wildcard.PERMAFROST, Items.QUARTZ, "Permafrost");
-        register(Actives.Wildcard.PHANTOM_FORCE, Items.CHARCOAL, "Phantom Force");
-        register(Actives.Wildcard.RAPID_FIRE, Items.REPEATER, "Rapid Fire");
-        register(Actives.Wildcard.WHIRLWIND, Items.IRON_PICKAXE, "Whirlwind");
-        register(Actives.Wildcard.CONVERGENCE, Items.RECOVERY_COMPASS, "Convergence");
+        register(Actives.LIGHTNING_BOTTLE, Items.BREWING_STAND, "Lightning Bottle");
+        register(Actives.ENTRENCH, Items.SOUL_SAND, "Entrench");
+        register(Actives.FLAME_SPIRIT, Items.SOUL_CAMPFIRE, "Flame Spirit");
+        register(Actives.PERMAFROST, Items.QUARTZ, "Permafrost");
+        register(Actives.PHANTOM_FORCE, Items.CHARCOAL, "Phantom Force");
+        register(Actives.RAPID_FIRE, Items.REPEATER, "Rapid Fire");
+        register(Actives.WHIRLWIND, Items.IRON_PICKAXE, "Whirlwind");
+        register(Actives.CONVERGENCE, Items.RECOVERY_COMPASS, "Convergence");
 
         // Actives.Bow
-        register(Actives.Bow.DIVINE_BEAM, Items.YELLOW_CANDLE, "Divine Beam");
-        register(Actives.Bow.EARTHQUAKE, Items.COARSE_DIRT, "Earthquake");
-        register(Actives.Bow.PYROBLAST, Items.TNT_MINECART, "Pyroblast");
-        register(Actives.Bow.PIERCING_COLD, Items.PRISMARINE_SHARD, "Piercing Cold");
-        register(Actives.Bow.DUMMY_DECOY, Items.ARMOR_STAND, "Dummy Decoy");
-        register(Actives.Bow.VOLLEY, Items.ARROW, "Volley");
-        register(Actives.Bow.SKYHOOK, Items.FISHING_ROD, "Skyhook");
-        register(Actives.Bow.DISCO_BALL, Items.PEARLESCENT_FROGLIGHT, "Disco Ball");
+        register(Actives.DIVINE_BEAM, Items.YELLOW_CANDLE, "Divine Beam");
+        register(Actives.EARTHQUAKE, Items.COARSE_DIRT, "Earthquake");
+        register(Actives.PYROBLAST, Items.TNT_MINECART, "Pyroblast");
+        register(Actives.PIERCING_COLD, Items.PRISMARINE_SHARD, "Piercing Cold");
+        register(Actives.DUMMY_DECOY, Items.ARMOR_STAND, "Dummy Decoy");
+        register(Actives.VOLLEY, Items.ARROW, "Volley");
+        register(Actives.SKYHOOK, Items.FISHING_ROD, "Skyhook");
+        register(Actives.DISCO_BALL, Items.PEARLESCENT_FROGLIGHT, "Disco Ball");
 
         // Actives.Swap
-        register(Actives.Swap.SPARK_OF_INSPIRATION, Items.BELL, "Spark of Inspiration");
-        register(Actives.Swap.EARTHEN_WRATH, Items.TURTLE_HELMET, "Earthen Wrath");
-        register(Actives.Swap.VOLCANIC_METEOR, Items.MAGMA_BLOCK, "Volcanic Meteor");
-        register(Actives.Swap.AVALANCHE, Items.SNOW_BLOCK, "Avalanche");
-        register(Actives.Swap.CHAOS_DAGGER, Items.ITEM_FRAME, "Chaos Dagger");
-        register(Actives.Swap.GRAVITY_BOMB, Items.GRAY_GLAZED_TERRACOTTA, "Gravity Bomb");
-        register(Actives.Swap.THUNDERCLOUD_FORM, Items.WHITE_GLAZED_TERRACOTTA, "Thundercloud Form");
-        register(Actives.Swap.REFRACTION, Items.SPYGLASS, "Refraction");
-        register(Actives.Swap.COLOR_SPLASH, Items.BEACON, "Color Splash");
+        register(Actives.SPARK_OF_INSPIRATION, Items.BELL, "Spark of Inspiration");
+        register(Actives.EARTHEN_WRATH, Items.TURTLE_HELMET, "Earthen Wrath");
+        register(Actives.VOLCANIC_METEOR, Items.MAGMA_BLOCK, "Volcanic Meteor");
+        register(Actives.AVALANCHE, Items.SNOW_BLOCK, "Avalanche");
+        register(Actives.CHAOS_DAGGER, Items.ITEM_FRAME, "Chaos Dagger");
+        register(Actives.GRAVITY_BOMB, Items.GRAY_GLAZED_TERRACOTTA, "Gravity Bomb");
+        register(Actives.THUNDERCLOUD_FORM, Items.WHITE_GLAZED_TERRACOTTA, "Thundercloud Form");
+        register(Actives.REFRACTION, Items.SPYGLASS, "Refraction");
+        register(Actives.COLOR_SPLASH, Items.BEACON, "Color Splash");
 
         // Actives.Lifeline
-        register(Actives.Lifeline.ETERNAL_SAVIOR, Items.YELLOW_GLAZED_TERRACOTTA, "Eternal Savior");
-        register(Actives.Lifeline.APOCALYPSE, Items.ORANGE_DYE, "Apocalypse");
-        register(Actives.Lifeline.CRYOBOX, Items.GHAST_TEAR, "Cryobox");
-        register(Actives.Lifeline.ESCAPE_ARTIST, Items.ENDER_PEARL, "Escape Artist");
-        register(Actives.Lifeline.STEEL_STALLION, Items.IRON_HORSE_ARMOR, "Steel Stallion");
-        register(Actives.Lifeline.LAST_BREATH, Items.DRAGON_BREATH, "Last Breath");
+        register(Actives.ETERNAL_SAVIOR, Items.YELLOW_GLAZED_TERRACOTTA, "Eternal Savior");
+        register(Actives.APOCALYPSE, Items.ORANGE_DYE, "Apocalypse");
+        register(Actives.CRYOBOX, Items.GHAST_TEAR, "Cryobox");
+        register(Actives.ESCAPE_ARTIST, Items.ENDER_PEARL, "Escape Artist");
+        register(Actives.STEEL_STALLION, Items.IRON_HORSE_ARMOR, "Steel Stallion");
+        register(Actives.LAST_BREATH, Items.DRAGON_BREATH, "Last Breath");
 
         // Aspect
         register(Aspect.BOX, Items.BARREL, "Mystery Box");

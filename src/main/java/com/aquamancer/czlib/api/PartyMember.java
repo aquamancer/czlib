@@ -5,10 +5,7 @@ import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 public class PartyMember {
@@ -18,8 +15,7 @@ public class PartyMember {
     private EnumMap<Passives, Passive> passives = new EnumMap<>(Passives.class);
     private EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
     private Aspect aspect;
-    private EnumMap<ActiveSlot, Active> actives = new EnumMap<>(ActiveSlot.class);
-    private EnumMap<Actives.Wildcard, Active> wildcards = new EnumMap<>(Actives.Wildcard.class);
+    private EnumMap<Actives, Active> actives = new EnumMap<>(Actives.class);
     private EnumMap<Gifts, Gift> gifts = new EnumMap<>(Gifts.class);
     private EnumMap<AbilitySpec, Integer> charmLines = new EnumMap<>(AbilitySpec.class);
 
@@ -106,42 +102,31 @@ public class PartyMember {
         }
     }
 
-    public void setActives(List<Active> actives) {
-        EnumMap<ActiveSlot, Active> nonWildcards = new EnumMap<>(ActiveSlot.class);
-        EnumMap<Actives.Wildcard, Active> wildcards = new EnumMap<>(Actives.Wildcard.class);
-        for (Active active : actives) {
-            ActiveSlot slot = active.getSlot();
-            if (slot == ActiveSlot.WILDCARD && active.getAbility() instanceof Actives.Wildcard wildcard) {
-                if (active.getAbility() == Actives.Wildcard.CONVERGENCE) {
-                    // do not replace other existing wildcards if convergence is present
-                    // gui/chat will be the source of rarities
-                    wildcards.putAll(this.wildcards);
+    public void setActives(Set<Active> actives) {
+        EnumMap<Actives, Active> newActives = new EnumMap<>(Actives.class);
+        if (this.actives.containsKey(Actives.CONVERGENCE)) {
+            // retain current wildcards
+            this.actives.forEach((k, v) -> {
+                if (k.getSlot() == ActiveSlot.WILDCARD) {
+                    newActives.put(k, v);
                 }
-                wildcards.put(wildcard, active);
-            } else {
-                nonWildcards.put(active.getSlot(), active);
-            }
+            });
+        }
+        for (Active active : actives) {
+            newActives.put(active.getAbility(), active);
         }
 
-        EnumMap<ActiveSlot, Active> oldActives = this.actives;
-        EnumMap<Actives.Wildcard, Active> oldWildcards = this.wildcards;
-        this.actives = nonWildcards;
-        this.wildcards = wildcards;
+        EnumMap<Actives, Active> oldActives = this.actives;
+        this.actives = newActives;
 
         boolean changed = this.actives.size() != oldActives.size()
-                || this.wildcards.size() != oldWildcards.size()
                 || this.actives.entrySet().stream().anyMatch((entry) -> {
                     Active other = oldActives.get(entry.getKey());
-                    return other == null || !entry.getValue().deepEquals(other);
-                })
-                || this.wildcards.entrySet().stream().anyMatch((entry) -> {
-                    Active other = oldWildcards.get(entry.getKey());
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
             ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
         }
-
     }
 
     void addAbility(Passive passive) {
@@ -159,16 +144,9 @@ public class PartyMember {
     }
 
     void addAbility(Active active) {
-        if (active.getSlot() == ActiveSlot.WILDCARD && active.getAbility() instanceof Actives.Wildcard wildcard) {
-            Active old = this.wildcards.put(wildcard, active);
-            if (old == null || !old.deepEquals(active)) {
-                ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
-            }
-        } else {
-            Active old = this.actives.put(active.getSlot(), active);
-            if (old == null || !old.deepEquals(active)) {
-                ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
-            }
+        Active replaced = this.actives.put(active.getAbility(), active);
+        if (replaced == null || !replaced.deepEquals(active)) {
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
         }
     }
 
@@ -185,21 +163,13 @@ public class PartyMember {
         }
     }
 
-    void loseAbility(ActiveType active) {
-        if (actives.values().removeIf(e -> e.getAbility() == active)) {
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
-            return;
-        }
-
-        if (active instanceof Actives.Wildcard) {
-            if (active == Actives.Wildcard.CONVERGENCE) {
-                wildcards.clear();
-                ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
-            } else {
-                if (wildcards.remove(active) != null) {
-                    ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
-                }
+    void loseAbility(Actives active) {
+        if (this.actives.remove(active) != null) {
+            if (active == Actives.CONVERGENCE) {
+                // removing convergence removes all wildcards
+                this.actives.entrySet().removeIf(e -> e.getKey().getSlot() == ActiveSlot.WILDCARD);
             }
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
         }
     }
 
@@ -225,7 +195,6 @@ public class PartyMember {
 
     private void replaceAll(Function<Active, Active> newActive, Function<Passive, Passive> newPassive) {
         this.actives.replaceAll((k, v) -> newActive.apply(v));
-        this.wildcards.replaceAll((k, v) -> newActive.apply(v));
         this.passives.replaceAll((k, v) -> newPassive.apply(v));
 
         ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
@@ -314,14 +283,13 @@ public class PartyMember {
         s.append("Actives=");
         if (actives != null) {
             s.append("{");
-            for (Map.Entry<ActiveSlot, Active> e : actives.entrySet()) {
+            for (Map.Entry<Actives, Active> e : actives.entrySet()) {
                 s.append("\n    ").append(e.getKey()).append("={").append(e.getValue()).append("}");
             }
             s.append("\n}\n");
         } else {
             s.append("null\n");
         }
-        s.append("Wildcards=").append(wildcards);
         s.append("\n").append("Charm lines=").append(charmLines);
 
         return s.toString();

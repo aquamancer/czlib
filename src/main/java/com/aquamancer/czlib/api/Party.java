@@ -51,7 +51,7 @@ public class Party {
         players.get(player).setAspect(aspect);
     }
 
-    public void setActives(String player, List<Active> actives) {
+    public void setActives(String player, Set<Active> actives) {
         players.get(player).setActives(actives);
     }
 
@@ -79,7 +79,7 @@ public class Party {
         players.get(player).loseAbility(curse);
     }
 
-    public void loseAbility(String player, ActiveType active) {
+    public void loseAbility(String player, Actives active) {
         players.get(player).loseAbility(active);
     }
 
