@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -51,5 +52,18 @@ public enum Rarity {
             case UNCOMMON -> EPIC;
             case COMMON -> RARE;
         };
+    }
+
+    public class RarityComparator implements Comparator<HasRarity> {
+        @Override
+        public int compare(HasRarity o1, HasRarity o2) {
+            Rarity r1 = o1.getRarity();
+            Rarity r2 = o2.getRarity();
+            if (r1 == null && r2 == null) return 0;
+            if (r1 == null) return -1;
+            if (r2 == null) return 1;
+
+            return o1.getRarity().ordinal() - o2.getRarity().ordinal();
+        }
     }
 }

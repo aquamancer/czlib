@@ -1,8 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public enum AbilitySpec {
     PRISMATIC,
@@ -136,5 +134,22 @@ public enum AbilitySpec {
         fromAbilityName.put("Rebirth", AbilitySpec.PRISMATIC);
         fromAbilityName.put("Diversity", AbilitySpec.PRISMATIC);
         fromAbilityName.put("Opportunity", AbilitySpec.PRISMATIC);
+    }
+
+    public class SpecComparator implements Comparator<HasAbilitySpec> {
+        private final EnumMap<AbilitySpec, Integer> priority;
+        public SpecComparator(EnumMap<AbilitySpec, Integer> priority) {
+            this.priority = priority;
+        }
+
+        @Override
+        public int compare(HasAbilitySpec o1, HasAbilitySpec o2) {
+            Integer p1 = priority.get(o1.getSpec());
+            Integer p2 = priority.get(o2.getSpec());
+            if (p1 == null && p2 == null) return 0;
+            if (p1 == null) return -1;
+            if (p2 == null) return 1;
+            return p1 - p2;
+        }
     }
 }

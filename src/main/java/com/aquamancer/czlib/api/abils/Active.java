@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
-public class Active {
+public class Active implements HasAbilitySpec, HasRarity {
     private final Actives ability;
     private final AbilitySpec spec;
     private final Rarity rarity;
@@ -15,10 +15,12 @@ public class Active {
         return ability;
     }
 
+    @Override
     public AbilitySpec getSpec() {
         return spec;
     }
 
+    @Override
     public Rarity getRarity() {
         return rarity;
     }

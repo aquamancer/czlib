@@ -1,9 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -111,5 +108,35 @@ public enum Actives {
 
     public static Optional<Actives> fromString(String name) {
         return Optional.ofNullable(FROM_STRING.get(name));
+    }
+
+    public class ActiveSlotComparator implements Comparator<Actives> {
+        public final Map<ActiveSlot, Integer> priority;
+        public ActiveSlotComparator(Map<ActiveSlot, Integer> priority) {
+            this.priority = priority;
+        }
+
+        @Override
+        public int compare(Actives o1, Actives o2) {
+            return priority.get(o1.getSlot()) - priority.get(o2.getSlot());
+        }
+    }
+
+    public class ActiveSlotComparator2 implements Comparator<Active> {
+        public final Map<ActiveSlot, Integer> priority;
+        public ActiveSlotComparator2(Map<ActiveSlot, Integer> priority) {
+            this.priority = priority;
+        }
+
+        @Override
+        public int compare(Active o1, Active o2) {
+            Actives a1 = o1.getAbility();
+            Actives a2 = o2.getAbility();
+            if (a1 == null && a2 == null) return 0;
+            if (a1 == null) return -1;
+            if (a2 == null) return 1;
+
+            return priority.get(a1.getSlot()) - priority.get(a2.getSlot());
+        }
     }
 }
