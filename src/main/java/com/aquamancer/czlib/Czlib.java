@@ -8,6 +8,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -15,7 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 
 @ApiStatus.Internal
 public class Czlib implements ClientModInitializer {
@@ -108,6 +111,15 @@ public class Czlib implements ClientModInitializer {
 					ClientCommandManager.literal("clearTrinket")
 							.executes(context -> {
 								ZenithApi.getInstance().getPartyManager().setMembers(Set.of());
+								return 1;
+							})
+			);
+			dispatcher.register(
+					ClientCommandManager.literal("clearTrinket")
+							.executes(context -> {
+								MinecraftClient client = MinecraftClient.getInstance();
+								List<String> handItems = StreamSupport.stream(client.player.getHandItems().spliterator(), false).map(stack -> stack.getNbt().toString()).toList();
+								MinecraftClient.getInstance().player.sendMessage(Text.literal(handItems.toString()));
 								return 1;
 							})
 			);
