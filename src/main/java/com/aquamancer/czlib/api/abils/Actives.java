@@ -110,7 +110,7 @@ public enum Actives {
         return Optional.ofNullable(FROM_STRING.get(name));
     }
 
-    public class ActiveSlotComparator implements Comparator<Actives> {
+    public static class ActiveSlotComparator implements Comparator<Actives> {
         public final Map<ActiveSlot, Integer> priority;
         public ActiveSlotComparator(Map<ActiveSlot, Integer> priority) {
             this.priority = priority;
@@ -122,7 +122,7 @@ public enum Actives {
         }
     }
 
-    public class ActiveSlotComparator2 implements Comparator<Active> {
+    public static class ActiveSlotComparator2 implements Comparator<Active> {
         public final Map<ActiveSlot, Integer> priority;
         public ActiveSlotComparator2(Map<ActiveSlot, Integer> priority) {
             this.priority = priority;

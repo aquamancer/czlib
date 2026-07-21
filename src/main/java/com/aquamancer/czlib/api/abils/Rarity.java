@@ -54,7 +54,7 @@ public enum Rarity {
         };
     }
 
-    public class RarityComparator implements Comparator<HasRarity> {
+    public static class RarityComparator implements Comparator<HasRarity> {
         @Override
         public int compare(HasRarity o1, HasRarity o2) {
             Rarity r1 = o1.getRarity();

@@ -173,7 +173,7 @@ public class UpdateManager {
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
         slotsToClick.remove(SelfIdentifier.getSelfHeadSlot());
-        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick+", starting syncid="+this.lastScreenSyncId+",current screenhandler syncid="+client.player.currentScreenHandler.syncId));
+//        client.player.sendMessage(Text.literal("Updating all players: "+slotsToClick+", starting syncid="+this.lastScreenSyncId+",current screenhandler syncid="+client.player.currentScreenHandler.syncId));
         this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
         this.ticksUntilUpdate = -1;
         this.ticksSinceFullUpdate = 0;

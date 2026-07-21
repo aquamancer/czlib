@@ -136,9 +136,9 @@ public enum AbilitySpec {
         fromAbilityName.put("Opportunity", AbilitySpec.PRISMATIC);
     }
 
-    public class SpecComparator implements Comparator<HasAbilitySpec> {
-        private final EnumMap<AbilitySpec, Integer> priority;
-        public SpecComparator(EnumMap<AbilitySpec, Integer> priority) {
+    public static class SpecComparator implements Comparator<HasAbilitySpec> {
+        private final Map<AbilitySpec, Integer> priority;
+        public SpecComparator(Map<AbilitySpec, Integer> priority) {
             this.priority = priority;
         }
 
