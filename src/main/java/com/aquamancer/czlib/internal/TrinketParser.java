@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -156,7 +155,7 @@ public class TrinketParser {
             if (item.getItem() == EMPTY_SLOT || item.isEmpty()) break;
             String line1 = item.getName().getString();
 
-            Optional<Passives> passiveName = Passives.toEnum(line1);
+            Optional<Passives> passiveName = Passives.fromString(line1);
             if (passiveName.isPresent()) {
                 List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
                 if (tooltip.size() < 2) continue;
@@ -167,7 +166,7 @@ public class TrinketParser {
                 continue;
             }
 
-            Optional<Curse> curse = Curse.toEnum(line1);
+            Optional<Curse> curse = Curse.fromString(line1);
             if (curse.isPresent()) {
                 curses.add(curse.get());
                 continue;
@@ -184,7 +183,7 @@ public class TrinketParser {
         EnumSet<Spec> specs = EnumSet.noneOf(Spec.class);
         for (Integer slot : SPEC_SLOTS) {
             String line1 = inv.get(slot).getName().getString();
-            Optional<Spec> spec = Spec.toEnum(line1);
+            Optional<Spec> spec = Spec.fromString(line1);
             if (spec.isPresent()) {
                 specs.add(spec.get());
             }
@@ -193,7 +192,7 @@ public class TrinketParser {
     }
 
     private static Optional<Aspect> parseAspect(List<ItemStack> inv) {
-        return Aspect.toEnum(inv.get(ASPECT_SLOT).getName().getString());
+        return Aspect.fromString(inv.get(ASPECT_SLOT).getName().getString());
     }
 
     // multiple wildcards via convergence is handled by not having convergence replace previous wildcards

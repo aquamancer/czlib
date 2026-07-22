@@ -15,7 +15,7 @@ public enum Spec {
 
     private static Map<String, Spec> fromString = new HashMap<>();
 
-    public static Optional<Spec> toEnum(String string) {
+    public static Optional<Spec> fromString(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 

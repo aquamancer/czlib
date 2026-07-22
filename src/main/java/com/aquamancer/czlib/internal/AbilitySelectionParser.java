@@ -43,7 +43,7 @@ public class AbilitySelectionParser {
                 party.createMember(self);
 
                 Optional<Actives> active = Actives.fromString(ability);
-                Optional<Passives> passive = (active.isPresent()) ? Optional.empty() : Passives.toEnum(ability);
+                Optional<Passives> passive = (active.isPresent()) ? Optional.empty() : Passives.fromString(ability);
                 if (active.isPresent() || passive.isPresent()) {
                     List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
                     if (tooltip.size() < 2) return;
@@ -61,12 +61,12 @@ public class AbilitySelectionParser {
                     return;
                 }
 
-                Optional<Curse> curse = Curse.toEnum(ability);
+                Optional<Curse> curse = Curse.fromString(ability);
                 if (curse.isPresent()) {
                     party.addAbility(self, curse.get());
                     return;
                 }
-                Optional<Gifts> gift = Gifts.toEnum(ability);
+                Optional<Gifts> gift = Gifts.fromString(ability);
                 if (gift.isPresent()) {
                     party.addGift(self, gift.get());
                     return;
@@ -77,24 +77,24 @@ public class AbilitySelectionParser {
                 String ability = item.getName().getString();
                 party.createMember(self);
 
-                Optional<Aspect> aspect = Aspect.toEnum(ability);
+                Optional<Aspect> aspect = Aspect.fromString(ability);
                 if (aspect.isPresent()) party.setAspect(self, aspect.get());
                 break;
             }
             case "Poet's Quill (Remove Tree)": {
-                Optional<Spec> removed = Spec.toEnum(item.getName().getString());
+                Optional<Spec> removed = Spec.fromString(item.getName().getString());
                 if (removed.isEmpty()) return;
                 party.loseSpec(self, removed.get());
                 break;
             }
             case "Poet's Quill (Replace Tree)": {
-                Optional<Spec> gained = Spec.toEnum(item.getName().getString());
+                Optional<Spec> gained = Spec.fromString(item.getName().getString());
                 if (gained.isEmpty()) return;
                 party.addSpec(self, gained.get());
                 break;
             }
             case "Pointed Hat (Select Tree)":
-                Optional<Spec> tree = Spec.toEnum(item.getName().getString());
+                Optional<Spec> tree = Spec.fromString(item.getName().getString());
                 if (tree.isEmpty()) return;
                 party.addGift(self, new Gift(tree.get()));
                 break;

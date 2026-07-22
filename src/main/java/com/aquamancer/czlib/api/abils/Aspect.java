@@ -22,7 +22,7 @@ public enum Aspect {
         fromString.put("Aspect of the Wand", WAND);
     }
 
-    public static Optional<Aspect> toEnum(String string) {
+    public static Optional<Aspect> fromString(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 }

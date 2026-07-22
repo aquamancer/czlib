@@ -63,7 +63,7 @@ public enum Rarity {
             if (r1 == null) return -1;
             if (r2 == null) return 1;
 
-            return o1.getRarity().ordinal() - o2.getRarity().ordinal();
+            return r1.ordinal() - r2.ordinal();
         }
     }
 }

@@ -38,7 +38,7 @@ public enum Passives {
 
     private static final Map<String, Passives> fromString = new HashMap<>();
 
-    public static Optional<Passives> toEnum(String string) {
+    public static Optional<Passives> fromString(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 

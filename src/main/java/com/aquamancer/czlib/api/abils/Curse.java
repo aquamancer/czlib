@@ -25,7 +25,7 @@ public enum Curse {
 
     private static final Map<String, Curse> fromString = new HashMap<>();
 
-    public static Optional<Curse> toEnum(String string) {
+    public static Optional<Curse> fromString(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 
