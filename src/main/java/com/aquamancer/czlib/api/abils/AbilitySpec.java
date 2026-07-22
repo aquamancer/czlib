@@ -12,8 +12,8 @@ public enum AbilitySpec {
     STEEL,
     WIND;
 
-    private static Map<String, AbilitySpec> fromString = new HashMap<>();
-    private static Map<String, AbilitySpec> fromAbilityName = new HashMap<>();
+    private static final Map<String, AbilitySpec> fromString = new HashMap<>();
+    private static final Map<String, AbilitySpec> fromAbilityName = new HashMap<>();
 
     public static Optional<AbilitySpec> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));

@@ -1,77 +1,58 @@
 package com.aquamancer.czlib.api.abils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum Passives {
-    ENLIGHTENMENT,
-    REJUVENATION,
-    SUNDROPS,
-    BRAMBLE_SHELL,
-    BULWARK,
-    TOUGHNESS,
-    DETONATION,
-    PRIMORDIAL_MASTERY,
-    PYROMANIA,
-    FROZEN_DOMAIN,
-    ICEBREAKER,
-    BRUTALIZE,
-    DEADLY_STRIKE,
-    DETHRONER,
-    SHADOW_SLAM,
-    SHARPSHOOTER,
-    SPLIT_ARROW,
-    AEROMANCY,
-    DODGING,
-    ONE_WITH_THE_WIND,
-    RESTORING_DRAFT,
-    ABNORMALITY,
-    GENEROSITY,
-    CHARITY,
-    FLEXIBILITY,
-    MULTIPLICITY,
-    PROSPERITY,
-    REBIRTH,
-    DIVERSITY,
-    OPPORTUNITY;
+    ENLIGHTENMENT("Enlightenment"),
+    REJUVENATION("Rejuvenation"),
+    SUNDROPS("Sundrops"),
+    BRAMBLE_SHELL("Bramble Shell"),
+    BULWARK("Bulwark"),
+    TOUGHNESS("Toughness"),
+    DETONATION("Detonation"),
+    PRIMORDIAL_MASTERY("Primordial Mastery"),
+    PYROMANIA("Pyromania"),
+    FROZEN_DOMAIN("Frozen Domain"),
+    ICEBREAKER("Icebreaker"),
+    BRUTALIZE("Brutalize"),
+    DEADLY_STRIKE("Deadly Strike"),
+    DETHRONER("Dethroner"),
+    SHADOW_SLAM("Shadow Slam"),
+    SHARPSHOOTER("Sharpshooter"),
+    SPLIT_ARROW("Split Arrow"),
+    AEROMANCY("Aeromancy"),
+    DODGING("Dodging"),
+    ONE_WITH_THE_WIND("One with the Wind"),
+    RESTORING_DRAFT("Restoring Draft"),
+    ABNORMALITY("Abnormality"),
+    GENEROSITY("Generosity"),
+    CHARITY("Charity"),
+    FLEXIBILITY("Flexibility"),
+    MULTIPLICITY("Multiplicity"),
+    PROSPERITY("Prosperity"),
+    REBIRTH("Rebirth"),
+    DIVERSITY("Diversity"),
+    OPPORTUNITY("Opportunity");
 
-    private static final Map<String, Passives> fromString = new HashMap<>();
+    private final String displayName;
 
-    public static Optional<Passives> fromString(String string) {
-        return Optional.ofNullable(fromString.get(string));
+    Passives(String displayName) {
+        this.displayName = displayName;
     }
 
-    static {
-        fromString.put("Enlightenment", ENLIGHTENMENT);
-        fromString.put("Rejuvenation", REJUVENATION);
-        fromString.put("Sundrops", SUNDROPS);
-        fromString.put("Bramble Shell", BRAMBLE_SHELL);
-        fromString.put("Bulwark", BULWARK);
-        fromString.put("Toughness", TOUGHNESS);
-        fromString.put("Detonation", DETONATION);
-        fromString.put("Primordial Mastery", PRIMORDIAL_MASTERY);
-        fromString.put("Pyromania", PYROMANIA);
-        fromString.put("Frozen Domain", FROZEN_DOMAIN);
-        fromString.put("Icebreaker", ICEBREAKER);
-        fromString.put("Brutalize", BRUTALIZE);
-        fromString.put("Deadly Strike", DEADLY_STRIKE);
-        fromString.put("Dethroner", DETHRONER);
-        fromString.put("Shadow Slam", SHADOW_SLAM);
-        fromString.put("Sharpshooter", SHARPSHOOTER);
-        fromString.put("Split Arrow", SPLIT_ARROW);
-        fromString.put("Aeromancy", AEROMANCY);
-        fromString.put("Dodging", DODGING);
-        fromString.put("One with the Wind", ONE_WITH_THE_WIND);
-        fromString.put("Restoring Draft", RESTORING_DRAFT);
-        fromString.put("Abnormality", ABNORMALITY);
-        fromString.put("Generosity", GENEROSITY);
-        fromString.put("Charity", CHARITY);
-        fromString.put("Flexibility", FLEXIBILITY);
-        fromString.put("Multiplicity", MULTIPLICITY);
-        fromString.put("Prosperity", PROSPERITY);
-        fromString.put("Rebirth", REBIRTH);
-        fromString.put("Diversity", DIVERSITY);
-        fromString.put("Opportunity", OPPORTUNITY);
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    private static final Map<String, Passives> FROM_STRING = Arrays.stream(values())
+            .collect(Collectors.toMap(Passives::getDisplayName, Function.identity()));
+
+    public static Optional<Passives> fromString(String string) {
+        return Optional.ofNullable(FROM_STRING.get(string));
     }
 }
