@@ -38,7 +38,7 @@ public class Gift {
     public Gift(Spec callisPointedHat) {
         this.gift = Gifts.CALLICARPAS_POINTED_HAT;
         this.callisPointedHat = callisPointedHat;
-        this.counter = Gifts.getDefaultValue(Gifts.CALLICARPAS_POINTED_HAT);
+        this.counter = Gifts.CALLICARPAS_POINTED_HAT.getDefaultValue();
     }
 
     public Gifts getGift() {

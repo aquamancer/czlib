@@ -1,74 +1,62 @@
 package com.aquamancer.czlib.api.abils;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum Gifts {
-    TWISTED_SCROLL,
-    FORSAKEN_GRIMOIRE,
-    PRISMATIC_CUBE,
-    NORTHERN_STAR,
-    BOTTOMLESS_BOWL,
-    POETS_QUILL,
-    PURGING_STONE,
-    WILD_CARD,
-    AVARICIOUS_PENDANT,
-    CELESTIAL_SURPRISE,
-    COMB_OF_SELECTION,
-    PILLAR_OF_LIGHT,
-    BROKEN_CLOCK,
-    TREASURE_MAP,
-    MEGA_HAMMER,
-    KALEIDOSCOPIC_LENS,
-    CALLICARPAS_POINTED_HAT,
-    VENOM_OF_THE_BROODMOTHER,
-    BROODMOTHERS_WEBBING,
-    STATUE_OF_REGRET,
-    RAINBOW_GEODE,
-    CRACKED_IDOL,
-    ORB_OF_DARKNESS;
+    TWISTED_SCROLL("Twisted Scroll"),
+    FORSAKEN_GRIMOIRE("Forsaken Grimoire"),
+    PRISMATIC_CUBE("Prismatic Cube"),
+    NORTHERN_STAR("Northern Star", 4),
+    BOTTOMLESS_BOWL("Bottomless Bowl"),
+    POETS_QUILL("Poet's Quill"),
+    PURGING_STONE("Purging Stone"),
+    WILD_CARD("Wild Card"),
+    AVARICIOUS_PENDANT("Avaricious Pendant"),
+    CELESTIAL_SURPRISE("Celestial Surprise"),
+    COMB_OF_SELECTION("Comb of Selection"),
+    PILLAR_OF_LIGHT("Pillar of Light"),
+    BROKEN_CLOCK("Broken Clock"),
+    TREASURE_MAP("Treasure Map"),
+    MEGA_HAMMER("Mega Hammer"),
+    KALEIDOSCOPIC_LENS("Kaleidoscopic Lens"),
+    CALLICARPAS_POINTED_HAT("Callicarpa's Pointed Hat", 3),
+    VENOM_OF_THE_BROODMOTHER("Venom of the Broodmother"),
+    BROODMOTHERS_WEBBING("Broodmother's Webbing"),
+    STATUE_OF_REGRET("Statue of Regret"),
+    RAINBOW_GEODE("Rainbow Geode", 3),
+    CRACKED_IDOL("Cracked Idol", 1),
+    ORB_OF_DARKNESS("Orb of Darkness");
 
-    private static final Map<String, Gifts> fromString = new HashMap<>();
-    private static final Map<Gifts, Integer> defaultCounters = new HashMap<>();
+    private final String displayName;
+    private final int defaultCounter;
+
+    Gifts(String displayName) {
+        this(displayName, 0);
+    }
+
+    Gifts(String displayName, int defaultCounter) {
+        this.displayName = displayName;
+        this.defaultCounter = defaultCounter;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public int getDefaultValue() {
+        return defaultCounter;
+    }
+
+    private static final Map<String, Gifts> FROM_STRING =
+            Arrays.stream(values())
+                    .collect(Collectors.toMap(Gifts::getDisplayName, Function.identity()));
 
     public static Optional<Gifts> fromString(String string) {
-        return Optional.ofNullable(fromString.get(string));
-    }
-
-    public static int getDefaultValue(Gifts gift) {
-        Integer v = defaultCounters.get(gift);
-        return (v == null) ? 0 : v;
-    }
-
-    static {
-        fromString.put("Twisted Scroll", TWISTED_SCROLL);
-        fromString.put("Forsaken Grimoire", FORSAKEN_GRIMOIRE);
-        fromString.put("Prismatic Cube", PRISMATIC_CUBE);
-        fromString.put("Northern Star", NORTHERN_STAR);
-        fromString.put("Bottomless Bowl", BOTTOMLESS_BOWL);
-        fromString.put("Poet's Quill", POETS_QUILL);
-        fromString.put("Purging Stone", PURGING_STONE);
-        fromString.put("Wild Card", WILD_CARD);
-        fromString.put("Avaricious Pendant", AVARICIOUS_PENDANT);
-        fromString.put("Celestial Surprise", CELESTIAL_SURPRISE);
-        fromString.put("Comb of Selection", COMB_OF_SELECTION);
-        fromString.put("Pillar of Light", PILLAR_OF_LIGHT);
-        fromString.put("Broken Clock", BROKEN_CLOCK);
-        fromString.put("Treasure Map", TREASURE_MAP);
-        fromString.put("Mega Hammer", MEGA_HAMMER);
-        fromString.put("Kaleidoscopic Lens", KALEIDOSCOPIC_LENS);
-        fromString.put("Callicarpa's Pointed Hat", CALLICARPAS_POINTED_HAT);
-        fromString.put("Venom of the Broodmother", VENOM_OF_THE_BROODMOTHER);
-        fromString.put("Broodmother's Webbing", BROODMOTHERS_WEBBING);
-        fromString.put("Statue of Regret", STATUE_OF_REGRET);
-        fromString.put("Rainbow Geode", RAINBOW_GEODE);
-        fromString.put("Cracked Idol", CRACKED_IDOL);
-        fromString.put("Orb of Darkness", ORB_OF_DARKNESS);
-
-        defaultCounters.put(CRACKED_IDOL, 1);
-        defaultCounters.put(NORTHERN_STAR, 4);
-        defaultCounters.put(CALLICARPAS_POINTED_HAT, 3);
-        defaultCounters.put(RAINBOW_GEODE, 3);
+        return Optional.ofNullable(FROM_STRING.get(string));
     }
 }

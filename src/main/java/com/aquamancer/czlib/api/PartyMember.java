@@ -234,7 +234,7 @@ public class PartyMember {
             case RAINBOW_GEODE:
             case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui will call addGift(Gift) with a tree and replace this
             case CRACKED_IDOL:
-                this.gifts.put(gift, new Gift(gift, Gifts.getDefaultValue(gift)));
+                this.gifts.put(gift, new Gift(gift, gift.getDefaultValue()));
                 ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
                 break;
             // gifts not fully handled by chat or gui
