@@ -4,6 +4,7 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -11,13 +12,14 @@ import java.util.function.Function;
 public class PartyMember {
     private final String name;
     private double graveTimer;
+
     private EnumSet<Spec> specs = EnumSet.noneOf(Spec.class);
     private EnumMap<Passives, Passive> passives = new EnumMap<>(Passives.class);
     private EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
     private Aspect aspect;
     private EnumMap<Actives, Active> actives = new EnumMap<>(Actives.class);
     private EnumMap<Gifts, Gift> gifts = new EnumMap<>(Gifts.class);
-    private EnumMap<AbilitySpec, Integer> charmLines = new EnumMap<>(AbilitySpec.class);
+    private EnumMap<Spec, Integer> charmLines = new EnumMap<>(Spec.class);
 
     public PartyMember(String name) {
         this.name = name;
@@ -26,8 +28,9 @@ public class PartyMember {
     void onRoomSpawned(Rooms room, boolean wildcard) {
         gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
             if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
-                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
-                if (v.decrement() <= 0) {
+                v.decrement();
+                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
+                if (v.getCounter() <= 0) {
                     return null;
                 }
             }
@@ -36,18 +39,17 @@ public class PartyMember {
 
         gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
             if (wildcard) {
-                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
                 v.increment();
+                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
             }
             return v;
         });
     }
 
     void onDeath() {
-        this.gifts.computeIfPresent(Gifts.CRACKED_IDOL, (k, v) -> {
-            ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
-            return null;
-        });
+        if (gifts.remove(Gifts.CRACKED_IDOL) != null) {
+            ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
+        }
     }
 
     void setGraveTimer(double time) {
@@ -55,7 +57,7 @@ public class PartyMember {
         this.graveTimer = time;
 
         if (this.graveTimer != old) {
-            ZenithApiUpdateEvents.GRAVE_TIMER.invoker().onGraveTimerUpdate(this.name);
+            ZenithApiUpdateEvents.GRAVE_TIMER.invoker().onGraveTimerUpdate(this);
         }
     }
 
@@ -69,7 +71,7 @@ public class PartyMember {
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
-            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
+            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
         }
     }
 
@@ -78,7 +80,7 @@ public class PartyMember {
         this.curses = curses;
 
         if (!this.curses.equals(old)) {
-            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this.name);
+            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this);
         }
     }
 
@@ -87,7 +89,7 @@ public class PartyMember {
         this.specs = specs;
 
         if (!this.specs.equals(old)) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
         }
     }
 
@@ -96,7 +98,7 @@ public class PartyMember {
         this.aspect = aspect;
 
         if (this.aspect != old) {
-            ZenithApiUpdateEvents.ASPECT.invoker().onAspectUpdate(this.name);
+            ZenithApiUpdateEvents.ASPECT.invoker().onAspectUpdate(this);
         }
     }
 
@@ -123,7 +125,7 @@ public class PartyMember {
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
         }
     }
 
@@ -131,33 +133,33 @@ public class PartyMember {
         Passive old = this.passives.put(passive.getAbility(), passive);
 
         if (old == null || !old.deepEquals(passive)) {
-            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
+            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
         }
     }
 
     void addAbility(Curse curse) {
         if (this.curses.add(curse)) {
-            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this.name);
+            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this);
         }
     }
 
     void addAbility(Active active) {
         Active replaced = this.actives.put(active.getAbility(), active);
         if (replaced == null || !replaced.deepEquals(active)) {
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
         }
     }
 
     void loseAbility(Passives passive) {
         Passive old = this.passives.remove(passive);
         if (old != null) {
-            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
+            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
         }
     }
 
     void loseAbility(Curse curse) {
         if (this.curses.remove(curse)) {
-            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this.name);
+            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this);
         }
     }
 
@@ -167,19 +169,19 @@ public class PartyMember {
                 // removing convergence removes all wildcards
                 this.actives.entrySet().removeIf(e -> e.getKey().getSlot() == ActiveSlot.WILDCARD);
             }
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
+            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
         }
     }
 
     void addSpec(Spec spec) {
         if (this.specs.add(spec)) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
         }
     }
 
     void loseSpec(Spec spec) {
         if (this.specs.remove(spec)) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
         }
     }
 
@@ -187,7 +189,7 @@ public class PartyMember {
         this.specs = EnumSet.complementOf(this.specs);
 
         if (!this.specs.equals(EnumSet.allOf(Spec.class))) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this.name);
+            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
         }
     }
 
@@ -195,8 +197,8 @@ public class PartyMember {
         this.actives.replaceAll((k, v) -> newActive.apply(v));
         this.passives.replaceAll((k, v) -> newPassive.apply(v));
 
-        ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this.name);
-        ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this.name);
+        ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
+        ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
     }
 
     private void replaceAll(Function<Rarity, Rarity> newRarity) {
@@ -233,7 +235,7 @@ public class PartyMember {
             case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui will call addGift(Gift) with a tree and replace this
             case CRACKED_IDOL:
                 this.gifts.put(gift, new Gift(gift, gift.getDefaultValue()));
-                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
+                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
                 break;
             // gifts not fully handled by chat or gui
             case KALEIDOSCOPIC_LENS:
@@ -256,8 +258,8 @@ public class PartyMember {
         this.gifts.put(gift.getAbility(), gift);
     }
 
-    void setCharmLines(EnumMap<AbilitySpec, Integer> charmLines) {
-        EnumMap<AbilitySpec, Integer> old = this.charmLines;
+    void setCharmLines(EnumMap<Spec, Integer> charmLines) {
+        EnumMap<Spec, Integer> old = this.charmLines;
         this.charmLines = charmLines;
 
         boolean changed = this.charmLines.size() != old.size()
@@ -266,9 +268,50 @@ public class PartyMember {
                     return !entry.getValue().equals(other);
                 });
         if (changed) {
-            ZenithApiUpdateEvents.VZC.invoker().onVzcUpdate(this.name);
+            ZenithApiUpdateEvents.VZC.invoker().onVzcUpdate(this);
         }
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getGraveTimer() {
+        return graveTimer;
+    }
+
+    public EnumSet<Spec> getSpecs() {
+        return specs;
+    }
+
+    public Map<Passives, Passive> getPassives() {
+        return passives;
+    }
+
+    public EnumSet<Curse> getCurses() {
+        return curses;
+    }
+
+    public Aspect getAspect() {
+        return aspect;
+    }
+
+    public Map<Actives, Active> getActives() {
+        return actives;
+    }
+
+    public Map<Gifts, Gift> getGifts() {
+        return gifts;
+    }
+
+    public Map<Spec, Integer> getCharmLines() {
+        return charmLines;
+    }
+
+    public Optional<Spec> getCharmedSpec() {
+        return charmLines.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
+    }
+
 
     @Override
     public String toString() {

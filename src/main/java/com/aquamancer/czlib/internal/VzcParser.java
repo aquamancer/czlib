@@ -3,6 +3,7 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.Czlib;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.AbilitySpec;
+import com.aquamancer.czlib.api.abils.Spec;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,18 +49,17 @@ public class VzcParser {
         List<String> tooltip = book.getTooltip(null, TooltipContext.BASIC).stream().map(Text::getString).toList();
         if (tooltip.size() < 4) return;
 
-        EnumMap<AbilitySpec, Integer> lineCounts = new EnumMap<>(AbilitySpec.class);
+        EnumMap<Spec, Integer> lineCounts = new EnumMap<>(Spec.class);
         int i = 1;
         if (tooltip.get(1).equals("These Charms are currently disabled!")) {
             i = 2;
         }
         for (; i < tooltip.size() - 3; i++) {
             Optional<AbilitySpec> spec = parseSpec(tooltip.get(i));
-            if (spec.isEmpty()) {
-                Czlib.LOGGER.error("Spec for ability could not be parsed from charm summary line {}: {}", i, tooltip.get(i));
-                continue;
-            }
-            lineCounts.compute(spec.get(), (k, v) -> {
+            if (spec.isEmpty()) continue;
+            Optional<Spec> converted = spec.get().toSpec();
+            if (converted.isEmpty()) continue;
+            lineCounts.compute(converted.get(), (k, v) -> {
                 return (v == null) ? 1 : v + 1;
             });
         }

@@ -29,7 +29,7 @@ public enum AbilitySpec {
         return displayName;
     }
 
-    public Optional<Spec> getSpec() {
+    public Optional<Spec> toSpec() {
         return Optional.ofNullable(spec);
     }
 

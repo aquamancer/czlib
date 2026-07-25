@@ -2,6 +2,7 @@ package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.internal.SelfIdentifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -45,6 +46,13 @@ public class ZenithApi {
 
     public Optional<PartyMember> getPlayer(String name) {
         return this.party.getPlayer(name);
+    }
+
+    public Optional<PartyMember> getSelf() {
+        return getPlayer(getSelfName());
+    }
+    public String getSelfName() {
+        return SelfIdentifier.getSelfName();
     }
 
     public boolean isPartyMember(String name) {

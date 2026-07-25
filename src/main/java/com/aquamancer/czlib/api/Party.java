@@ -2,6 +2,7 @@ package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
+import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -31,10 +32,13 @@ public class Party {
     }
 
     public void setMembers(Set<String> names) {
-        players.keySet().retainAll(names);
+        boolean changed = players.keySet().retainAll(names);
         for (String name : names) {
-            players.putIfAbsent(name, new PartyMember(name));
+            if (players.putIfAbsent(name, new PartyMember(name)) == null) {
+                changed = true;
+            }
         }
+        if (changed) ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
     }
 
     public void setGraveTimer(String player, double timer) {
@@ -67,7 +71,9 @@ public class Party {
     }
 
     public void createMember(String name) {
-        players.computeIfAbsent(name, PartyMember::new);
+        if (players.putIfAbsent(name, new PartyMember(name)) == null) {
+            ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
+        }
     }
 
     public void addAbility(String player, Passive passive) {
@@ -130,12 +136,15 @@ public class Party {
         players.get(player).addGift(gift);
     }
 
-    public void setCharmLines(String player, EnumMap<AbilitySpec, Integer> charmLines) {
+    public void setCharmLines(String player, EnumMap<Spec, Integer> charmLines) {
         players.get(player).setCharmLines(charmLines);
     }
 
     void clear() {
-        this.players.clear();
+        if (!players.isEmpty()) {
+            players.clear();
+            ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
+        }
     }
 
     @Override

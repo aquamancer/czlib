@@ -1,9 +1,21 @@
 package com.aquamancer.czlib.api.event;
 
+import com.aquamancer.czlib.api.PartyMember;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
+import java.util.Set;
+
 public class ZenithApiUpdateEvents {
+    public static Event<PartyUpdate> PARTY_MEMBER = EventFactory.createArrayBacked(
+            PartyUpdate.class,
+            (listeners) -> (names) -> {
+                for (PartyUpdate listener : listeners) {
+                    listener.onPartyUpdate(names);
+                }
+            }
+    );
+
     public static Event<ActiveUpdate> ACTIVE = EventFactory.createArrayBacked(
             ActiveUpdate.class,
             (listeners) -> (player) -> {
@@ -78,42 +90,47 @@ public class ZenithApiUpdateEvents {
 
 
     @FunctionalInterface
+    public interface PartyUpdate {
+        void onPartyUpdate(Set<String> names);
+    }
+
+    @FunctionalInterface
     public interface ActiveUpdate {
-        void onActiveUpdate(String player);
+        void onActiveUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface PassiveUpdate {
-        void onPassiveUpdate(String player);
+        void onPassiveUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface CurseUpdate {
-        void onCurseUpdate(String player);
+        void onCurseUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface GraveTimerUpdate {
-        void onGraveTimerUpdate(String player);
+        void onGraveTimerUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface SpecUpdate {
-        void onSpecUpdate(String player);
+        void onSpecUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface AspectUpdate {
-        void onAspectUpdate(String player);
+        void onAspectUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface GiftUpdate {
-        void onGiftUpdate(String player);
+        void onGiftUpdate(PartyMember player);
     }
 
     @FunctionalInterface
     public interface VzcUpdate {
-        void onVzcUpdate(String player);
+        void onVzcUpdate(PartyMember player);
     }
 }
