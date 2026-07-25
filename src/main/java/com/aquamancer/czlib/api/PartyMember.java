@@ -21,34 +21,32 @@ public class PartyMember {
 
     public PartyMember(String name) {
         this.name = name;
+    }
 
-        ZenithApiStateEvents.ROOM_SPAWNED.register((room, wildcard) -> {
-            gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
-                if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
-                    ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
-                    if (v.decrement() <= 0) {
-                        return null;
-                    }
-                }
-                return v;
-            });
-
-            gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
-                if (wildcard) {
-                    ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
-                    v.increment();
-                }
-                return v;
-            });
-        });
-        // todo move this to Party?
-        ZenithApiStateEvents.GRAVE_SPAWNED.register((deadPlayer) -> {
-            if (this.name.equals(deadPlayer)) {
-                this.gifts.computeIfPresent(Gifts.CRACKED_IDOL, (k, v) -> {
-                    ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
+    void onRoomSpawned(Rooms room, boolean wildcard) {
+        gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
+            if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
+                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
+                if (v.decrement() <= 0) {
                     return null;
-                });
+                }
             }
+            return v;
+        });
+
+        gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
+            if (wildcard) {
+                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
+                v.increment();
+            }
+            return v;
+        });
+    }
+
+    void onDeath() {
+        this.gifts.computeIfPresent(Gifts.CRACKED_IDOL, (k, v) -> {
+            ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this.name);
+            return null;
         });
     }
 
@@ -255,7 +253,7 @@ public class PartyMember {
     }
 
     void addGift(Gift gift) {
-        this.gifts.put(gift.getGift(), gift);
+        this.gifts.put(gift.getAbility(), gift);
     }
 
     void setCharmLines(EnumMap<AbilitySpec, Integer> charmLines) {

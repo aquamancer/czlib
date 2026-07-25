@@ -97,8 +97,8 @@ public class UpdateManager {
         String name = player.getName().getString();
         if (!ZenithApi.getInstance().isPartyMember(name)) return;
         List<Pair<EquipmentSlot, ItemStack>> changed = packet.getEquipmentList();
-        // player only changed held item
-        if (changed.size() == 1 && changed.get(0).getFirst() == EquipmentSlot.MAINHAND) return;
+        if (changed.size() <= 2) return;  // magic number from testing to filter out durability changes
+//        if (changed.size() == 1 && changed.get(0).getFirst() == EquipmentSlot.MAINHAND) return;
         Stream<ItemStack> stacks = changed.stream().map(Pair::getSecond);
         if (stacks.allMatch(ItemStack::isEmpty)) return;
         List<String> stack = changed.stream().map(Pair::getSecond).map(s -> s.getName().getString()).toList();

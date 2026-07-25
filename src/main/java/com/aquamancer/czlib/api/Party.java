@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -9,7 +10,17 @@ import java.util.*;
 public class Party {
     private final Map<String, PartyMember> players = new HashMap<>();
 
-    Party() {}
+    Party() {
+        ZenithApiStateEvents.ROOM_SPAWNED.register((room, wildcard) -> {
+            players.values().forEach(player -> player.onRoomSpawned(room, wildcard));
+        });
+        ZenithApiStateEvents.GRAVE_SPAWNED.register((deadPlayer) -> {
+            players.computeIfPresent(deadPlayer, (name, player) -> {
+                player.onDeath();
+                return player;
+            });
+        });
+    }
 
     Map<String, PartyMember> getPlayers() {
         return this.players;

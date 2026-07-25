@@ -16,7 +16,7 @@ public class Gift {
             Rooms.BOSS
     );
 
-    private final Gifts gift;
+    private final Gifts ability;
     private int counter;
 
     // dont want to make more classes
@@ -24,7 +24,7 @@ public class Gift {
     private Spec callisPointedHat;
 
     public Gift(Gifts gift) {
-        this.gift = gift;
+        this.ability = gift;
         if (gift == Gifts.TREASURE_MAP) {
             treasureMap = EnumSet.copyOf(TREASURE_MAP_ROOMS);
         }
@@ -36,13 +36,13 @@ public class Gift {
     }
 
     public Gift(Spec callisPointedHat) {
-        this.gift = Gifts.CALLICARPAS_POINTED_HAT;
+        this.ability = Gifts.CALLICARPAS_POINTED_HAT;
         this.callisPointedHat = callisPointedHat;
         this.counter = Gifts.CALLICARPAS_POINTED_HAT.getDefaultValue();
     }
 
-    public Gifts getGift() {
-        return this.gift;
+    public Gifts getAbility() {
+        return this.ability;
     }
 
     public int getCounter() {
@@ -58,16 +58,16 @@ public class Gift {
     }
 
     public Optional<EnumSet<Rooms>> getTreasureMapRemaining() {
-        if (this.gift != Gifts.TREASURE_MAP) {
-            Czlib.LOGGER.error("Treasure map field queried on Gift of type Gifts: {}", this.gift);
+        if (this.ability != Gifts.TREASURE_MAP) {
+            Czlib.LOGGER.error("Treasure map field queried on Gift of type Gifts: {}", this.ability);
             return Optional.empty();
         }
         return Optional.ofNullable(this.treasureMap);
     }
 
     public Optional<Spec> getCallisPointedHat() {
-        if (this.gift != Gifts.CALLICARPAS_POINTED_HAT) {
-            Czlib.LOGGER.error("Callicarpa's Hat spec field queried on Gift of type Gifts: {}", this.gift);
+        if (this.ability != Gifts.CALLICARPAS_POINTED_HAT) {
+            Czlib.LOGGER.error("Callicarpa's Hat spec field queried on Gift of type Gifts: {}", this.ability);
             return Optional.empty();
         }
         return Optional.ofNullable(this.callisPointedHat);
@@ -77,11 +77,11 @@ public class Gift {
     public boolean equals(Object o2) {
         if (this == o2) return true;
         if (!(o2 instanceof Gift)) return false;
-        return this.gift == ((Gift) o2).gift;
+        return this.ability == ((Gift) o2).ability;
     }
 
     @Override
     public int hashCode() {
-        return gift.hashCode();
+        return ability.hashCode();
     }
 }
