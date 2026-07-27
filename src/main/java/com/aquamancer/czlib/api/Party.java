@@ -21,6 +21,9 @@ public class Party {
                 return player;
             });
         });
+        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
+            this.clear();
+        });
     }
 
     Map<String, PartyMember> getPlayers() {

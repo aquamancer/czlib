@@ -50,6 +50,7 @@ public class ShardTracker {
                 if (!currentShard.equals(previousValidShard)) {
                     if (isZenithShard(previousValidShard)) {
                         ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
+                        MinecraftClient.getInstance().player.sendMessage(Text.literal("exited zenith"));
                     }
                 }
                 if (isZenithShard(currentShard)) {

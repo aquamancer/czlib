@@ -1,10 +1,8 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
-import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -29,7 +27,7 @@ public class PartyMember {
         gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
             if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
                 v.decrement();
-                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
+                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
                 if (v.getCounter() <= 0) {
                     return null;
                 }
@@ -40,7 +38,7 @@ public class PartyMember {
         gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
             if (wildcard) {
                 v.increment();
-                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
+                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
             }
             return v;
         });
@@ -48,7 +46,7 @@ public class PartyMember {
 
     void onDeath() {
         if (gifts.remove(Gifts.CRACKED_IDOL) != null) {
-            ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
     }
 
@@ -57,7 +55,7 @@ public class PartyMember {
         this.graveTimer = time;
 
         if (this.graveTimer != old) {
-            ZenithApiUpdateEvents.GRAVE_TIMER.invoker().onGraveTimerUpdate(this);
+            ZenithApiUpdateEvents.GRAVE_TIMER.invoker().onUpdate(this);
         }
     }
 
@@ -71,7 +69,7 @@ public class PartyMember {
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
-            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
+            ZenithApiUpdateEvents.PASSIVE.invoker().onUpdate(this);
         }
     }
 
@@ -80,7 +78,7 @@ public class PartyMember {
         this.curses = curses;
 
         if (!this.curses.equals(old)) {
-            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this);
+            ZenithApiUpdateEvents.CURSE.invoker().onUpdate(this);
         }
     }
 
@@ -89,7 +87,7 @@ public class PartyMember {
         this.specs = specs;
 
         if (!this.specs.equals(old)) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
+            ZenithApiUpdateEvents.SPEC.invoker().onUpdate(this);
         }
     }
 
@@ -98,7 +96,7 @@ public class PartyMember {
         this.aspect = aspect;
 
         if (this.aspect != old) {
-            ZenithApiUpdateEvents.ASPECT.invoker().onAspectUpdate(this);
+            ZenithApiUpdateEvents.ASPECT.invoker().onUpdate(this);
         }
     }
 
@@ -125,7 +123,7 @@ public class PartyMember {
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
+            ZenithApiUpdateEvents.ACTIVE.invoker().onUpdate(this);
         }
     }
 
@@ -133,33 +131,33 @@ public class PartyMember {
         Passive old = this.passives.put(passive.getAbility(), passive);
 
         if (old == null || !old.deepEquals(passive)) {
-            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
+            ZenithApiUpdateEvents.PASSIVE.invoker().onUpdate(this);
         }
     }
 
     void addAbility(Curse curse) {
         if (this.curses.add(curse)) {
-            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this);
+            ZenithApiUpdateEvents.CURSE.invoker().onUpdate(this);
         }
     }
 
     void addAbility(Active active) {
         Active replaced = this.actives.put(active.getAbility(), active);
         if (replaced == null || !replaced.deepEquals(active)) {
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
+            ZenithApiUpdateEvents.ACTIVE.invoker().onUpdate(this);
         }
     }
 
     void loseAbility(Passives passive) {
         Passive old = this.passives.remove(passive);
         if (old != null) {
-            ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
+            ZenithApiUpdateEvents.PASSIVE.invoker().onUpdate(this);
         }
     }
 
     void loseAbility(Curse curse) {
         if (this.curses.remove(curse)) {
-            ZenithApiUpdateEvents.CURSE.invoker().onCurseUpdate(this);
+            ZenithApiUpdateEvents.CURSE.invoker().onUpdate(this);
         }
     }
 
@@ -169,19 +167,19 @@ public class PartyMember {
                 // removing convergence removes all wildcards
                 this.actives.entrySet().removeIf(e -> e.getKey().getSlot() == ActiveSlot.WILDCARD);
             }
-            ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
+            ZenithApiUpdateEvents.ACTIVE.invoker().onUpdate(this);
         }
     }
 
     void addSpec(Spec spec) {
         if (this.specs.add(spec)) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
+            ZenithApiUpdateEvents.SPEC.invoker().onUpdate(this);
         }
     }
 
     void loseSpec(Spec spec) {
         if (this.specs.remove(spec)) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
+            ZenithApiUpdateEvents.SPEC.invoker().onUpdate(this);
         }
     }
 
@@ -189,7 +187,7 @@ public class PartyMember {
         this.specs = EnumSet.complementOf(this.specs);
 
         if (!this.specs.equals(EnumSet.allOf(Spec.class))) {
-            ZenithApiUpdateEvents.SPEC.invoker().onSpecUpdate(this);
+            ZenithApiUpdateEvents.SPEC.invoker().onUpdate(this);
         }
     }
 
@@ -197,8 +195,8 @@ public class PartyMember {
         this.actives.replaceAll((k, v) -> newActive.apply(v));
         this.passives.replaceAll((k, v) -> newPassive.apply(v));
 
-        ZenithApiUpdateEvents.ACTIVE.invoker().onActiveUpdate(this);
-        ZenithApiUpdateEvents.PASSIVE.invoker().onPassiveUpdate(this);
+        ZenithApiUpdateEvents.ACTIVE.invoker().onUpdate(this);
+        ZenithApiUpdateEvents.PASSIVE.invoker().onUpdate(this);
     }
 
     private void replaceAll(Function<Rarity, Rarity> newRarity) {
@@ -235,7 +233,7 @@ public class PartyMember {
             case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui will call addGift(Gift) with a tree and replace this
             case CRACKED_IDOL:
                 this.gifts.put(gift, new Gift(gift, gift.getDefaultValue()));
-                ZenithApiUpdateEvents.GIFT.invoker().onGiftUpdate(this);
+                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
                 break;
             // gifts not fully handled by chat or gui
             case KALEIDOSCOPIC_LENS:
@@ -268,7 +266,7 @@ public class PartyMember {
                     return !entry.getValue().equals(other);
                 });
         if (changed) {
-            ZenithApiUpdateEvents.VZC.invoker().onVzcUpdate(this);
+            ZenithApiUpdateEvents.VZC.invoker().onUpdate(this);
         }
     }
 
