@@ -3,6 +3,9 @@ package com.aquamancer.czlib.api;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -23,6 +26,23 @@ public class Party {
         });
         ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
             this.clear();
+        });
+        ClientTickEvents.START_CLIENT_TICK.register(client -> {
+            if (client.player == null || client.world == null) return;
+            boolean shouldUpdateEntities = false;
+            for (PartyMember player : this.players.values()) {
+                if (player.getEntity() == null || player.getEntity().isRemoved()) {
+                    shouldUpdateEntities = true;
+                }
+            }
+            if (shouldUpdateEntities) {
+                client.world.getPlayers().forEach(entity -> {
+                    this.players.computeIfPresent(entity.getName().getString(), (k, v) -> {
+                        v.setEntity(entity);
+                        return v;
+                    });
+                });
+            }
         });
     }
 

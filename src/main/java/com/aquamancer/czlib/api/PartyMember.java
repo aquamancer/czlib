@@ -3,11 +3,15 @@ package com.aquamancer.czlib.api;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.*;
 import java.util.function.Function;
 
 public class PartyMember {
+    private AbstractClientPlayerEntity entity;
+
     private final String name;
     private double graveTimer;
 
@@ -48,6 +52,10 @@ public class PartyMember {
         if (gifts.remove(Gifts.CRACKED_IDOL) != null) {
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
+    }
+
+    void setEntity(AbstractClientPlayerEntity entity) {
+        this.entity = entity;
     }
 
     void setGraveTimer(double time) {
@@ -268,6 +276,10 @@ public class PartyMember {
         if (changed) {
             ZenithApiUpdateEvents.VZC.invoker().onUpdate(this);
         }
+    }
+
+    public PlayerEntity getEntity() {
+        return this.entity;
     }
 
     public String getName() {
