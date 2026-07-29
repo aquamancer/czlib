@@ -20,10 +20,13 @@ public class ScreenCancelerMixin {
     private void setScreen(@Nullable Screen screen, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (screen == null || client == null || client.player == null) return;
-        if (client.currentScreen instanceof HandledScreen<?>) return;  // for some reason canceling while a screen is open disables it
         if (ScreenCanceler.shouldCancelScreen(screen)) {
             UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(client.player.currentScreenHandler.syncId));
             client.player.sendMessage(Text.literal("canceled screen syncid="+client.player.currentScreenHandler.syncId));
+            if (client.currentScreen instanceof HandledScreen<?>) {
+                // un-desync the player's currentScreenHandler
+                client.player.currentScreenHandler = client.player.playerScreenHandler;
+            }
             ci.cancel();
         }
     }
