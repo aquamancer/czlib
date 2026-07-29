@@ -65,8 +65,8 @@ public class Czlib implements ClientModInitializer {
 							.then(ClientCommandManager.argument("syncId", IntegerArgumentType.integer(0))
 									.executes(context -> {
 //										int syncId = IntegerArgumentType.getInteger(context, "syncId");
-										MinecraftClient.getInstance().player.sendMessage(Text.literal("Opening trinket with syncId: " + MinecraftClient.getInstance().player.currentScreenHandler.syncId));
-										TrinketOpener.openAndClickHeads(Set.of(47, 48, 50, 53), TrinketLocator.getTrinketSlot(), MinecraftClient.getInstance().player.currentScreenHandler.syncId);
+//										MinecraftClient.getInstance().player.sendMessage(Text.literal("Opening trinket with syncId: " + UpdateManager.getInstance().lastScreenSyncId));
+//										TrinketOpener.openAndClickHeads(Set.of(47, 48, 50, 51), TrinketLocator.getTrinketSlot(), UpdateManager.getInstance().lastScreenSyncId);
 										return 1;
 									})
 							)

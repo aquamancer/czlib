@@ -2,6 +2,8 @@ package com.aquamancer.czlib.internal;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 
 import java.util.EnumMap;
 
@@ -14,7 +16,7 @@ public class ScreenCanceler {
     }
 
     private static int ticksUntilTimeout = TICKS_UNTIL_TIMEOUT;
-    private static EnumMap<Type, Integer> screensToCancel = new EnumMap<>(Type.class);
+    private static final EnumMap<Type, Integer> screensToCancel = new EnumMap<>(Type.class);
 
     public static boolean shouldCancelScreen(Screen screen) {
         String name = screen.getTitle().getString();

@@ -21,12 +21,13 @@ public class ScreenCancelerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (screen == null || client == null || client.player == null) return;
         if (ScreenCanceler.shouldCancelScreen(screen)) {
-            UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(client.player.currentScreenHandler.syncId));
-            client.player.sendMessage(Text.literal("canceled screen syncid="+client.player.currentScreenHandler.syncId));
-            if (client.currentScreen instanceof HandledScreen<?>) {
-                // un-desync the player's currentScreenHandler
+            if (client.currentScreen instanceof InventoryScreen) {
+                // un-desync the player's currentScreenHandler but don't close the inventory
                 client.player.currentScreenHandler = client.player.playerScreenHandler;
+            } else if (client.currentScreen instanceof HandledScreen<?>) {
+                client.currentScreen.close();
             }
+//            client.player.sendMessage(Text.literal("canceled screen syncid="+client.player.currentScreenHandler.syncId));
             ci.cancel();
         }
     }
