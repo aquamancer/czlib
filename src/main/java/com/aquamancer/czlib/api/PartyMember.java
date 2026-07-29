@@ -28,16 +28,19 @@ public class PartyMember {
     }
 
     void onRoomSpawned(Rooms room, boolean wildcard) {
-        gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
+        Gift northernStar = gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
             if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
                 v.decrement();
                 ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
-                if (v.getCounter() <= 0) {
-                    return null;
-                }
             }
             return v;
         });
+        if (northernStar != null) {
+            if (northernStar.getCounter() <= 0) {
+                gifts.remove(Gifts.NORTHERN_STAR);
+            }
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
 
         gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
             if (wildcard) {
@@ -46,6 +49,17 @@ public class PartyMember {
             }
             return v;
         });
+
+        Gift hat = gifts.computeIfPresent(Gifts.CALLICARPAS_POINTED_HAT, (k, v) -> {
+            v.decrement();
+            return v;
+        });
+        if (hat != null) {
+            if (hat.getCounter() <= 0) {
+                gifts.remove(Gifts.CALLICARPAS_POINTED_HAT);
+            }
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
     }
 
     void onDeath() {
