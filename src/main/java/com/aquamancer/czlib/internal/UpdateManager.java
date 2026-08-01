@@ -21,9 +21,7 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @ApiStatus.Internal
 public class UpdateManager {

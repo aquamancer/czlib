@@ -1,7 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;

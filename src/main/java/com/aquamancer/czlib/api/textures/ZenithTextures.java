@@ -1,18 +1,13 @@
 package com.aquamancer.czlib.api.textures;
 
-import com.aquamancer.czlib.api.abils.Actives;
-import com.aquamancer.czlib.api.abils.Aspect;
-import com.aquamancer.czlib.api.abils.Curse;
-import com.aquamancer.czlib.api.abils.Gifts;
-import com.aquamancer.czlib.api.abils.Passives;
+import com.aquamancer.czlib.api.abils.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 
 import java.util.HashMap;
 import java.util.Optional;
-
-import net.minecraft.item.Items;
 
 public class ZenithTextures {
     private static final HashMap<Enum<?>, ItemStack> ICONS = new HashMap<>();
