@@ -1,29 +1,42 @@
 package com.aquamancer.czlib.api.abils;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public enum Rarity {
-    COMMON,
-    UNCOMMON,
-    RARE,
-    EPIC,
-    LEGENDARY,
-    TWISTED;
+    COMMON("Common", 1),
+    UNCOMMON("Uncommon", 2),
+    RARE("Rare", 3),
+    EPIC("Epic", 4),
+    LEGENDARY("Legendary", 5),
+    TWISTED("XXXXXX", 6);
 
-    private static final Map<String, Rarity> fromString = new HashMap<>();
-    static {
-        fromString.put("Common", COMMON);
-        fromString.put("Uncommon", UNCOMMON);
-        fromString.put("Rare", RARE);
-        fromString.put("Epic", EPIC);
-        fromString.put("Legendary", LEGENDARY);
-        fromString.put("XXXXXX", TWISTED);
+    private final String displayName;
+    private final int level;
+
+    Rarity(String displayName, int level) {
+        this.displayName = displayName;
+        this.level = level;
     }
-    public static Optional<Rarity> toEnum(String string) {
-        return Optional.ofNullable(fromString.get(string));
+
+    private static final Map<String, Rarity> FROM_STRING =
+            Arrays.stream(values())
+                    .collect(Collectors.toUnmodifiableMap(
+                            Rarity::getDisplayName,
+                            Function.identity()
+                    ));
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public static Optional<Rarity> fromString(String name) {
+        return Optional.ofNullable(FROM_STRING.get(name));
     }
 
     public static Rarity downgrade(Rarity rarity) {
@@ -63,7 +76,7 @@ public enum Rarity {
             if (r1 == null) return -1;
             if (r2 == null) return 1;
 
-            return r1.ordinal() - r2.ordinal();
+            return Integer.compare(r1.level, r2.level);
         }
     }
 }

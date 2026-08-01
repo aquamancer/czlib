@@ -125,6 +125,14 @@ public class Czlib implements ClientModInitializer {
 								return 1;
 							})
 			);
+			dispatcher.register(
+					ClientCommandManager.literal("getRoom")
+							.executes(context -> {
+								MinecraftClient client = MinecraftClient.getInstance();
+								MinecraftClient.getInstance().player.sendMessage(Text.literal(ZenithApi.getInstance().getCurrentRoom().name()));
+								return 1;
+							})
+			);
 		});
 	}
 

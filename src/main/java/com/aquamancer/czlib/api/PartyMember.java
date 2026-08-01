@@ -336,6 +336,33 @@ public class PartyMember {
         return charmLines.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
     }
 
+    public enum BlockReason { NOT_BLOCKED, MORE_THAN_4, SLOT_TAKEN }
+    public BlockReason isBlocked(Active active, boolean a14) {
+        if (active.getSlot() == ActiveSlot.SWAP && this.curses.contains(Curse.ANCHORING)) {
+            return BlockReason.SLOT_TAKEN;
+        } if (active.getSlot() == ActiveSlot.WILDCARD) {
+            Active convergence = this.actives.get(Actives.CONVERGENCE);
+            if (convergence != null) {
+                long numWildcards = this.actives.keySet().stream().filter(a -> a.getSlot() == ActiveSlot.WILDCARD).count();
+                if (numWildcards >= Actives.getConvergenceValues(convergence.getRarity())) {
+                    return BlockReason.SLOT_TAKEN;
+                }
+            }
+        } else if (this.actives.keySet().stream().anyMatch(a -> a.getSlot() == active.getSlot())) {
+            return BlockReason.SLOT_TAKEN;
+        }
+
+        if (!a14) return BlockReason.NOT_BLOCKED;
+        if (this.actives.keySet().stream().filter(a -> a.getSpec() == active.getSpec()).count() >= 4) {
+            return BlockReason.MORE_THAN_4;
+        }
+        return BlockReason.NOT_BLOCKED;
+    }
+
+    public long getGreedAmount() {
+        return this.actives.values().stream().filter(a -> a.getRarity().getLevel() >= Rarity.LEGENDARY.getLevel()).count()
+                + this.passives.values().stream().filter(p -> p.getRarity().getLevel() >= Rarity.LEGENDARY.getLevel()).count();
+    }
 
     @Override
     public String toString() {

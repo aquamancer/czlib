@@ -1,9 +1,15 @@
 package com.aquamancer.czlib.api.abils;
 
-public class Active implements HasAbilitySpec, HasRarity {
+public class Active implements HasAbility, HasAbilitySpec, HasRarity {
     private final Actives ability;
     private final AbilitySpec spec;
     private final Rarity rarity;
+
+    public Active(Actives ability, Rarity rarity) {
+        this.ability = ability;
+        this.spec = ability.getSpec();
+        this.rarity = rarity;
+    }
 
     public Active(Actives ability, AbilitySpec spec, Rarity rarity) {
         this.ability = ability;

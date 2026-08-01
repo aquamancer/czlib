@@ -59,6 +59,10 @@ public class ZenithApi {
         return this.party.getPlayer(name).isPresent();
     }
 
+    public Rooms getCurrentRoom() {
+        return this.currentRoom;
+    }
+
     @ApiStatus.Internal
     public Party getPartyManager() {
         return this.party;

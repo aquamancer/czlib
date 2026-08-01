@@ -1,9 +1,15 @@
 package com.aquamancer.czlib.api.abils;
 
-public class Passive implements HasAbilitySpec, HasRarity {
+public class Passive implements HasAbility, HasAbilitySpec, HasRarity {
     private final Passives ability;
     private final AbilitySpec spec;
     private final Rarity rarity;
+
+    public Passive(Passives ability, Rarity rarity) {
+        this.ability = ability;
+        this.spec = ability.getSpec();
+        this.rarity = rarity;
+    }
 
     public Passive(Passives ability, AbilitySpec spec, Rarity rarity) {
         this.ability = ability;

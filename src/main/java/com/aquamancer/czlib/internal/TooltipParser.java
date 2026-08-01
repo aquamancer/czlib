@@ -21,7 +21,7 @@ public class TooltipParser {
         int lastSpace = rarityPart.lastIndexOf(' ');
 
         Optional<AbilitySpec> spec = AbilitySpec.toEnum(line.substring(0, split));
-        Optional<Rarity> rarity = Rarity.toEnum(rarityPart.substring(lastSpace + 1));
+        Optional<Rarity> rarity = Rarity.fromString(rarityPart.substring(lastSpace + 1));
         return new SpecRarityParseResult(spec, rarity);
     }
 }

@@ -5,6 +5,7 @@ import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -56,7 +57,7 @@ public class ChatParser {
         }
         String verb = matcher.group(2);
         String ability = matcher.group(3);
-        Optional<Rarity> rarity = Rarity.toEnum(matcher.group(4));
+        Optional<Rarity> rarity = Rarity.fromString(matcher.group(4));
         Optional<AbilitySpec> spec = AbilitySpec.fromAbilityName(ability);
 
         Optional<Passives> passive = Passives.fromString(ability);

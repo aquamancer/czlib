@@ -2,6 +2,7 @@ package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
+import com.aquamancer.czlib.api.rooms.Rooms;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -83,6 +84,7 @@ public class UpdateManager {
 
     public void onZenithChatMessage() {
         if (!enabled) return;
+        if (!ShardTracker.inZenithShard()) return;
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
@@ -170,6 +172,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
+        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
         if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
         }
@@ -188,6 +191,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
+        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {
@@ -214,6 +218,7 @@ public class UpdateManager {
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
+        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {

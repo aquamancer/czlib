@@ -120,6 +120,18 @@ public enum Actives {
         return fromString(string).map(Actives::getSpec);
     }
 
+    public static int getConvergenceValues(Rarity rarity) {
+        if (rarity == null) return 2;
+        return switch (rarity) {
+            case COMMON -> 2;
+            case UNCOMMON -> 3;
+            case RARE -> 4;
+            case EPIC -> 5;
+            case LEGENDARY -> 6;
+            case TWISTED -> 7;
+        };
+    }
+
     public static class ActiveSlotComparator implements Comparator<Actives> {
         public final Map<ActiveSlot, Integer> priority;
         public ActiveSlotComparator(Map<ActiveSlot, Integer> priority) {

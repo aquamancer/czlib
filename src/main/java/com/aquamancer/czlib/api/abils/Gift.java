@@ -6,7 +6,7 @@ import com.aquamancer.czlib.api.rooms.Rooms;
 import java.util.EnumSet;
 import java.util.Optional;
 
-public class Gift {
+public class Gift implements HasAbility {
     private static final EnumSet<Rooms> TREASURE_MAP_ROOMS = EnumSet.of(
             Rooms.ABILITY,
             Rooms.ABILITY_ELITE,
