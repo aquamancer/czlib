@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class PartyMember {
     private AbstractClientPlayerEntity entity;
@@ -362,6 +363,21 @@ public class PartyMember {
     public long getGreedAmount() {
         return this.actives.values().stream().filter(a -> a.getRarity().getLevel() >= Rarity.LEGENDARY.getLevel()).count()
                 + this.passives.values().stream().filter(p -> p.getRarity().getLevel() >= Rarity.LEGENDARY.getLevel()).count();
+    }
+
+    public int getPrideAmount() {
+        Map<AbilitySpec, Integer> counts = new EnumMap<>(AbilitySpec.class);
+        this.actives.keySet().forEach(a -> counts.compute(a.getSpec(), (s, v) -> (v == null) ? 1 : v + 1));
+        this.passives.keySet().forEach(a -> counts.compute(a.getSpec(), (s, v) -> (v == null) ? 1 : v + 1));
+
+        int count = 0;
+        for (Map.Entry<AbilitySpec, Integer> entry : counts.entrySet()) {
+            if (entry.getKey() == AbilitySpec.PRISMATIC) continue;
+            if (entry.getValue() > 4) {
+                count += entry.getValue();
+            }
+        }
+        return count;
     }
 
     @Override
