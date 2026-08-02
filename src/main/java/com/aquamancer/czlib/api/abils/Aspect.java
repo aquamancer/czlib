@@ -1,13 +1,12 @@
 package com.aquamancer.czlib.api.abils;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Aspect implements HasAbility {
+public enum Aspect implements Ability {
     BOX("Mystery Box"),
     AXE("Aspect of the Axe"),
     BOW("Aspect of the Bow"),

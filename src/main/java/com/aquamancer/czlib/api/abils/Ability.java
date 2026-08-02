@@ -1,5 +1,5 @@
 package com.aquamancer.czlib.api.abils;
 
-public interface HasAbility {
+public interface Ability {
     Enum<?> getAbility();
 }

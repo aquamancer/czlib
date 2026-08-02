@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Curse implements HasAbility {
+public enum Curse implements Ability {
     ANCHORING("Curse of Anchoring"),
     ARACHNOPHOBIA("Curse of Arachnophobia"),
     CHAOS("Curse of Chaos"),
