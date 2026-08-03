@@ -8,25 +8,31 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Spec {
-    DAWN("Dawnbringer"),
-    EARTH("Earthbound"),
-    FLAME("Flamecaller"),
-    FROST("Frostborn"),
-    SHADOW("Shadowdancer"),
-    STEEL("Steelsage"),
-    WIND("Windwalker");
+    DAWN("Dawnbringer", 0xf0b326),
+    EARTH("Earthbound", 0x6b3d2d),
+    FLAME("Flamecaller", 0xf04e21),
+    FROST("Frostborn", 0xa3cbe1),
+    SHADOW("Shadowdancer", 0x7948af),
+    STEEL("Steelsage", 0x929292),
+    WIND("Windwalker", 0xc0dea9);
 
     private static final Map<String, Spec> FROM_STRING = Arrays.stream(values())
             .collect(Collectors.toMap(Spec::getDisplayName, Function.identity()));
 
     private final String name;
+    private final int color;
 
-    Spec(String name) {
+    Spec(String name, int color) {
         this.name = name;
+        this.color = color;
     }
 
     public String getDisplayName() {
-        return name;
+        return this.name;
+    }
+
+    public int getColor() {
+        return this.color;
     }
 
     public static Optional<Spec> fromString(String string) {
@@ -46,7 +52,7 @@ public enum Spec {
             if (p1 == null && p2 == null) return 0;
             if (p1 == null) return -1;
             if (p2 == null) return 1;
-            return p1 - p2;
+            return Integer.compare(p1, p2);
         }
     }
 }

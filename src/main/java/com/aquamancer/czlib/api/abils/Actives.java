@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Actives {
+public enum Actives implements Ability {
     // Combo
     SOOTHING("Soothing Combos", ActiveSlot.COMBO, AbilitySpec.DAWN),
     EARTHEN("Earthen Combos", ActiveSlot.COMBO, AbilitySpec.EARTH),
@@ -108,6 +108,15 @@ public enum Actives {
         return spec;
     }
 
+    public int getColor() {
+        return this.spec.getColor();
+    }
+
+    @Override
+    public Enum<?> getAbility() {
+        return this;
+    }
+
     private static final Map<String, Actives> FROM_STRING =
             Arrays.stream(values())
                     .collect(Collectors.toUnmodifiableMap(
@@ -161,7 +170,7 @@ public enum Actives {
             if (a1 == null) return -1;
             if (a2 == null) return 1;
 
-            return priority.get(a1.getSlot()) - priority.get(a2.getSlot());
+            return Integer.compare(priority.get(a1.getSlot()), priority.get(a2.getSlot()));
         }
     }
 }

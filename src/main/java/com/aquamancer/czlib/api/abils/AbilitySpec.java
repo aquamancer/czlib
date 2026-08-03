@@ -1,5 +1,7 @@
 package com.aquamancer.czlib.api.abils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -36,6 +38,14 @@ public enum AbilitySpec {
         return Optional.ofNullable(spec);
     }
 
+    public int getColor() {
+        if (this.spec == null) {
+            return 0xff9cf0;  // prismatic
+        } else {
+            return this.spec.getColor();
+        }
+    }
+
     public static Optional<AbilitySpec> toEnum(String string) {
         return Optional.ofNullable(FROM_STRING.get(string));
     }
@@ -57,7 +67,7 @@ public enum AbilitySpec {
             if (p1 == null && p2 == null) return 0;
             if (p1 == null) return -1;
             if (p2 == null) return 1;
-            return p1 - p2;
+            return Integer.compare(p1, p2);
         }
     }
 }

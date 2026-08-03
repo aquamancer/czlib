@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Gifts {
+public enum Gifts implements Ability {
     TWISTED_SCROLL("Twisted Scroll"),
     FORSAKEN_GRIMOIRE("Forsaken Grimoire"),
     PRISMATIC_CUBE("Prismatic Cube"),
@@ -49,6 +49,11 @@ public enum Gifts {
 
     public int getDefaultValue() {
         return defaultCounter;
+    }
+
+    @Override
+    public Enum<?> getAbility() {
+        return this;
     }
 
     private static final Map<String, Gifts> FROM_STRING =

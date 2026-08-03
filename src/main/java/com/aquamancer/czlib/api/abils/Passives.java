@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Passives {
+public enum Passives implements Ability {
     ENLIGHTENMENT("Enlightenment", AbilitySpec.DAWN),
     REJUVENATION("Rejuvenation", AbilitySpec.DAWN),
     SUNDROPS("Sundrops", AbilitySpec.DAWN),
@@ -59,6 +59,15 @@ public enum Passives {
 
     public AbilitySpec getSpec() {
         return this.spec;
+    }
+
+    public int getColor() {
+        return this.spec.getColor();
+    }
+
+    @Override
+    public Enum<?> getAbility() {
+        return this;
     }
 
     private static final Map<String, Passives> FROM_STRING = Arrays.stream(values())

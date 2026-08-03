@@ -41,7 +41,7 @@ public class ZenithApi {
     }
 
     public Map<String, PartyMember> getParty() {
-        return Map.copyOf(this.party.getPlayers());
+        return this.party.getPlayers();
     }
 
     public Optional<PartyMember> getPlayer(String name) {

@@ -25,6 +25,8 @@ public enum Curse implements Ability {
     SLOTH("Curse of Sloth"),
     SOBRIETY("Curse of Sobriety");
 
+    public static final int COLOR = 0xc41300;
+
     private final String displayName;
 
     Curse(String displayName) {
