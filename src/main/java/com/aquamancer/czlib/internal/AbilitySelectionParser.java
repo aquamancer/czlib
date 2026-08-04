@@ -37,6 +37,7 @@ public class AbilitySelectionParser {
         switch (title) {
             case "Select an Ability":
             case "Select an Upgrade":
+            case "Accept of Reject the Gift":
             case "Grimoire (Select Ability)":
             case "Regret (Replace Curse)": {
                 String ability = item.getName().getString();

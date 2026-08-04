@@ -63,6 +63,7 @@ public class TrinketParser {
 
         String player = headParseResult.currentlySelected.orElse(null);
         if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
+        ZenithApi.getInstance().setCurrentlySelected(player);
         if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
         SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player));
 //        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
