@@ -8,22 +8,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Spec {
-    DAWN("Dawnbringer", 0xf0b326),
-    EARTH("Earthbound", 0x6b3d2d),
-    FLAME("Flamecaller", 0xf04e21),
-    FROST("Frostborn", 0xa3cbe1),
-    SHADOW("Shadowdancer", 0x7948af),
-    STEEL("Steelsage", 0x929292),
-    WIND("Windwalker", 0xc0dea9);
-
-    private static final Map<String, Spec> FROM_STRING = Arrays.stream(values())
-            .collect(Collectors.toMap(Spec::getDisplayName, Function.identity()));
+    DAWN("Dawnbringer", AbilitySpec.DAWN, 0xf0b326),
+    EARTH("Earthbound", AbilitySpec.EARTH, 0x6b3d2d),
+    FLAME("Flamecaller", AbilitySpec.FLAME, 0xf04e21),
+    FROST("Frostborn", AbilitySpec.FROST, 0xa3cbe1),
+    SHADOW("Shadowdancer", AbilitySpec.SHADOW, 0x7948af),
+    STEEL("Steelsage", AbilitySpec.STEEL, 0x929292),
+    WIND("Windwalker", AbilitySpec.WIND, 0xc0dea9);
 
     private final String name;
+    private final AbilitySpec spec;
     private final int color;
 
-    Spec(String name, int color) {
+    Spec(String name, AbilitySpec spec, int color) {
         this.name = name;
+        this.spec = spec;
         this.color = color;
     }
 
@@ -31,9 +30,16 @@ public enum Spec {
         return this.name;
     }
 
+    public AbilitySpec toSpec() {
+        return this.spec;
+    }
+
     public int getColor() {
         return this.color;
     }
+
+    private static final Map<String, Spec> FROM_STRING = Arrays.stream(values())
+            .collect(Collectors.toMap(Spec::getDisplayName, Function.identity()));
 
     public static Optional<Spec> fromString(String string) {
         return Optional.ofNullable(FROM_STRING.get(string));

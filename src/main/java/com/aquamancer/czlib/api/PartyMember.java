@@ -338,7 +338,7 @@ public class PartyMember {
     }
 
     public enum BlockReason { NOT_BLOCKED, MORE_THAN_4, SLOT_TAKEN }
-    public BlockReason isBlocked(Active active, boolean a14) {
+    public BlockReason isBlocked(Actives active, boolean a14) {
         if (active.getSlot() == ActiveSlot.SWAP && this.curses.contains(Curse.ANCHORING)) {
             return BlockReason.SLOT_TAKEN;
         } if (active.getSlot() == ActiveSlot.WILDCARD) {

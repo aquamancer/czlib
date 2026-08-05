@@ -3,6 +3,7 @@ package com.aquamancer.czlib.api;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import com.aquamancer.czlib.internal.SelfIdentifier;
+import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Map;
@@ -15,6 +16,8 @@ public class ZenithApi {
     private int room = -1;
     private int floor = 1;
     private Rooms currentRoom = Rooms.TREE_SELECT;
+
+    private String openedTrinketPlayer = "";
 
     private ZenithApi() {
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> this.reset());
@@ -61,6 +64,19 @@ public class ZenithApi {
 
     public Rooms getCurrentRoom() {
         return this.currentRoom;
+    }
+
+    public Optional<PartyMember> getCurrentlySelectedInTrinket() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.currentScreen == null) return Optional.empty();
+        if (!client.currentScreen.getTitle().getString().equals("Current Abilities")) return Optional.empty();
+
+        return getPlayer(this.openedTrinketPlayer);
+    }
+
+    @ApiStatus.Internal
+    public void setCurrentlySelected(String name) {
+        this.openedTrinketPlayer = name;
     }
 
     @ApiStatus.Internal
