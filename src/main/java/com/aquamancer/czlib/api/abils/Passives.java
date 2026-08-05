@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Passives implements Ability {
+public enum Passives implements Ability, HasAbilitySpec {
     ENLIGHTENMENT("Enlightenment", AbilitySpec.DAWN),
     REJUVENATION("Rejuvenation", AbilitySpec.DAWN),
     SUNDROPS("Sundrops", AbilitySpec.DAWN),

@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Actives implements Ability {
+public enum Actives implements Ability, HasAbilitySpec {
     // Combo
     SOOTHING("Soothing Combos", ActiveSlot.COMBO, AbilitySpec.DAWN),
     EARTHEN("Earthen Combos", ActiveSlot.COMBO, AbilitySpec.EARTH),
