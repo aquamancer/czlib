@@ -7,173 +7,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum AbilitySpec {
-    DAWN(
-            "Dawnbringer",
-            Spec.DAWN,
-            EnumSet.of(
-                    Actives.SOOTHING,
-                    Actives.WARD_OF_LIGHT,
-                    Actives.RADIANT_BLESSING,
-                    Actives.BOTTLED_SUNLIGHT,
-                    Actives.LIGHTNING_BOTTLE,
-                    Actives.DIVINE_BEAM,
-                    Actives.SPARK_OF_INSPIRATION,
-                    Actives.ETERNAL_SAVIOR
-            ),
-            EnumSet.of(
-                    Passives.ENLIGHTENMENT,
-                    Passives.REJUVENATION,
-                    Passives.SUNDROPS
-            )
-    ),
-    EARTH(
-            "Earthbound",
-            Spec.EARTH,
-            EnumSet.of(
-                    Actives.EARTHEN,
-                    Actives.BEASTS_CLAW,
-                    Actives.TAUNT,
-                    Actives.IRON_GRIP,
-                    Actives.ENTRENCH,
-                    Actives.EARTHQUAKE,
-                    Actives.EARTHEN_WRATH
-            ),
-            EnumSet.of(
-                    Passives.BRAMBLE_SHELL,
-                    Passives.BULWARK,
-                    Passives.TOUGHNESS
-            )
-    ),
-    FLAME(
-            "Flamecaller",
-            Spec.FLAME,
-            EnumSet.of(
-                    Actives.VOLCANIC,
-                    Actives.FIREBALL,
-                    Actives.IGNEOUS_RUNE,
-                    Actives.FLAMESTRIKE,
-                    Actives.FLAME_SPIRIT,
-                    Actives.PYROBLAST,
-                    Actives.VOLCANIC_METEOR,
-                    Actives.APOCALYPSE
-            ),
-            EnumSet.of(
-                    Passives.DETONATION,
-                    Passives.PRIMORDIAL_MASTERY,
-                    Passives.PYROMANIA
-            )
-    ),
-    FROST(
-            "Frostborn",
-            Spec.FROST,
-            EnumSet.of(
-                    Actives.FRIGID,
-                    Actives.ICE_LANCE,
-                    Actives.SNOWSTORM,
-                    Actives.ICE_BARRIER,
-                    Actives.PERMAFROST,
-                    Actives.PIERCING_COLD,
-                    Actives.AVALANCHE,
-                    Actives.CRYOBOX
-            ),
-            EnumSet.of(
-                    Passives.FROZEN_DOMAIN,
-                    Passives.ICEBREAKER
-            )
-    ),
-    SHADOW(
-            "Shadowdancer",
-            Spec.SHADOW,
-            EnumSet.of(
-                    Actives.DARK,
-                    Actives.ADVANCING_SHADOWS,
-                    Actives.CLOAK_OF_SHADOWS,
-                    Actives.BLADE_FLURRY,
-                    Actives.PHANTOM_FORCE,
-                    Actives.DUMMY_DECOY,
-                    Actives.CHAOS_DAGGER,
-                    Actives.ESCAPE_ARTIST
-            ),
-            EnumSet.of(
-                    Passives.BRUTALIZE,
-                    Passives.DEADLY_STRIKE,
-                    Passives.DETHRONER,
-                    Passives.SHADOW_SLAM
-            )
-    ),
-    STEEL(
-            "Steelsage",
-            Spec.STEEL,
-            EnumSet.of(
-                    Actives.FOCUSED,
-                    Actives.SIDEARM,
-                    Actives.SCRAPSHOT,
-                    Actives.FIREWORK_BLAST,
-                    Actives.RAPID_FIRE,
-                    Actives.VOLLEY,
-                    Actives.GRAVITY_BOMB,
-                    Actives.STEEL_STALLION
-            ),
-            EnumSet.of(
-                    Passives.SHARPSHOOTER,
-                    Passives.SPLIT_ARROW
-            )
-    ),
-    WIND(
-            "Windwalker",
-            Spec.WIND,
-            EnumSet.of(
-                    Actives.WINDSWEPT,
-                    Actives.WIND_WALK,
-                    Actives.GUARDING_BOLT,
-                    Actives.AEROBLAST,
-                    Actives.WHIRLWIND,
-                    Actives.SKYHOOK,
-                    Actives.THUNDERCLOUD_FORM,
-                    Actives.LAST_BREATH
-            ),
-            EnumSet.of(
-                    Passives.AEROMANCY,
-                    Passives.DODGING,
-                    Passives.ONE_WITH_THE_WIND,
-                    Passives.RESTORING_DRAFT
-            )
-    ),
-    PRISMATIC(
-            "Prismatic",
-            null,
-            EnumSet.of(
-                    Actives.SOLAR_RAY,
-                    Actives.ENCORE,
-                    Actives.CHROMA_BLADE,
-                    Actives.CONVERGENCE,
-                    Actives.DISCO_BALL,
-                    Actives.REFRACTION,
-                    Actives.COLOR_SPLASH
-            ),
-            EnumSet.of(
-                    Passives.ABNORMALITY,
-                    Passives.GENEROSITY,
-                    Passives.CHARITY,
-                    Passives.FLEXIBILITY,
-                    Passives.MULTIPLICITY,
-                    Passives.PROSPERITY,
-                    Passives.REBIRTH,
-                    Passives.DIVERSITY,
-                    Passives.OPPORTUNITY
-            )
-    );
+    DAWN("Dawnbringer", Spec.DAWN),
+    EARTH("Earthbound", Spec.EARTH),
+    FLAME("Flamecaller", Spec.FLAME),
+    FROST("Frostborn", Spec.FROST),
+    SHADOW("Shadowdancer", Spec.SHADOW),
+    STEEL("Steelsage", Spec.STEEL),
+    WIND("Windwalker", Spec.WIND),
+    PRISMATIC("Prismatic", null);
 
     private final String displayName;
     private final Spec spec;
-    private final EnumSet<Actives> actives;
-    private final EnumSet<Passives> passives;
 
-    AbilitySpec(String displayName, Spec spec, EnumSet<Actives> actives, EnumSet<Passives> passives) {
+    AbilitySpec(String displayName, Spec spec) {
         this.displayName = displayName;
         this.spec = spec;
-        this.actives = actives;
-        this.passives = passives;
     }
 
     public String getDisplayName() {
@@ -182,14 +30,6 @@ public enum AbilitySpec {
 
     public Optional<Spec> toSpec() {
         return Optional.ofNullable(spec);
-    }
-
-    public EnumSet<Actives> getActives() {
-        return EnumSet.copyOf(actives);
-    }
-
-    public EnumSet<Passives> getPassives() {
-        return EnumSet.copyOf(passives);
     }
 
     public int getColor() {
@@ -203,12 +43,36 @@ public enum AbilitySpec {
     private static final Map<String, AbilitySpec> FROM_STRING = Arrays.stream(values())
             .collect(Collectors.toMap(AbilitySpec::getDisplayName, Function.identity()));
 
+    private static final Map<AbilitySpec, EnumSet<Actives>> actives = new EnumMap<>(AbilitySpec.class);
+    static {
+        for (Actives active : Actives.values()) {
+            actives.computeIfAbsent(active.getSpec(), k -> EnumSet.noneOf(Actives.class))
+                    .add(active);
+        }
+    }
+
+    private static final Map<AbilitySpec, EnumSet<Passives>> passives = new EnumMap<>(AbilitySpec.class);
+    static {
+        for (Passives passive : Passives.values()) {
+            passives.computeIfAbsent(passive.getSpec(), k -> EnumSet.noneOf(Passives.class))
+                    .add(passive);
+        }
+    }
+
     public static Optional<AbilitySpec> toEnum(String string) {
         return Optional.ofNullable(FROM_STRING.get(string));
     }
 
     public static Optional<AbilitySpec> fromAbilityName(String ability) {
         return Actives.getSpec(ability).or(() -> Passives.getSpec(ability));
+    }
+
+    public static EnumSet<Actives> getActives(AbilitySpec spec) {
+        return actives.get(spec);
+    }
+
+    public static EnumSet<Passives> getPassives(AbilitySpec spec) {
+        return passives.get(spec);
     }
 
     public static class SpecComparator implements Comparator<HasAbilitySpec> {
