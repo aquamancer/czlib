@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class PartyMember {
@@ -309,20 +310,60 @@ public class PartyMember {
         return specs;
     }
 
-    public Map<Passives, Passive> getPassives() {
-        return passives;
+    public Aspect getAspect() {
+        return aspect;
     }
 
     public EnumSet<Curse> getCurses() {
         return curses;
     }
 
-    public Aspect getAspect() {
-        return aspect;
+    public Map<Passives, Passive> getPassives() {
+        return passives;
+    }
+
+    public Map<Passives, Passive> getPassives(AbilitySpec spec) {
+        return this.passives.entrySet().stream()
+                .filter(e -> e.getKey().getSpec() == spec)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a,
+                        () -> new EnumMap<>(Passives.class)
+                ));
+    }
+
+    public EnumSet<Passives> getPassiveSet(AbilitySpec spec) {
+        return EnumSet.copyOf(this.passives.keySet().stream().filter(p -> p.getSpec() == spec).toList());
+    }
+
+    public long getPassiveCount(AbilitySpec spec) {
+        return this.passives.keySet().stream().filter(p -> p.getSpec() == spec).count();
     }
 
     public Map<Actives, Active> getActives() {
         return actives;
+    }
+
+    public Map<Actives, Active> getActives(AbilitySpec spec) {
+        return this.actives.entrySet().stream()
+                .filter(e -> e.getKey().getSpec() == spec)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a,
+                        () -> new EnumMap<>(Actives.class)
+                ));
+    }
+
+    public EnumSet<Actives> getActiveSet(AbilitySpec spec) {
+        return EnumSet.copyOf(this.actives.keySet().stream().filter(a -> a.getSpec() == spec).toList());
+    }
+
+    public long getActiveCount(AbilitySpec spec) {
+        return this.actives.keySet().stream().filter(a -> a.getSpec() == spec).count();
+    }
+
+    public long getAbilityCount(AbilitySpec spec) {
+        return this.getActiveCount(spec) + this.getPassiveCount(spec);
     }
 
     public Map<Gifts, Gift> getGifts() {
@@ -365,16 +406,13 @@ public class PartyMember {
                 + this.passives.values().stream().filter(p -> p.getRarity().getLevel() >= Rarity.LEGENDARY.getLevel()).count();
     }
 
-    public int getPrideAmount() {
-        Map<AbilitySpec, Integer> counts = new EnumMap<>(AbilitySpec.class);
-        this.actives.keySet().forEach(a -> counts.compute(a.getSpec(), (s, v) -> (v == null) ? 1 : v + 1));
-        this.passives.keySet().forEach(a -> counts.compute(a.getSpec(), (s, v) -> (v == null) ? 1 : v + 1));
-
-        int count = 0;
-        for (Map.Entry<AbilitySpec, Integer> entry : counts.entrySet()) {
-            if (entry.getKey() == AbilitySpec.PRISMATIC) continue;
-            if (entry.getValue() > 4) {
-                count += entry.getValue();
+    public long getPrideAmount() {
+        long count = 0;
+        for (AbilitySpec spec : AbilitySpec.values()) {
+            if (spec == AbilitySpec.PRISMATIC) continue;
+            long abilityCount = getAbilityCount(spec);
+            if (abilityCount > 4) {
+                count += abilityCount;
             }
         }
         return count;

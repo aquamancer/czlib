@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Passives implements Ability, HasAbilitySpec {
+public enum Passives implements Ability<Passives>, HasAbilitySpec {
     ENLIGHTENMENT("Enlightenment", AbilitySpec.DAWN),
     REJUVENATION("Rejuvenation", AbilitySpec.DAWN),
     SUNDROPS("Sundrops", AbilitySpec.DAWN),
@@ -66,7 +66,7 @@ public enum Passives implements Ability, HasAbilitySpec {
     }
 
     @Override
-    public Enum<?> getAbility() {
+    public Passives getAbility() {
         return this;
     }
 

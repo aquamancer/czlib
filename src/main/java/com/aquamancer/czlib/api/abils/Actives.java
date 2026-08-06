@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Actives implements Ability, HasAbilitySpec {
+public enum Actives implements Ability<Actives>, HasAbilitySpec {
     // Combo
     SOOTHING("Soothing Combos", ActiveSlot.COMBO, AbilitySpec.DAWN),
     EARTHEN("Earthen Combos", ActiveSlot.COMBO, AbilitySpec.EARTH),
@@ -113,7 +113,7 @@ public enum Actives implements Ability, HasAbilitySpec {
     }
 
     @Override
-    public Enum<?> getAbility() {
+    public Actives getAbility() {
         return this;
     }
 
@@ -152,7 +152,7 @@ public enum Actives implements Ability, HasAbilitySpec {
 
         @Override
         public int compare(Actives o1, Actives o2) {
-            return priority.get(o1.getSlot()) - priority.get(o2.getSlot());
+            return Integer.compare(priority.get(o1.getSlot()), priority.get(o2.getSlot()));
         }
     }
 

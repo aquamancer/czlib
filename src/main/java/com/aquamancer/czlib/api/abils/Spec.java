@@ -1,9 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -59,6 +56,17 @@ public enum Spec {
             if (p1 == null) return -1;
             if (p2 == null) return 1;
             return Integer.compare(p1, p2);
+        }
+
+        public static SpecComparator fromAbilitySpec(Map<AbilitySpec, Integer> priority) {
+            Map<Spec, Integer> convertedMap = new EnumMap<>(Spec.class);
+            priority.forEach((abilitySpec, value) -> {
+                Optional<Spec> converted = abilitySpec.toSpec();
+                if (converted.isPresent()) {
+                    convertedMap.put(converted.get(), value);
+                }
+            });
+            return new SpecComparator(convertedMap);
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.aquamancer.czlib.api.abils;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -75,9 +73,9 @@ public enum AbilitySpec {
         return passives.get(spec);
     }
 
-    public static class SpecComparator implements Comparator<HasAbilitySpec> {
+    public static class AbilitySpecComparator implements Comparator<HasAbilitySpec> {
         private final Map<AbilitySpec, Integer> priority;
-        public SpecComparator(Map<AbilitySpec, Integer> priority) {
+        public AbilitySpecComparator(Map<AbilitySpec, Integer> priority) {
             this.priority = priority;
         }
 

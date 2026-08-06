@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Aspect implements Ability {
+public enum Aspect implements Ability<Aspect> {
     BOX("Mystery Box"),
     AXE("Aspect of the Axe"),
     BOW("Aspect of the Bow"),
@@ -25,7 +25,7 @@ public enum Aspect implements Ability {
     }
 
     @Override
-    public Enum<?> getAbility() {
+    public Aspect getAbility() {
         return this;
     }
 

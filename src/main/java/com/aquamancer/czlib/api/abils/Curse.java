@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Curse implements Ability {
+public enum Curse implements Ability<Curse> {
     ANCHORING("Curse of Anchoring"),
     ARACHNOPHOBIA("Curse of Arachnophobia"),
     CHAOS("Curse of Chaos"),
@@ -38,7 +38,7 @@ public enum Curse implements Ability {
     }
 
     @Override
-    public Enum<?> getAbility() {
+    public Curse getAbility() {
         return this;
     }
 
