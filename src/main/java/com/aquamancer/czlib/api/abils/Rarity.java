@@ -23,7 +23,7 @@ public enum Rarity {
         this.level = level;
     }
 
-    private static final Map<String, Rarity> FROM_STRING =
+    private static final Map<String, Rarity> fromString =
             Arrays.stream(values())
                     .collect(Collectors.toUnmodifiableMap(
                             Rarity::getDisplayName,
@@ -39,7 +39,7 @@ public enum Rarity {
     }
 
     public static Optional<Rarity> fromString(String name) {
-        return Optional.ofNullable(FROM_STRING.get(name));
+        return Optional.ofNullable(fromString.get(name));
     }
 
     public static Rarity downgrade(Rarity rarity) {

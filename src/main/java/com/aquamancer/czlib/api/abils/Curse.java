@@ -42,11 +42,11 @@ public enum Curse implements Ability<Curse> {
         return this;
     }
 
-    private static final Map<String, Curse> FROM_STRING =
+    private static final Map<String, Curse> fromString =
             Arrays.stream(values())
                     .collect(Collectors.toMap(Curse::getDisplayName, Function.identity()));
 
     public static Optional<Curse> fromString(String string) {
-        return Optional.ofNullable(FROM_STRING.get(string));
+        return Optional.ofNullable(fromString.get(string));
     }
 }

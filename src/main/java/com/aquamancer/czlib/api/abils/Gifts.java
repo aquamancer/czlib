@@ -56,11 +56,11 @@ public enum Gifts implements Ability {
         return this;
     }
 
-    private static final Map<String, Gifts> FROM_STRING =
+    private static final Map<String, Gifts> fromString =
             Arrays.stream(values())
                     .collect(Collectors.toMap(Gifts::getDisplayName, Function.identity()));
 
     public static Optional<Gifts> fromString(String string) {
-        return Optional.ofNullable(FROM_STRING.get(string));
+        return Optional.ofNullable(fromString.get(string));
     }
 }

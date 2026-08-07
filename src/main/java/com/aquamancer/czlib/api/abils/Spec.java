@@ -27,7 +27,7 @@ public enum Spec {
         return this.name;
     }
 
-    public AbilitySpec toSpec() {
+    public AbilitySpec toAbilitySpec() {
         return this.spec;
     }
 
@@ -35,11 +35,11 @@ public enum Spec {
         return this.color;
     }
 
-    private static final Map<String, Spec> FROM_STRING = Arrays.stream(values())
+    private static final Map<String, Spec> fromString = Arrays.stream(values())
             .collect(Collectors.toMap(Spec::getDisplayName, Function.identity()));
 
     public static Optional<Spec> fromString(String string) {
-        return Optional.ofNullable(FROM_STRING.get(string));
+        return Optional.ofNullable(fromString.get(string));
     }
 
     public static class SpecComparator implements Comparator<Spec> {

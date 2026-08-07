@@ -29,11 +29,11 @@ public enum Aspect implements Ability<Aspect> {
         return this;
     }
 
-    private static final Map<String, Aspect> FROM_STRING =
+    private static final Map<String, Aspect> fromString =
             Arrays.stream(values())
                     .collect(Collectors.toMap(Aspect::getDisplayName, Function.identity()));
 
     public static Optional<Aspect> fromString(String string) {
-        return Optional.ofNullable(FROM_STRING.get(string));
+        return Optional.ofNullable(fromString.get(string));
     }
 }

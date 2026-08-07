@@ -70,11 +70,11 @@ public enum Passives implements Ability<Passives>, HasAbilitySpec {
         return this;
     }
 
-    private static final Map<String, Passives> FROM_STRING = Arrays.stream(values())
+    private static final Map<String, Passives> fromString = Arrays.stream(values())
             .collect(Collectors.toMap(Passives::getDisplayName, Function.identity()));
 
     public static Optional<Passives> fromString(String string) {
-        return Optional.ofNullable(FROM_STRING.get(string));
+        return Optional.ofNullable(fromString.get(string));
     }
 
     public static Optional<AbilitySpec> getSpec(String string) {

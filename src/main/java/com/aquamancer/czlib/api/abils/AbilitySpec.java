@@ -1,5 +1,7 @@
 package com.aquamancer.czlib.api.abils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -38,27 +40,31 @@ public enum AbilitySpec {
         }
     }
 
-    private static final Map<String, AbilitySpec> FROM_STRING = Arrays.stream(values())
+    private static final Map<String, AbilitySpec> fromString = Arrays.stream(values())
             .collect(Collectors.toMap(AbilitySpec::getDisplayName, Function.identity()));
 
     private static final Map<AbilitySpec, EnumSet<Actives>> actives = new EnumMap<>(AbilitySpec.class);
     static {
+        for (AbilitySpec spec : AbilitySpec.values()) {
+            actives.put(spec, EnumSet.noneOf(Actives.class));
+        }
         for (Actives active : Actives.values()) {
-            actives.computeIfAbsent(active.getSpec(), k -> EnumSet.noneOf(Actives.class))
-                    .add(active);
+            actives.get(active.getSpec()).add(active);
         }
     }
 
     private static final Map<AbilitySpec, EnumSet<Passives>> passives = new EnumMap<>(AbilitySpec.class);
     static {
+        for (AbilitySpec spec : AbilitySpec.values()) {
+            passives.put(spec, EnumSet.noneOf(Passives.class));
+        }
         for (Passives passive : Passives.values()) {
-            passives.computeIfAbsent(passive.getSpec(), k -> EnumSet.noneOf(Passives.class))
-                    .add(passive);
+            passives.get(passive.getSpec()).add(passive);
         }
     }
 
     public static Optional<AbilitySpec> toEnum(String string) {
-        return Optional.ofNullable(FROM_STRING.get(string));
+        return Optional.ofNullable(fromString.get(string));
     }
 
     public static Optional<AbilitySpec> fromAbilityName(String ability) {
@@ -66,11 +72,43 @@ public enum AbilitySpec {
     }
 
     public static EnumSet<Actives> getActives(AbilitySpec spec) {
-        return actives.get(spec);
+        return EnumSet.copyOf(actives.get(spec));
     }
 
     public static EnumSet<Passives> getPassives(AbilitySpec spec) {
-        return passives.get(spec);
+        return EnumSet.copyOf(passives.get(spec));
+    }
+
+    public static Set<Ability<?>> getAllAbilities(AbilitySpec spec) {
+        Set<Ability<?>> all = new LinkedHashSet<>(getActives(spec));
+        all.addAll(getPassives(spec));
+        return all;
+    }
+
+    public static Set<Ability<?>> getAllAbilities(
+            AbilitySpec spec,
+            @Nullable Comparator<Actives> activeSorter,
+            @Nullable Comparator<Passives> passiveSorter,
+            boolean activesFirst) {
+
+        List<Actives> actives = new ArrayList<>(getActives(spec));
+        if (activeSorter != null) {
+            actives.sort(activeSorter);
+        }
+        List<Passives> passives = new ArrayList<>(getPassives(spec));
+        if (passiveSorter != null) {
+            passives.sort(passiveSorter);
+        }
+
+        Set<Ability<?>> result;
+        if (activesFirst) {
+            result = new LinkedHashSet<>(actives);
+            result.addAll(passives);
+        } else {
+            result = new LinkedHashSet<>(passives);
+            result.addAll(actives);
+        }
+        return result;
     }
 
     public static class AbilitySpecComparator implements Comparator<HasAbilitySpec> {

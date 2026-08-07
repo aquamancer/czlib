@@ -382,7 +382,8 @@ public class PartyMember {
     public BlockReason isBlocked(Actives active, boolean a14) {
         if (active.getSlot() == ActiveSlot.SWAP && this.curses.contains(Curse.ANCHORING)) {
             return BlockReason.SLOT_TAKEN;
-        } if (active.getSlot() == ActiveSlot.WILDCARD) {
+        }
+        if (active.getSlot() == ActiveSlot.WILDCARD) {
             Active convergence = this.actives.get(Actives.CONVERGENCE);
             if (convergence != null) {
                 long numWildcards = this.actives.keySet().stream().filter(a -> a.getSlot() == ActiveSlot.WILDCARD).count();
