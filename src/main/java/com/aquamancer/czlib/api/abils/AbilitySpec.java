@@ -43,6 +43,21 @@ public enum AbilitySpec {
     private static final Map<String, AbilitySpec> fromString = Arrays.stream(values())
             .collect(Collectors.toMap(AbilitySpec::getDisplayName, Function.identity()));
 
+    private static final Map<Spec, AbilitySpec> fromSpec = new EnumMap<>(Spec.class);
+    static {
+        for (Spec spec : Spec.values()) {
+            for (AbilitySpec abilitySpec : AbilitySpec.values()) {
+                if (abilitySpec.spec == spec) {
+                    fromSpec.put(spec, abilitySpec);
+                    break;
+                }
+            }
+        }
+        if (fromSpec.size() != Spec.values().length) {
+            throw new RuntimeException("Not every Spec is mapped to a corresponding AbilitySpec");
+        }
+    }
+
     private static final Map<AbilitySpec, EnumSet<Actives>> actives = new EnumMap<>(AbilitySpec.class);
     static {
         for (AbilitySpec spec : AbilitySpec.values()) {
@@ -63,8 +78,12 @@ public enum AbilitySpec {
         }
     }
 
-    public static Optional<AbilitySpec> toEnum(String string) {
+    public static Optional<AbilitySpec> fromString(String string) {
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static AbilitySpec fromSpec(Spec spec) {
+        return fromSpec.get(spec);
     }
 
     public static Optional<AbilitySpec> fromAbilityName(String ability) {

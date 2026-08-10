@@ -162,6 +162,9 @@ public class PartyMember {
     void addAbility(Curse curse) {
         if (this.curses.add(curse)) {
             ZenithApiUpdateEvents.CURSE.invoker().onUpdate(this);
+            if (curse == Curse.ENVY) {
+                this.invertSpecs();
+            }
         }
     }
 
@@ -333,7 +336,10 @@ public class PartyMember {
     }
 
     public EnumSet<Passives> getPassiveSet(AbilitySpec spec) {
-        return EnumSet.copyOf(this.passives.keySet().stream().filter(p -> p.getSpec() == spec).toList());
+        // cannot use EnumSet.copyOf since it requires at least 1 element
+        EnumSet<Passives> result = EnumSet.noneOf(Passives.class);
+        result.addAll(this.passives.keySet().stream().filter(p -> p.getSpec() == spec).toList());
+        return result;
     }
 
     public long getPassiveCount(AbilitySpec spec) {
@@ -355,7 +361,10 @@ public class PartyMember {
     }
 
     public EnumSet<Actives> getActiveSet(AbilitySpec spec) {
-        return EnumSet.copyOf(this.actives.keySet().stream().filter(a -> a.getSpec() == spec).toList());
+        // cannot use EnumSet.copyOf since it requires at least 1 element
+        EnumSet<Actives> result = EnumSet.noneOf(Actives.class);
+        result.addAll(this.actives.keySet().stream().filter(a -> a.getSpec() == spec).toList());
+        return result;
     }
 
     public long getActiveCount(AbilitySpec spec) {

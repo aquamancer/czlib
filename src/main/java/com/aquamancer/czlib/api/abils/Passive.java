@@ -21,6 +21,11 @@ public class Passive implements Ability<Passives>, HasAbilitySpec, HasRarity {
         return ability;
     }
 
+    @Override
+    public String getDisplayName() {
+        return this.ability.getDisplayName();
+    }
+
     public AbilitySpec getSpec() {
         return spec;
     }

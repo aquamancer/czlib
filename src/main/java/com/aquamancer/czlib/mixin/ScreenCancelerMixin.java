@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +22,7 @@ public class ScreenCancelerMixin {
 //            client.player.sendMessage(Text.literal("canceled screen syncid="+client.player.currentScreenHandler.syncId));
             ci.cancel();
             if (client.currentScreen instanceof HandledScreen<?>) {
-                client.setScreen(null);  // screen is stale since it got replaced by the canceled one
+                client.currentScreen.close();
             }
             client.player.currentScreenHandler = client.player.playerScreenHandler;
         }

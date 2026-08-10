@@ -17,8 +17,14 @@ public class Active implements Ability<Actives>, HasAbilitySpec, HasRarity {
         this.rarity = rarity;
     }
 
+    @Override
     public Actives getAbility() {
         return ability;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return this.ability.getDisplayName();
     }
 
     @Override

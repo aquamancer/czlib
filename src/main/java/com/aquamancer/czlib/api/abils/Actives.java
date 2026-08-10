@@ -123,12 +123,12 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
 
     private static final Map<ActiveSlot, Map<AbilitySpec, EnumSet<Actives>>> slots = new EnumMap<>(ActiveSlot.class);
     static {
-        Map<AbilitySpec, EnumSet<Actives>> empty = new EnumMap<>(AbilitySpec.class);
-        for (AbilitySpec spec : AbilitySpec.values()) {
-            empty.put(spec, EnumSet.noneOf(Actives.class));
-        }
         for (ActiveSlot slot : ActiveSlot.values()) {
-            slots.put(slot, new EnumMap<>(empty));
+            Map<AbilitySpec, EnumSet<Actives>> empty = new EnumMap<>(AbilitySpec.class);
+            for (AbilitySpec spec : AbilitySpec.values()) {
+                empty.put(spec, EnumSet.noneOf(Actives.class));
+            }
+            slots.put(slot, empty);
         }
 
         for (Actives active : Actives.values()) {
@@ -142,6 +142,10 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
 
     public static Map<AbilitySpec, EnumSet<Actives>> getActives(ActiveSlot slot) {
         return new EnumMap<>(slots.get(slot));
+    }
+
+    public static Set<Actives> getActives(ActiveSlot slot, AbilitySpec spec) {
+        return new HashSet<>(slots.get(slot).get(spec));
     }
 
     public static Optional<AbilitySpec> getSpec(String string) {

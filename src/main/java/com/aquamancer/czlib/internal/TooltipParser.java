@@ -20,7 +20,7 @@ public class TooltipParser {
         String rarityPart = line.substring(rarityStart - 1);  // include a leading space
         int lastSpace = rarityPart.lastIndexOf(' ');
 
-        Optional<AbilitySpec> spec = AbilitySpec.toEnum(line.substring(0, split));
+        Optional<AbilitySpec> spec = AbilitySpec.fromString(line.substring(0, split));
         Optional<Rarity> rarity = Rarity.fromString(rarityPart.substring(lastSpace + 1));
         return new SpecRarityParseResult(spec, rarity);
     }
