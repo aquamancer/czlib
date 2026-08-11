@@ -34,11 +34,12 @@ public class UpdateManager {
     private static final int CHAT_UPDATE_DELAY_TICKS = 4*20;
     private static final int MIN_TICKS_BETWEEN_FULL_UPDATE = 8*20;
     private static final int MIN_TICKS_BETWEEN_PARSE = 1;
+    private static final int CLOSE_VZC_DELAY_TICKS = 2;
 
     private int ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
     private int ticksSinceFullUpdate = 0;
     private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
-    private boolean sendCloseVzc = false;
+    private int ticksUntilCloseVzc = -1;
 
     public static void init() {
         ZenithApiInternalEvents.WORLD_CHANGED.register(() -> getInstance().onWorldChange());
@@ -113,10 +114,14 @@ public class UpdateManager {
     public void onTick() {
         if (!enabled) return;
         if (!ShardTracker.inZenithShard()) return;
-        if (sendCloseVzc) {
-            sendCloseVzc = false;
+
+        if (ticksUntilCloseVzc == 0) {
             sendPacket(new CloseHandledScreenC2SPacket(this.lastScreenSyncId));
+            ticksUntilCloseVzc--;
+        } else if (ticksUntilCloseVzc > 0) {
+            ticksUntilCloseVzc--;
         }
+
         for (Map.Entry<String, Integer> entry : ticksSinceParse.entrySet()) {
             entry.setValue(entry.getValue() + 1);
         }
@@ -189,7 +194,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-//        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {
@@ -216,17 +221,17 @@ public class UpdateManager {
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-//        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
             client.player.networkHandler.sendChatCommand("vzc " + name);
         }
         this.lastScreenSyncId += names.size();
-        // have to send closescreens2cpacket on the next tick because of race.
+        // have to send closescreens2cpacket after > 1 tick delay since
         // server defers commands to main thread instead of handling in network thread
         // so sending closescreens2cpacket instantly is too early
-        sendCloseVzc = true;
+        ticksUntilCloseVzc = CLOSE_VZC_DELAY_TICKS;
         this.ticksSinceFullUpdate = 0;
     }
 

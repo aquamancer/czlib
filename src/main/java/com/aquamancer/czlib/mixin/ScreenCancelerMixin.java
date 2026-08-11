@@ -21,7 +21,7 @@ public class ScreenCancelerMixin {
         if (ScreenCanceler.shouldCancelScreen(screen)) {
 //            client.player.sendMessage(Text.literal("canceled screen syncid="+client.player.currentScreenHandler.syncId));
             ci.cancel();
-            if (client.currentScreen instanceof HandledScreen<?>) {
+            if (client.currentScreen instanceof HandledScreen<?> && !(client.currentScreen instanceof InventoryScreen)) {
                 client.currentScreen.close();
             }
             client.player.currentScreenHandler = client.player.playerScreenHandler;
