@@ -38,8 +38,9 @@ public enum Rarity {
         return this.level;
     }
 
-    public static Optional<Rarity> fromString(String name) {
-        return Optional.ofNullable(fromString.get(name));
+    public static Optional<Rarity> fromString(String string) {
+        if (string == null) return Optional.empty();
+        return Optional.ofNullable(fromString.get(string));
     }
 
     public static Rarity downgrade(Rarity rarity) {

@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum Gifts implements Ability {
+public enum Gifts implements Ability<Gifts> {
     TWISTED_SCROLL("Twisted Scroll"),
     FORSAKEN_GRIMOIRE("Forsaken Grimoire"),
     PRISMATIC_CUBE("Prismatic Cube"),
@@ -52,7 +52,7 @@ public enum Gifts implements Ability {
     }
 
     @Override
-    public Enum<?> getAbility() {
+    public Gifts getAbility() {
         return this;
     }
 
@@ -61,6 +61,7 @@ public enum Gifts implements Ability {
                     .collect(Collectors.toMap(Gifts::getDisplayName, Function.identity()));
 
     public static Optional<Gifts> fromString(String string) {
+        if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }
 }

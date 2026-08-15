@@ -102,10 +102,6 @@ public class UpdateManager {
 //        if (changed.size() == 1 && changed.get(0).getFirst() == EquipmentSlot.MAINHAND) return;
         Stream<ItemStack> stacks = changed.stream().map(Pair::getSecond);
         if (stacks.allMatch(ItemStack::isEmpty)) return;
-        List<String> stack = changed.stream().map(Pair::getSecond).map(s -> s.getName().getString()).toList();
-        if (client.player != null) {
-//            client.player.sendMessage(Text.literal(stack.toString()));
-        }
 
         openVzc(Collections.singleton(name));
     }

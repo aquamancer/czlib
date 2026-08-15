@@ -136,8 +136,9 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
         }
     }
 
-    public static Optional<Actives> fromString(String name) {
-        return Optional.ofNullable(fromString.get(name));
+    public static Optional<Actives> fromString(String string) {
+        if (string == null) return Optional.empty();
+        return Optional.ofNullable(fromString.get(string));
     }
 
     public static Map<AbilitySpec, EnumSet<Actives>> getActives(ActiveSlot slot) {

@@ -74,6 +74,7 @@ public enum Passives implements Ability<Passives>, HasAbilitySpec {
             .collect(Collectors.toMap(Passives::getDisplayName, Function.identity()));
 
     public static Optional<Passives> fromString(String string) {
+        if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }
 

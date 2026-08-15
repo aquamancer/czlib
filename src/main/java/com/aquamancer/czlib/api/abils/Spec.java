@@ -37,6 +37,7 @@ public enum Spec {
             .collect(Collectors.toMap(Spec::getDisplayName, Function.identity()));
 
     public static Optional<Spec> fromString(String string) {
+        if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }
 

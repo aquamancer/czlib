@@ -34,6 +34,7 @@ public enum Aspect implements Ability<Aspect> {
                     .collect(Collectors.toMap(Aspect::getDisplayName, Function.identity()));
 
     public static Optional<Aspect> fromString(String string) {
+        if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }
 }

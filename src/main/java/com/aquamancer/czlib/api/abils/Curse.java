@@ -47,6 +47,7 @@ public enum Curse implements Ability<Curse> {
                     .collect(Collectors.toMap(Curse::getDisplayName, Function.identity()));
 
     public static Optional<Curse> fromString(String string) {
+        if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }
 }
