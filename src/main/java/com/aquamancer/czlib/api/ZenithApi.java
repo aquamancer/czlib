@@ -2,6 +2,7 @@ package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.api.screens.ZenithScreens;
 import com.aquamancer.czlib.internal.SelfIdentifier;
 import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.ApiStatus;
@@ -62,14 +63,22 @@ public class ZenithApi {
         return this.party.getPlayer(name).isPresent();
     }
 
-    public Rooms getCurrentRoom() {
+    public Rooms getCurrentRoomType() {
         return this.currentRoom;
+    }
+    
+    public int getCurrentRoom() {
+        return this.room;
+    }
+    
+    public int getCurrentFloor() {
+        return this.floor;
     }
 
     public Optional<PartyMember> getCurrentlySelectedInTrinket() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.currentScreen == null) return Optional.empty();
-        if (!client.currentScreen.getTitle().getString().equals("Current Abilities")) return Optional.empty();
+        if (ZenithScreens.fromString(client.currentScreen.getTitle().getString()).orElse(null) != ZenithScreens.TRINKET) return Optional.empty();
 
         return getPlayer(this.openedTrinketPlayer);
     }

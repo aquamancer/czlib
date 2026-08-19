@@ -3,6 +3,7 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.screens.ZenithScreens;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
@@ -31,15 +32,13 @@ public class AbilitySelectionParser {
         Screen openedScreen = MinecraftClient.getInstance().currentScreen;
         if (openedScreen == null) return;
         String title = openedScreen.getTitle().getString();
+        ZenithScreens screen = ZenithScreens.fromString(title).orElse(null);
+        if (screen == null) return;
 
         String self = SelfIdentifier.getSelfName();
         Party party = ZenithApi.getInstance().getPartyManager();
-        switch (title) {
-            case "Select an Ability":
-            case "Select an Upgrade":
-            case "Accept of Reject the Gift":
-            case "Grimoire (Select Ability)":
-            case "Regret (Replace Curse)": {
+        switch (screen) {
+            case ABILITY, UPGRADE, GENEROSITY, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD: {
                 String ability = item.getName().getString();
                 party.createMember(self);
 
@@ -74,35 +73,30 @@ public class AbilitySelectionParser {
                 }
                 break;
             }
-            case "Select an Aspect": {
+            case ASPECT:
                 String ability = item.getName().getString();
                 party.createMember(self);
 
                 Optional<Aspect> aspect = Aspect.fromString(ability);
                 if (aspect.isPresent()) party.setAspect(self, aspect.get());
                 break;
-            }
-            case "Poet's Quill (Remove Tree)": {
+            case QUILL_REMOVE: {
                 Optional<Spec> removed = Spec.fromString(item.getName().getString());
                 if (removed.isEmpty()) return;
                 party.loseSpec(self, removed.get());
                 break;
             }
-            case "Poet's Quill (Replace Tree)": {
+            case QUILL_REPLACE: {
                 Optional<Spec> gained = Spec.fromString(item.getName().getString());
                 if (gained.isEmpty()) return;
                 party.addSpec(self, gained.get());
                 break;
             }
-            case "Pointed Hat (Select Tree)":
+            case POINTED_HAT:
                 Optional<Spec> tree = Spec.fromString(item.getName().getString());
                 if (tree.isEmpty()) return;
                 party.addGift(self, new Gift(tree.get()));
                 break;
-            case "Webbing (Select Player)":
-            case "Grimoire (Select Tree)":
-            case "Prismatic Cube (Replace)":
-            case "Regret (Remove Curse)":
         }
     }
 }

@@ -211,7 +211,7 @@ public class PartyMember {
     }
 
     void invertSpecs() {
-        this.specs = EnumSet.complementOf(this.specs);
+        this.specs = this.getInvertedSpecs();
 
         if (!this.specs.equals(EnumSet.allOf(Spec.class))) {
             ZenithApiUpdateEvents.SPEC.invoker().onUpdate(this);
@@ -311,6 +311,10 @@ public class PartyMember {
 
     public EnumSet<Spec> getSpecs() {
         return specs;
+    }
+
+    public EnumSet<Spec> getInvertedSpecs() {
+        return EnumSet.complementOf(specs);
     }
 
     public Aspect getAspect() {

@@ -171,7 +171,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) return;
         if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
         }
@@ -190,7 +190,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {
@@ -217,7 +217,7 @@ public class UpdateManager {
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoom() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
