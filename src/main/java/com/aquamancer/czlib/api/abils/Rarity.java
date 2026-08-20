@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
@@ -8,20 +11,45 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Rarity {
-    COMMON("Common", 1),
-    UNCOMMON("Uncommon", 2),
-    RARE("Rare", 3),
-    EPIC("Epic", 4),
-    LEGENDARY("Legendary", 5),
-    TWISTED("XXXXXX", 6);
+    COMMON("Common", 1, 0x9f929c),
+    UNCOMMON("Uncommon", 2, 0x70bc6d),
+    RARE("Rare", 3, 0x705eca),
+    EPIC("Epic", 4, 0xcd5eca),
+    LEGENDARY("Legendary", 5, 0xe49b20),
+    TWISTED("XXXXXX", 6, 0x703663);
 
     private final String displayName;
     private final int level;
+    private final int color;
 
-    Rarity(String displayName, int level) {
+    Rarity(String displayName, int level, int color) {
         this.displayName = displayName;
         this.level = level;
+        this.color = color;
     }
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    public int getLevel() {
+        return this.level;
+    }
+
+    public int getColor() {
+        return color;
+    }
+
+    public MutableText getText() {
+        return Text.literal(getDisplayName()).withColor(getColor());
+    }
+
+    private static final Map<Integer, Rarity> fromInt =
+            Arrays.stream(values())
+                    .collect(Collectors.toUnmodifiableMap(
+                            Rarity::getLevel,
+                            Function.identity()
+                    ));
 
     private static final Map<String, Rarity> fromString =
             Arrays.stream(values())
@@ -30,12 +58,8 @@ public enum Rarity {
                             Function.identity()
                     ));
 
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public int getLevel() {
-        return this.level;
+    public static Optional<Rarity> fromInt(int level) {
+        return Optional.ofNullable(fromInt.get(level));
     }
 
     public static Optional<Rarity> fromString(String string) {

@@ -2,6 +2,7 @@ package com.aquamancer.czlib.api.abils;
 
 import com.aquamancer.czlib.Czlib;
 import com.aquamancer.czlib.api.rooms.Rooms;
+import net.minecraft.text.MutableText;
 
 import java.util.EnumSet;
 import java.util.Optional;
@@ -48,6 +49,11 @@ public class Gift implements Ability<Gifts> {
     @Override
     public String getDisplayName() {
         return this.ability.getDisplayName();
+    }
+
+    @Override
+    public MutableText getText() {
+        return this.getAbility().getText();
     }
 
     public int getCounter() {

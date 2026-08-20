@@ -309,10 +309,12 @@ public class PartyMember {
         return graveTimer;
     }
 
+    /** Returns a copy */
     public EnumSet<Spec> getSpecs() {
-        return specs;
+        return specs.clone();
     }
 
+    /** Returns a copy */
     public EnumSet<Spec> getInvertedSpecs() {
         return EnumSet.complementOf(specs);
     }
@@ -321,14 +323,17 @@ public class PartyMember {
         return aspect;
     }
 
+    /** Returns a copy */
     public EnumSet<Curse> getCurses() {
-        return curses;
+        return curses.clone();
     }
 
+    /** Returns an unmodifiable view */
     public Map<Passives, Passive> getPassives() {
-        return passives;
+        return Collections.unmodifiableMap(passives);
     }
 
+    /** Returns a copy */
     public Map<Passives, Passive> getPassives(AbilitySpec spec) {
         return this.passives.entrySet().stream()
                 .filter(e -> e.getKey().getSpec() == spec)
@@ -339,6 +344,7 @@ public class PartyMember {
                 ));
     }
 
+    /** Returns a copy */
     public EnumSet<Passives> getPassiveSet(AbilitySpec spec) {
         // cannot use EnumSet.copyOf since it requires at least 1 element
         EnumSet<Passives> result = EnumSet.noneOf(Passives.class);
@@ -350,10 +356,12 @@ public class PartyMember {
         return this.passives.keySet().stream().filter(p -> p.getSpec() == spec).count();
     }
 
+    /** Returns an unmodifiable view */
     public Map<Actives, Active> getActives() {
-        return actives;
+        return Collections.unmodifiableMap(actives);
     }
 
+    /** Returns a copy */
     public Map<Actives, Active> getActives(AbilitySpec spec) {
         return this.actives.entrySet().stream()
                 .filter(e -> e.getKey().getSpec() == spec)
@@ -364,6 +372,7 @@ public class PartyMember {
                 ));
     }
 
+    /** Returns a copy */
     public EnumSet<Actives> getActiveSet(AbilitySpec spec) {
         // cannot use EnumSet.copyOf since it requires at least 1 element
         EnumSet<Actives> result = EnumSet.noneOf(Actives.class);
@@ -379,12 +388,14 @@ public class PartyMember {
         return this.getActiveCount(spec) + this.getPassiveCount(spec);
     }
 
+    /** Returns an unmodifiable view */
     public Map<Gifts, Gift> getGifts() {
-        return gifts;
+        return Collections.unmodifiableMap(gifts);
     }
 
+    /** Returns an unmodifiable view */
     public Map<Spec, Integer> getCharmLines() {
-        return charmLines;
+        return Collections.unmodifiableMap(charmLines);
     }
 
     public Optional<Spec> getCharmedSpec() {

@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +36,7 @@ public enum Curse implements Ability<Curse> {
         this.displayName = displayName;
     }
 
+    @Override
     public String getDisplayName() {
         return displayName;
     }
@@ -40,6 +44,11 @@ public enum Curse implements Ability<Curse> {
     @Override
     public Curse getAbility() {
         return this;
+    }
+
+    @Override
+    public MutableText getText() {
+        return Text.literal(getDisplayName()).withColor(COLOR);
     }
 
     private static final Map<String, Curse> fromString =

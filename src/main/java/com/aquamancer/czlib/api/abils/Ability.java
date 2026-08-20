@@ -1,10 +1,13 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+
 import java.util.Optional;
 
 public interface Ability<E extends Enum<E>> {
     E getAbility();
     String getDisplayName();
+    MutableText getText();
 
     static Optional<Ability<?>> fromString(String displayName) {
         Optional<Actives> a = Actives.fromString(displayName);

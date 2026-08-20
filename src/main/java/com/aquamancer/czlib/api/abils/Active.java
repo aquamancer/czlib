@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 public class Active implements Ability<Actives>, HasAbilitySpec, HasRarity {
     private final Actives ability;
     private final AbilitySpec spec;
@@ -25,6 +28,11 @@ public class Active implements Ability<Actives>, HasAbilitySpec, HasRarity {
     @Override
     public String getDisplayName() {
         return this.ability.getDisplayName();
+    }
+
+    @Override
+    public MutableText getText() {
+        return ability.getText();
     }
 
     @Override

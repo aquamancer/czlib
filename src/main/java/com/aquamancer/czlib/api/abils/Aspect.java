@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +30,11 @@ public enum Aspect implements Ability<Aspect> {
     @Override
     public Aspect getAbility() {
         return this;
+    }
+
+    @Override
+    public MutableText getText() {
+        return Text.literal(this.getDisplayName());
     }
 
     private static final Map<String, Aspect> fromString =

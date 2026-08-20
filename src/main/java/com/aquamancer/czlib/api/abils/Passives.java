@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -68,6 +71,11 @@ public enum Passives implements Ability<Passives>, HasAbilitySpec {
     @Override
     public Passives getAbility() {
         return this;
+    }
+
+    @Override
+    public MutableText getText() {
+        return Text.literal(getDisplayName()).withColor(this.getColor());
     }
 
     private static final Map<String, Passives> fromString = Arrays.stream(values())

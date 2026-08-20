@@ -1,5 +1,7 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+
 public class Passive implements Ability<Passives>, HasAbilitySpec, HasRarity {
     private final Passives ability;
     private final AbilitySpec spec;
@@ -26,10 +28,17 @@ public class Passive implements Ability<Passives>, HasAbilitySpec, HasRarity {
         return this.ability.getDisplayName();
     }
 
+    @Override
+    public MutableText getText() {
+        return this.getAbility().getText();
+    }
+
+    @Override
     public AbilitySpec getSpec() {
         return spec;
     }
 
+    @Override
     public Rarity getRarity() {
         return rarity;
     }

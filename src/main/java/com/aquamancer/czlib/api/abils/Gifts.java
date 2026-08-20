@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +34,8 @@ public enum Gifts implements Ability<Gifts> {
     CRACKED_IDOL("Cracked Idol", 1),
     ORB_OF_DARKNESS("Orb of Darkness");
 
+    public static final int COLOR = 0x25f6f5;
+
     private final String displayName;
     private final int defaultCounter;
 
@@ -54,6 +59,11 @@ public enum Gifts implements Ability<Gifts> {
     @Override
     public Gifts getAbility() {
         return this;
+    }
+
+    @Override
+    public MutableText getText() {
+        return Text.literal(getDisplayName()).withColor(COLOR);
     }
 
     private static final Map<String, Gifts> fromString =

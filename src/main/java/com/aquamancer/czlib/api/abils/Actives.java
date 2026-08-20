@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -112,6 +115,11 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     @Override
     public Actives getAbility() {
         return this;
+    }
+
+    @Override
+    public MutableText getText() {
+        return Text.literal(getDisplayName()).withColor(this.getColor());
     }
 
     private static final Map<String, Actives> fromString =
