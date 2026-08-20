@@ -388,6 +388,14 @@ public class PartyMember {
         return this.getActiveCount(spec) + this.getPassiveCount(spec);
     }
 
+    public Map<AbilitySpec, Long> getAbilityCounts() {
+        Map<AbilitySpec, Long> result = new EnumMap<>(AbilitySpec.class);
+        for (AbilitySpec spec : AbilitySpec.values()) {
+            result.put(spec, getAbilityCount(spec));
+        }
+        return result;
+    }
+
     /** Returns an unmodifiable view */
     public Map<Gifts, Gift> getGifts() {
         return Collections.unmodifiableMap(gifts);

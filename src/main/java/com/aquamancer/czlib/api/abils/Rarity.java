@@ -41,7 +41,7 @@ public enum Rarity {
     }
 
     public MutableText getText() {
-        return Text.literal(getDisplayName()).withColor(getColor());
+        return Text.literal(getDisplayName()).withColor(getColor()).styled(s -> s.withObfuscated(this == TWISTED));
     }
 
     private static final Map<Integer, Rarity> fromInt =

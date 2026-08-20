@@ -55,8 +55,18 @@ public class ZenithApi {
     public Optional<PartyMember> getSelf() {
         return getPlayer(getSelfName());
     }
+
     public String getSelfName() {
         return SelfIdentifier.getSelfName();
+    }
+
+    public boolean isSelf(String name) {
+        return name.equals(getSelfName());
+    }
+
+    public boolean isSelf(PartyMember player) {
+        PartyMember self = this.getSelf().orElse(null);
+        return self != null && (player == self || isSelf(self.getName()));
     }
 
     public boolean isPartyMember(String name) {
