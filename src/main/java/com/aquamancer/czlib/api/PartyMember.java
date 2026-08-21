@@ -423,8 +423,11 @@ public class PartyMember {
         return charmLines.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
     }
 
-    public enum BlockReason { NOT_BLOCKED, MORE_THAN_4, SLOT_TAKEN }
-    public BlockReason isBlocked(Actives active, boolean a14) {
+    public enum BlockReason { NOT_BLOCKED, MORE_THAN_4, SLOT_TAKEN, ALREADY_HAS }
+    public BlockReason isBlocked(Actives active, boolean limit4PerSpec) {
+        if (this.actives.containsKey(active)) {
+            return BlockReason.ALREADY_HAS;
+        }
         if (active.getSlot() == ActiveSlot.SWAP && this.curses.contains(Curse.ANCHORING)) {
             return BlockReason.SLOT_TAKEN;
         }
@@ -440,7 +443,7 @@ public class PartyMember {
             return BlockReason.SLOT_TAKEN;
         }
 
-        if (!a14) return BlockReason.NOT_BLOCKED;
+        if (!limit4PerSpec) return BlockReason.NOT_BLOCKED;
         if (this.actives.keySet().stream().filter(a -> a.getSpec() == active.getSpec()).count() >= 4) {
             return BlockReason.MORE_THAN_4;
         }
