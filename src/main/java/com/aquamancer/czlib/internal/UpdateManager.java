@@ -94,7 +94,7 @@ public class UpdateManager {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
-        this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
+        this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS + (int) (Math.random() * 10);  // respect server
     }
 
     public void onArmorChange(EntityEquipmentUpdateS2CPacket packet, MinecraftClient client) {
