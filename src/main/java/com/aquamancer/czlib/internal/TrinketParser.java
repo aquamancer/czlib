@@ -29,6 +29,7 @@ public class TrinketParser {
 
     private static final int ASPECT_SLOT = 9;
 
+    private static final int SWAP_SLOT = 16;
     private static final Set<Integer> activeSlots = Set.of(10, 11, 12, 13, 14, 15, 16, 17);
 
     private static final int PASSIVES_START = 27;
@@ -172,6 +173,9 @@ public class TrinketParser {
                 curses.add(curse.get());
                 continue;
             }
+        }
+        if (Curse.fromString(inv.get(SWAP_SLOT).getName().getString()).orElse(null) == Curse.ANCHORING) {
+            curses.add(Curse.ANCHORING);
         }
         return new PassiveParseResult(passives, curses);
     }
