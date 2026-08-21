@@ -401,6 +401,19 @@ public class PartyMember {
         return Collections.unmodifiableMap(gifts);
     }
 
+    public boolean hasAbility(Ability<?> ability) {
+        if (ability instanceof Aspect) return this.aspect == ability;
+        if (ability instanceof Curse) return this.curses.contains(ability);
+        if (ability instanceof Gifts) return this.gifts.containsKey(ability);
+        if (ability instanceof Actives) return this.actives.containsKey(ability);
+        if (ability instanceof Passives) return this.passives.containsKey(ability);
+        return false;
+    }
+
+    public boolean isSelf() {
+        return ZenithApi.getInstance().isSelf(this);
+    }
+
     /** Returns an unmodifiable view */
     public Map<Spec, Integer> getCharmLines() {
         return Collections.unmodifiableMap(charmLines);

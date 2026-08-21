@@ -77,6 +77,7 @@ public class UpdateManager {
         if (!enabled) return;
 
         if (message.getString().equals("Ability removed!")) {
+            ZenithApi.getInstance().removeAbilityForFloor();
             this.update(SelfIdentifier.getSelfName());
         }
     }

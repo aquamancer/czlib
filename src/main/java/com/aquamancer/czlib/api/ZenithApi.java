@@ -17,6 +17,7 @@ public class ZenithApi {
     private int room = -1;
     private int floor = 1;
     private Rooms currentRoom = Rooms.TREE_SELECT;
+    private boolean removedAbilityForFloor = false;
 
     private String openedTrinketPlayer = "";
 
@@ -37,6 +38,7 @@ public class ZenithApi {
             this.floor++;
             this.room = 0;
             this.currentRoom = Rooms.PRE_FLOOR;
+            this.removedAbilityForFloor = false;
         });
     }
 
@@ -85,6 +87,14 @@ public class ZenithApi {
         return this.floor;
     }
 
+    public void removeAbilityForFloor() {
+        this.removedAbilityForFloor = true;
+    }
+
+    public boolean hasRemovedAbilityForFloor() {
+        return this.removedAbilityForFloor;
+    }
+
     public Optional<PartyMember> getCurrentlySelectedInTrinket() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.currentScreen == null) return Optional.empty();
@@ -108,5 +118,6 @@ public class ZenithApi {
         this.room = -1;
         this.floor = 1;
         this.currentRoom = Rooms.TREE_SELECT;
+        this.removedAbilityForFloor = false;
     }
 }
