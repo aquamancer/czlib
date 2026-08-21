@@ -26,6 +26,7 @@ public class ChatParser {
     private static final Pattern WHEEL_REROLLS = Pattern.compile("^\\[Zenith Party] (\\w+) gained (\\d+) rerolls!$");
     private static final Pattern WHEEL_SPEC = Pattern.compile("^\\[Zenith Party] (\\w+) unlocked the (\\w+) tree!$");
     private static final Pattern SENT_TO_LOOTROOM = Pattern.compile("^\\[Zenith Party] Sending you to loot room.*");
+    private static final Pattern DIVERSITY_ACHIEVED = Pattern.compile("^\\[Zenith Party] Due to achieving your Diversity goal.*");
 
     // BOSS_CLEANSE_ROOM message is always sent with but always before "Spawned new Boss room" when opening the cleanse room
     // set a flag to indicate the next "Spawned new Boss room" is the cleanse room, not an actual boss room
@@ -44,6 +45,7 @@ public class ChatParser {
         if (parseAspect(line)) return;
         if (parseLootroom(line)) return;
         if (parseWheel(line)) return;
+        if (parseDiversity(line)) return;
     }
 
     private static boolean parseAbility(String line) {
@@ -166,6 +168,13 @@ public class ChatParser {
         Matcher matcher = SENT_TO_LOOTROOM.matcher(line);
         if (!matcher.matches()) return false;
         ZenithApiStateEvents.SENT_TO_LOOTROOM.invoker().onSentToLootroom();
+        return true;
+    }
+
+    private static boolean parseDiversity(String line) {
+        Matcher matcher = DIVERSITY_ACHIEVED.matcher(line);
+        if (!matcher.matches()) return false;
+        ZenithApi.getInstance().achieveDiversity();
         return true;
     }
 }

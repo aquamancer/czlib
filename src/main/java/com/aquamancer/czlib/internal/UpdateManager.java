@@ -85,9 +85,6 @@ public class UpdateManager {
                 ZenithApi.getInstance().mutated();
                 this.update(SelfIdentifier.getSelfName());
             }
-            case "Due to achieving your Diversity goal, you've received a prismatic ability reward in your trinket!" -> {
-                ZenithApi.getInstance().achieveDiversity();
-            }
         }
     }
 
