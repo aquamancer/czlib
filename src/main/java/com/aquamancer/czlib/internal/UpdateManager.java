@@ -224,7 +224,6 @@ public class UpdateManager {
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
