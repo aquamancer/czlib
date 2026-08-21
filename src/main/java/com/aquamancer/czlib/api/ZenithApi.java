@@ -17,7 +17,10 @@ public class ZenithApi {
     private int room = -1;
     private int floor = 1;
     private Rooms currentRoom = Rooms.TREE_SELECT;
-    private boolean removedAbilityForFloor = false;
+
+    private boolean cleansed = false;
+    private boolean mutated = false;
+    private boolean diversityAchieved = false;
 
     private String openedTrinketPlayer = "";
 
@@ -38,7 +41,8 @@ public class ZenithApi {
             this.floor++;
             this.room = 0;
             this.currentRoom = Rooms.PRE_FLOOR;
-            this.removedAbilityForFloor = false;
+            this.cleansed = false;
+            this.mutated = false;
         });
     }
 
@@ -87,12 +91,28 @@ public class ZenithApi {
         return this.floor;
     }
 
-    public void removeAbilityForFloor() {
-        this.removedAbilityForFloor = true;
+    public void cleansed() {
+        this.cleansed = true;
     }
 
-    public boolean hasRemovedAbilityForFloor() {
-        return this.removedAbilityForFloor;
+    public boolean hasCleansed() {
+        return this.cleansed;
+    }
+
+    public void mutated() {
+        this.mutated = true;
+    }
+
+    public boolean hasMutated() {
+        return this.mutated;
+    }
+
+    public void achieveDiversity() {
+        this.diversityAchieved = true;
+    }
+
+    public boolean hasAchievedDiversity() {
+        return this.diversityAchieved;
     }
 
     public Optional<PartyMember> getCurrentlySelectedInTrinket() {
@@ -118,6 +138,8 @@ public class ZenithApi {
         this.room = -1;
         this.floor = 1;
         this.currentRoom = Rooms.TREE_SELECT;
-        this.removedAbilityForFloor = false;
+        this.cleansed = false;
+        this.mutated = false;
+        this.diversityAchieved = false;
     }
 }

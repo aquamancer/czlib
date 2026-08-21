@@ -1,5 +1,7 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -38,6 +40,11 @@ public enum AbilitySpec {
         } else {
             return this.spec.getColor();
         }
+    }
+
+    public MutableText getText() {
+        if (this.spec == null) return Text.literal(PRISMATIC.getDisplayName()).withColor(PRISMATIC.getColor());
+        return this.spec.getText();
     }
 
     private static final Map<String, AbilitySpec> fromString = Arrays.stream(values())

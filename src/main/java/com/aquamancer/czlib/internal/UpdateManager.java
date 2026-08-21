@@ -76,9 +76,18 @@ public class UpdateManager {
     public void onActionBarMessage(Text message) {
         if (!enabled) return;
 
-        if (message.getString().equals("Ability removed!")) {
-            ZenithApi.getInstance().removeAbilityForFloor();
-            this.update(SelfIdentifier.getSelfName());
+        switch (message.getString()) {
+            case "Ability removed!" -> {
+                ZenithApi.getInstance().cleansed();
+                this.update(SelfIdentifier.getSelfName());
+            }
+            case "Ability mutated!" -> {
+                ZenithApi.getInstance().mutated();
+                this.update(SelfIdentifier.getSelfName());
+            }
+            case "Due to achieving your Diversity goal, you've received a prismatic ability reward in your trinket!" -> {
+                ZenithApi.getInstance().achieveDiversity();
+            }
         }
     }
 

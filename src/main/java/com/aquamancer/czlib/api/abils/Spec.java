@@ -1,5 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -31,6 +34,10 @@ public enum Spec {
 
     public int getColor() {
         return this.color;
+    }
+
+    public MutableText getText() {
+        return Text.literal(this.getDisplayName()).withColor(this.getColor());
     }
 
     private static final Map<String, Spec> fromString = Arrays.stream(values())
