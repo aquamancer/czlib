@@ -17,6 +17,7 @@ public class ChatParser {
     private static final Pattern ABILITY = Pattern.compile("^\\[Zenith Party] (\\w+) (now has|now have|upgraded|downgraded|has lost|lost) ability: (.*?)(?: (?:at|to) (\\w+) level!|!)$");
     private static final Pattern ASPECT = Pattern.compile("^\\[Zenith Party] (\\w+) has selected (Mystery Box|Aspect of the (?:Axe|Bow|Scythe|Sword|Wand)) as their aspect!$");
     private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Ability|Elite Ability|Upgrade|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))?!$");
+    private static final Pattern ROOM_REWARD = Pattern.compile("^\\[Zenith Party] This room's \\w+ reward has been found!$");
     private static final Pattern TREE_SELECTION = Pattern.compile("^\\[Zenith Party] You have selected the \\w+ tree!$");
     private static final Pattern BOSS_KILLED = Pattern.compile("^\\[Zenith Party] You received a Celestial Gift for clearing the floor! Check your Trinket to claim the gift.$");
     private static final Pattern NEXT_FLOOR = Pattern.compile("^\\[Zenith Party] Your party earned \\d+ treasure score for clearing floor \\d+! Sending your party to next floor.$");
@@ -40,6 +41,7 @@ public class ChatParser {
         }
         if (parseAbility(line)) return;
         if (parseRoom(line)) return;
+        if (parseRoomReward(line)) return;
         if (parseBossCleanseRoom(line)) return;
         if (parseNextFloor(line)) return;
         if (parseAspect(line)) return;
@@ -121,8 +123,15 @@ public class ChatParser {
             room = Rooms.BOSS_CLEANSE;
         }
 
-        ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomSpawned(room, matcher.group(2) != null);
+        ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomEvent(room, matcher.group(2) != null);
         bossCleanseRoomFlag = false;
+        return true;
+    }
+
+    private static boolean parseRoomReward(String line) {
+        Matcher matcher = ROOM.matcher(line);
+        if (!matcher.matches()) return false;
+        ZenithApiStateEvents.ROOM_REWARD.invoker().onRoomEvent(ZenithApi.getInstance().getCurrentRoomType(), ZenithApi.getInstance().isCurrentRoomWildcard());
         return true;
     }
 

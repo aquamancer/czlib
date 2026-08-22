@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PartyMember {
     private AbstractClientPlayerEntity entity;
@@ -29,43 +28,56 @@ public class PartyMember {
         this.name = name;
     }
 
-    void onRoomSpawned(Rooms room, boolean wildcard) {
-        Gift northernStar = gifts.computeIfPresent(Gifts.NORTHERN_STAR, (k, v) -> {
-            if (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE) {
-                v.decrement();
-                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
-            }
-            return v;
-        });
-        if (northernStar != null) {
+    void onRoomSpawned(Rooms room, boolean isWildcard) {
+        Gift wildcard = gifts.get(Gifts.WILD_CARD);
+        if (wildcard != null && isWildcard) {
+            wildcard.increment();
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+    }
+
+    void onRoomReward(Rooms room, boolean isWildcard) {
+        Gift northernStar = gifts.get(Gifts.NORTHERN_STAR);
+        if (northernStar != null && (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE)) {
+            northernStar.decrement();
             if (northernStar.getCounter() <= 0) {
                 gifts.remove(Gifts.NORTHERN_STAR);
             }
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
 
-        gifts.computeIfPresent(Gifts.WILD_CARD, (k, v) -> {
-            if (wildcard) {
-                v.increment();
-                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
-            }
-            return v;
-        });
-
-        Gift hat = gifts.computeIfPresent(Gifts.CALLICARPAS_POINTED_HAT, (k, v) -> {
-            v.decrement();
-            return v;
-        });
-        if (hat != null) {
+        Gift hat = gifts.get(Gifts.CALLICARPAS_POINTED_HAT);
+        if (hat != null && (room == Rooms.ABILITY || room == Rooms.ABILITY_ELITE)) {
+            hat.decrement();
             if (hat.getCounter() <= 0) {
                 gifts.remove(Gifts.CALLICARPAS_POINTED_HAT);
             }
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
+
+        Gift pendant = this.gifts.get(Gifts.AVARICIOUS_PENDANT);
+        if (pendant != null && (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE)) {
+            pendant.increment();
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
     }
 
-    void onBossKilled() {
+    void onF1F2BossKilled() {
         if (this.gifts.remove(Gifts.BROKEN_CLOCK) != null) {
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+
+        Gift pendant = this.gifts.get(Gifts.AVARICIOUS_PENDANT);
+        if (pendant != null) {
+            pendant.increment();
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+    }
+
+    void onSentToLootroom() {
+        Gift pendant = this.gifts.get(Gifts.AVARICIOUS_PENDANT);
+        if (pendant != null) {
+            pendant.increment();
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
     }

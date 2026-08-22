@@ -17,6 +17,7 @@ public class ZenithApi {
     private int room = -1;
     private int floor = 1;
     private Rooms currentRoom = Rooms.TREE_SELECT;
+    private boolean isWildcard = false;
 
     private boolean cleansed = false;
     private boolean mutated = false;
@@ -36,11 +37,13 @@ public class ZenithApi {
             } else {
                 this.currentRoom = room;
             }
+            this.isWildcard = isWildcard;
         });
         ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register(() -> {
             this.floor++;
             this.room = 0;
             this.currentRoom = Rooms.PRE_FLOOR;
+            this.isWildcard = false;
             this.cleansed = false;
             this.mutated = false;
         });
@@ -81,6 +84,10 @@ public class ZenithApi {
 
     public Rooms getCurrentRoomType() {
         return this.currentRoom;
+    }
+
+    public boolean isCurrentRoomWildcard() {
+        return this.isWildcard;
     }
     
     public int getCurrentRoom() {
@@ -138,6 +145,7 @@ public class ZenithApi {
         this.room = -1;
         this.floor = 1;
         this.currentRoom = Rooms.TREE_SELECT;
+        this.isWildcard = false;
         this.cleansed = false;
         this.mutated = false;
         this.diversityAchieved = false;

@@ -13,11 +13,17 @@ public class Party {
     private final Map<String, PartyMember> players = new HashMap<>();
 
     Party() {
-        ZenithApiStateEvents.ROOM_SPAWNED.register((room, wildcard) -> {
-            players.values().forEach(player -> player.onRoomSpawned(room, wildcard));
+        ZenithApiStateEvents.ROOM_SPAWNED.register((room, isWildcard) -> {
+            players.values().forEach(player -> player.onRoomSpawned(room, isWildcard));
+        });
+        ZenithApiStateEvents.ROOM_REWARD.register((room, isWildcard) -> {
+            players.values().forEach(player -> player.onRoomReward(room, isWildcard));
         });
         ZenithApiStateEvents.F1_F2_BOSS_KILLED.register(() -> {
-            players.values().forEach(PartyMember::onBossKilled);
+            players.values().forEach(PartyMember::onF1F2BossKilled);
+        });
+        ZenithApiStateEvents.SENT_TO_LOOTROOM.register(() -> {
+            players.values().forEach(PartyMember::onSentToLootroom);
         });
         ZenithApiStateEvents.GRAVE_SPAWNED.register((deadPlayer) -> {
             players.computeIfPresent(deadPlayer, (name, player) -> {

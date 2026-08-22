@@ -5,12 +5,22 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
 public class ZenithApiStateEvents {
-    public static final Event<RoomSpawned> ROOM_SPAWNED = EventFactory.createArrayBacked(
-            RoomSpawned.class,
+    public static final Event<RoomEvent> ROOM_SPAWNED = EventFactory.createArrayBacked(
+            RoomEvent.class,
             (listeners) -> {
                 return (room, wildcard) -> {
-                    for (RoomSpawned listener : listeners) {
-                        listener.onRoomSpawned(room, wildcard);
+                    for (RoomEvent listener : listeners) {
+                        listener.onRoomEvent(room, wildcard);
+                    }
+                };
+            }
+    );
+    public static final Event<RoomEvent> ROOM_REWARD = EventFactory.createArrayBacked(
+            RoomEvent.class,
+            (listeners) -> {
+                return (room, wildcard) -> {
+                    for (RoomEvent listener : listeners) {
+                        listener.onRoomEvent(room, wildcard);
                     }
                 };
             }
@@ -77,8 +87,8 @@ public class ZenithApiStateEvents {
     );
 
     @FunctionalInterface
-    public interface RoomSpawned {
-        void onRoomSpawned(Rooms room, boolean isWildcard);
+    public interface RoomEvent {
+        void onRoomEvent(Rooms room, boolean isWildcard);
     }
     @FunctionalInterface
     public interface NextFloor {
