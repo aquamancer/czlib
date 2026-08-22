@@ -1,6 +1,9 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gift;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
+import com.aquamancer.czlib.api.abils.gifts.TreasureMap;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -33,6 +36,12 @@ public class PartyMember {
         if (wildcard != null && isWildcard) {
             wildcard.increment();
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+
+        if (gifts.get(Gifts.TREASURE_MAP) instanceof TreasureMap map) {
+            if (map.onRoomSpawned(room, isWildcard)) {
+                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+            }
         }
     }
 

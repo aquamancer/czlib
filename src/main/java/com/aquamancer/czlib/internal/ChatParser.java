@@ -3,6 +3,7 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Rooms;
 import net.minecraft.text.Text;

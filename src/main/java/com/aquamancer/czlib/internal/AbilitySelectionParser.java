@@ -3,6 +3,9 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.CallicarpasHat;
+import com.aquamancer.czlib.api.abils.gifts.Gift;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.screens.ZenithScreens;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -95,7 +98,7 @@ public class AbilitySelectionParser {
             case POINTED_HAT:
                 Optional<Spec> tree = Spec.fromString(item.getName().getString());
                 if (tree.isEmpty()) return;
-                party.addGift(self, new Gift(tree.get()));
+                party.addGift(self, new CallicarpasHat(tree.get().toAbilitySpec()));
                 break;
         }
     }

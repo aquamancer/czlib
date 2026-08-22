@@ -1,5 +1,6 @@
-package com.aquamancer.czlib.api.abils;
+package com.aquamancer.czlib.api.abils.gifts;
 
+import com.aquamancer.czlib.api.abils.Ability;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -30,7 +31,7 @@ public enum Gifts implements Ability<Gifts> {
     VENOM_OF_THE_BROODMOTHER("Venom of the Broodmother"),
     BROODMOTHERS_WEBBING("Broodmother's Webbing"),
     STATUE_OF_REGRET("Statue of Regret"),
-    RAINBOW_GEODE("Rainbow Geode", 3),
+    RAINBOW_GEODE("Rainbow Geode"),
     CRACKED_IDOL("Cracked Idol"),
     ORB_OF_DARKNESS("Orb of Darkness");
 

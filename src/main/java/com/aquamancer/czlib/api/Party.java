@@ -1,6 +1,8 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gift;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
