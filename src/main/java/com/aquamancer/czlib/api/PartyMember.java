@@ -282,11 +282,14 @@ public class PartyMember {
             case COMB_OF_SELECTION:
             case PILLAR_OF_LIGHT:
             case BROKEN_CLOCK:
-            case TREASURE_MAP:
             case RAINBOW_GEODE:
-            case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui will call addGift(Gift) with a tree and replace this
+            case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui for selecting a tree will also call addGift(Gift) and replace this
             case CRACKED_IDOL:
                 this.gifts.put(gift, new Gift(gift, gift.getDefaultValue()));
+                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+                break;
+            case TREASURE_MAP:
+                this.gifts.put(Gifts.TREASURE_MAP, new TreasureMap());
                 ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
                 break;
             // gifts not fully handled by chat or gui
@@ -298,11 +301,7 @@ public class PartyMember {
             case MEGA_HAMMER:
                 this.megaHammer();
                 break;
-            case POETS_QUILL:
-                // requires a trinket parse to determine its effect for other players
-                // gui handles poet's quill for self
-                break;
-            // all other gifts are one-off and fully handled by separate chat messages or gui screens
+            // all other gifts are handled by separate chat messages or gui screens
         }
     }
 
