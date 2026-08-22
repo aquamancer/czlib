@@ -64,6 +64,12 @@ public class PartyMember {
         }
     }
 
+    void onSentToNextFloor() {
+        if (this.gifts.remove(Gifts.BROKEN_CLOCK) != null) {
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+    }
+
     void onDeath() {
         if (gifts.remove(Gifts.CRACKED_IDOL) != null) {
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
