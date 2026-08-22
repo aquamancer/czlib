@@ -64,7 +64,7 @@ public class PartyMember {
         }
     }
 
-    void onSentToNextFloor() {
+    void onBossKilled() {
         if (this.gifts.remove(Gifts.BROKEN_CLOCK) != null) {
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }

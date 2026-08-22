@@ -16,8 +16,8 @@ public class Party {
         ZenithApiStateEvents.ROOM_SPAWNED.register((room, wildcard) -> {
             players.values().forEach(player -> player.onRoomSpawned(room, wildcard));
         });
-        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register(() -> {
-            players.values().forEach(PartyMember::onSentToNextFloor);
+        ZenithApiStateEvents.F1_F2_BOSS_KILLED.register(() -> {
+            players.values().forEach(PartyMember::onBossKilled);
         });
         ZenithApiStateEvents.GRAVE_SPAWNED.register((deadPlayer) -> {
             players.computeIfPresent(deadPlayer, (name, player) -> {

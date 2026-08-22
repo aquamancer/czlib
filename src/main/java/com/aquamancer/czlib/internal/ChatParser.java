@@ -18,7 +18,7 @@ public class ChatParser {
     private static final Pattern ASPECT = Pattern.compile("^\\[Zenith Party] (\\w+) has selected (Mystery Box|Aspect of the (?:Axe|Bow|Scythe|Sword|Wand)) as their aspect!$");
     private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Ability|Elite Ability|Upgrade|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))?!$");
     private static final Pattern TREE_SELECTION = Pattern.compile("^\\[Zenith Party] You have selected the \\w+ tree!$");
-    private static final Pattern BOSS_CONQUER = Pattern.compile("^\\[Zenith Party] You received a Celestial Gift for clearing the floor! Check your Trinket to claim the gift.$");
+    private static final Pattern BOSS_KILLED = Pattern.compile("^\\[Zenith Party] You received a Celestial Gift for clearing the floor! Check your Trinket to claim the gift.$");
     private static final Pattern NEXT_FLOOR = Pattern.compile("^\\[Zenith Party] Your party earned \\d+ treasure score for clearing floor \\d+! Sending your party to next floor.$");
     private static final Pattern BOSS_CLEANSE_ROOM = Pattern.compile("^\\[Zenith Party] Each player must remove an ability before moving on!$");
     private static final Pattern PURGING_STONE_WHEEL = Pattern.compile("^\\[Zenith Party] (?:Unlucky! )?(\\w+) downgraded all (?:your|their) abilities by a level!$");
@@ -44,6 +44,7 @@ public class ChatParser {
         if (parseNextFloor(line)) return;
         if (parseAspect(line)) return;
         if (parseLootroom(line)) return;
+        if (parseBossKilled(line)) return;
         if (parseWheel(line)) return;
         if (parseDiversity(line)) return;
     }
@@ -175,6 +176,13 @@ public class ChatParser {
         Matcher matcher = DIVERSITY_ACHIEVED.matcher(line);
         if (!matcher.matches()) return false;
         ZenithApi.getInstance().achieveDiversity();
+        return true;
+    }
+
+    private static boolean parseBossKilled(String line) {
+        Matcher matcher = BOSS_KILLED.matcher(line);
+        if (!matcher.matches()) return false;
+        ZenithApiStateEvents.F1_F2_BOSS_KILLED.invoker().onF1F2BossKilled();
         return true;
     }
 }

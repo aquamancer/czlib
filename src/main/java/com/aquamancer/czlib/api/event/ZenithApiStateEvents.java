@@ -15,6 +15,16 @@ public class ZenithApiStateEvents {
                 };
             }
     );
+    public static final Event<F1F2BossKilled> F1_F2_BOSS_KILLED = EventFactory.createArrayBacked(
+            F1F2BossKilled.class,
+            (listeners) -> {
+                return () -> {
+                    for (F1F2BossKilled listener : listeners) {
+                        listener.onF1F2BossKilled();
+                    }
+                };
+            }
+    );
     public static final Event<NextFloor> SENT_TO_NEXT_FLOOR = EventFactory.createArrayBacked(
             NextFloor.class,
             (listeners) -> {
@@ -73,6 +83,10 @@ public class ZenithApiStateEvents {
     @FunctionalInterface
     public interface NextFloor {
         void onSentToNextFloor();
+    }
+    @FunctionalInterface
+    public interface F1F2BossKilled {
+        void onF1F2BossKilled();
     }
     @FunctionalInterface
     public interface EnterZenithShard {
