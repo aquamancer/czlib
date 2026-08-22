@@ -31,7 +31,7 @@ public enum Gifts implements Ability<Gifts> {
     BROODMOTHERS_WEBBING("Broodmother's Webbing"),
     STATUE_OF_REGRET("Statue of Regret"),
     RAINBOW_GEODE("Rainbow Geode", 3),
-    CRACKED_IDOL("Cracked Idol", 1),
+    CRACKED_IDOL("Cracked Idol"),
     ORB_OF_DARKNESS("Orb of Darkness");
 
     public static final int COLOR = 0x25f6f5;
