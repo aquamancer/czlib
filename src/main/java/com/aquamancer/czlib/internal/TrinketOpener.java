@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
@@ -37,44 +38,59 @@ public class TrinketOpener {
     public static int openAndClickHeads(@Nullable Set<Integer> slots, int trinketSlot, int syncId) {
         if (trinketSlot < 9) return syncId;  // inventory starts at slot 9
         if (slots == null || slots.isEmpty()) {
-            if (openTrinket(trinketSlot)) {
-                UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(syncId + 1));
-                ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
-            }
-        } else {
-            for (Integer slot : slots) {
-                if (openTrinket(trinketSlot)) {
-                    UpdateManager.sendPacket(new ClickSlotC2SPacket(
-                            ++syncId,
-                            1,
-                            slot,
-                            0,
-                            SlotActionType.PICKUP,
-                            playerHead,
-                            modifiedStacks
-                    ));
-                    UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(
-                            syncId
-                    ));
-                    ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
-                }
-            }
+            return openAndCloseTrinket(trinketSlot, syncId, false);
         }
-        return syncId;
+
+        int lastId = syncId;
+        for (Integer slot : slots) {
+            lastId = openTrinketAndClickSlot(slot, trinketSlot, lastId, true, false);
+        }
+        return lastId;
     }
 
-    private static boolean openTrinket(int slot) {
-        if (slot < 9) return false;
+    public static int openTrinketAndClickSlot(int slot, int trinketSlot, int syncId, boolean cancelScreen, boolean allowInInventory) {
+        boolean opened = openTrinket(trinketSlot, allowInInventory);
+        if (!opened) return syncId;
+        int nextSyncId = syncId + 1;
+        UpdateManager.sendPacket(new ClickSlotC2SPacket(
+                nextSyncId,
+                1,
+                slot,
+                0,
+                SlotActionType.PICKUP,
+                playerHead,
+                modifiedStacks
+        ));
+        if (cancelScreen) {
+            UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(
+                    nextSyncId
+            ));
+            ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
+        }
+        return nextSyncId;
+    }
+
+    public static int openAndCloseTrinket(int trinketSlot, int syncId, boolean allowInInventory) {
+        boolean opened = openTrinket(trinketSlot, allowInInventory);
+        if (!opened) return syncId;
+        int nextSyncId = syncId + 1;
+        UpdateManager.sendPacket(new CloseHandledScreenC2SPacket(
+                nextSyncId
+        ));
+        ScreenCanceler.cancelFutureScreens(1, ScreenCanceler.Type.TRINKET);
+        return nextSyncId;
+    }
+
+    public static boolean openTrinket(int trinketSlot, boolean allowInInventory) {
+        if (trinketSlot < 9) return false;
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null || client.player.currentScreenHandler == null) return false;
-        if (client.currentScreen instanceof HandledScreen) return false;
+        if (client.currentScreen instanceof HandledScreen && !(allowInInventory && client.currentScreen instanceof InventoryScreen)) return false;
 
-        Int2ObjectMap<ItemStack> modifiedStacks = new Int2ObjectOpenHashMap<>();
-        modifiedStacks.put(slot, ItemStack.EMPTY);
         UpdateManager.sendPacket(new ClickSlotC2SPacket(
                 0,
                 client.player.currentScreenHandler.getRevision(),
-                slot,
+                trinketSlot,
                 1,
                 SlotActionType.PICKUP,
                 depthsTrinket,
