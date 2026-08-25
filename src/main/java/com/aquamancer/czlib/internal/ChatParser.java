@@ -122,6 +122,8 @@ public class ChatParser {
         Rooms room = roomOptional.get();
         if (room == Rooms.BOSS && bossCleanseRoomFlag) {
             room = Rooms.BOSS_CLEANSE;
+        } else if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) {
+            room = Rooms.ABILITY_SELECT;
         }
 
         ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomEvent(room, matcher.group(2) != null);
@@ -130,7 +132,7 @@ public class ChatParser {
     }
 
     private static boolean parseRoomReward(String line) {
-        Matcher matcher = ROOM.matcher(line);
+        Matcher matcher = ROOM_REWARD.matcher(line);
         if (!matcher.matches()) return false;
         ZenithApiStateEvents.ROOM_REWARD.invoker().onRoomEvent(ZenithApi.getInstance().getCurrentRoomType(), ZenithApi.getInstance().isCurrentRoomWildcard());
         return true;

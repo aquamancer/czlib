@@ -31,12 +31,7 @@ public class ZenithApi {
             if (room != Rooms.BOSS_CLEANSE) {
                 this.room++;
             }
-
-            if (this.currentRoom == Rooms.TREE_SELECT) {
-                this.currentRoom = Rooms.ABILITY_SELECT;
-            } else {
-                this.currentRoom = room;
-            }
+            this.currentRoom = room;
             this.isWildcard = isWildcard;
         });
         ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register(() -> {
