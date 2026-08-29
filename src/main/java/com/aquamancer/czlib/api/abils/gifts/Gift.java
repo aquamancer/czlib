@@ -15,6 +15,7 @@ public class Gift implements Ability<Gifts> {
 
     public Gift(Gifts gift) {
         this.ability = gift;
+        this.counter = gift.getDefaultValue();
     }
 
     public Gift(Gifts gift, int counter) {
