@@ -30,6 +30,10 @@ public class ShardTracker {
     }
 
     public static void updateCurrentShard() {
+        if (currentShard != null) {
+            previousValidShard = currentShard;
+            currentShard = null;
+        }
         remainingAttempts = ATTEMPTS_UNTIL_TIMEOUT;
         ticksUntilAttempt = FIRST_ATTEMPT_DELAY_TICKS;
 	}
@@ -40,17 +44,11 @@ public class ShardTracker {
             ticksUntilAttempt--;
         } else {
             remainingAttempts--;
-            String newShard = parseShard();
-            if (currentShard != null) {
-                previousValidShard = currentShard;
-            }
-            currentShard = newShard;
+            currentShard = parseShard();
             if (currentShard != null) {
                 remainingAttempts = 0;
-                if (!currentShard.equals(previousValidShard)) {
-                    if (isZenithShard(previousValidShard)) {
-                        ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
-                    }
+                if (!currentShard.equals(previousValidShard) && isZenithShard(previousValidShard)) {
+                    ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
                 }
                 if (isZenithShard(currentShard)) {
                     ZenithApiStateEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);

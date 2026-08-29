@@ -61,13 +61,17 @@ public class UpdateManager {
             getInstance().headNames.clear();
             getInstance().enabled = false;
         });
+        ZenithApiStateEvents.TREE_SELECT.register((spec) -> {
+            getInstance().updateSelf();
+        });
         ZenithApiStateEvents.ROOM_SPAWNED.register((r, w) -> {
-            getInstance().openVzc(getInstance().headNames.keySet());
-            if (r == Room.BOSS_CLEANSE || r == Room.BOSS) {
-                getInstance().preBoss = true;
+            if (r == Room.ABILITY_SELECT) {
+                getInstance().updateAll();
+                getInstance().openVzc(getInstance().headNames.keySet(), true);
             } else {
-                getInstance().preBoss = false;
+                getInstance().openVzc(getInstance().headNames.keySet(), false);
             }
+            getInstance().preBoss = r == Room.BOSS_CLEANSE || r == Room.BOSS;
         });
         ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register((f) -> {
             getInstance().preBoss = false;
@@ -85,7 +89,7 @@ public class UpdateManager {
         String title = closedScreen.getTitle().getString();
         if (title.equals("Current Abilities")) return;
 
-        this.update(SelfIdentifier.getSelfName());
+        this.updateSelf();
     }
 
     public void onActionBarMessage(Text message) {
@@ -94,11 +98,11 @@ public class UpdateManager {
         switch (message.getString()) {
             case "Ability removed!" -> {
                 ZenithApi.getInstance().cleansed();
-                this.update(SelfIdentifier.getSelfName());
+                this.updateSelf();
             }
             case "Ability mutated!" -> {
                 ZenithApi.getInstance().mutated();
-                this.update(SelfIdentifier.getSelfName());
+                this.updateSelf();
             }
         }
     }
@@ -126,7 +130,7 @@ public class UpdateManager {
         Stream<ItemStack> stacks = changed.stream().map(Pair::getSecond);
         if (stacks.allMatch(ItemStack::isEmpty)) return;
 
-        openVzc(Collections.singleton(name));
+        openVzc(Collections.singleton(name), false);
     }
 
 
@@ -197,6 +201,7 @@ public class UpdateManager {
         if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
         if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
+            return;
         }
 
         int trinketSlot = TrinketLocator.getTrinketSlot();
@@ -213,7 +218,6 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {
@@ -235,11 +239,15 @@ public class UpdateManager {
         this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }
 
-    public void openVzc(Collection<String> names) {
+    private void updateSelf() {
+        this.update(SelfIdentifier.getSelfName());
+    }
+
+    public void openVzc(Collection<String> names, boolean force) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
-        if (ScreenCanceler.isCancelingScreens()) return;
+        if (ScreenCanceler.isCancelingScreens() && !force) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
@@ -250,7 +258,9 @@ public class UpdateManager {
         // server defers commands to main thread instead of handling in network thread
         // so sending closescreens2cpacket instantly is too early
         ticksUntilCloseVzc = CLOSE_VZC_DELAY_TICKS;
-        this.ticksSinceFullUpdate = 0;
+        if (names.size() > 1) {
+            this.ticksSinceFullUpdate = 0;
+        }
     }
 
     public static void sendPacket(Packet<?> packet) {

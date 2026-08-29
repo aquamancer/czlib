@@ -96,7 +96,7 @@ public class Czlib implements ClientModInitializer {
 							.then(ClientCommandManager.argument("args", StringArgumentType.greedyString())
 							.executes(context -> {
 								String raw = StringArgumentType.getString(context, "args");
-								UpdateManager.getInstance().openVzc(Arrays.stream(raw.split("\\s+")).toList());
+								UpdateManager.getInstance().openVzc(Arrays.stream(raw.split("\\s+")).toList(), false);
 								return 1;
 							}))
 			);

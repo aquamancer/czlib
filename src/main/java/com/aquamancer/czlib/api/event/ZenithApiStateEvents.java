@@ -1,11 +1,22 @@
 package com.aquamancer.czlib.api.event;
 
+import com.aquamancer.czlib.api.abils.Spec;
 import com.aquamancer.czlib.api.bosses.Boss;
 import com.aquamancer.czlib.api.rooms.Room;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
 public class ZenithApiStateEvents {
+    public static final Event<TreeSelectEvent> TREE_SELECT = EventFactory.createArrayBacked(
+            TreeSelectEvent.class,
+            (listeners) -> {
+                return (spec) -> {
+                    for (TreeSelectEvent listener : listeners) {
+                        listener.onTreeSelect(spec);
+                    }
+                };
+            }
+    );
     public static final Event<RoomEvent> ROOM_SPAWNED = EventFactory.createArrayBacked(
             RoomEvent.class,
             (listeners) -> {
@@ -97,6 +108,10 @@ public class ZenithApiStateEvents {
             }
     );
 
+    @FunctionalInterface
+    public interface TreeSelectEvent {
+        void onTreeSelect(Spec spec);
+    }
     @FunctionalInterface
     public interface RoomEvent {
         void onRoomEvent(Room room, boolean isWildcard);
