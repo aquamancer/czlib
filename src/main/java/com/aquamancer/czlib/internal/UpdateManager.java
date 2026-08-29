@@ -2,13 +2,14 @@ package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
-import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.api.rooms.Room;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
@@ -39,6 +40,8 @@ public class UpdateManager {
     private int ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
     private int ticksSinceFullUpdate = 0;
     private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
+
+    private boolean preBoss = false;
     private int ticksUntilCloseVzc = -1;
 
     public static void init() {
@@ -46,6 +49,7 @@ public class UpdateManager {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
             getInstance().enabled = true;
+            getInstance().preBoss = false;
         });
         ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
             getInstance().ticksSinceParse.clear();
@@ -57,19 +61,30 @@ public class UpdateManager {
             getInstance().headNames.clear();
             getInstance().enabled = false;
         });
-
         ZenithApiStateEvents.ROOM_SPAWNED.register((r, w) -> {
             getInstance().openVzc(getInstance().headNames.keySet());
+            if (r == Room.BOSS_CLEANSE || r == Room.BOSS) {
+                getInstance().preBoss = true;
+            } else {
+                getInstance().preBoss = false;
+            }
+        });
+        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register((f) -> {
+            getInstance().preBoss = false;
+        });
+        ZenithApiStateEvents.BOSS_SPAWNED.register((b) -> {
+            getInstance().preBoss = false;
         });
     }
 
     // update rules
     public void onManualScreenClose(Screen closedScreen) {
         if (!enabled) return;
-
         if (closedScreen == null) return;
+        if (closedScreen instanceof InventoryScreen) return;
         String title = closedScreen.getTitle().getString();
-        if (title.equals("Crafting") || title.equals("Current Abilities")) return;
+        if (title.equals("Current Abilities")) return;
+
         this.update(SelfIdentifier.getSelfName());
     }
 
@@ -94,11 +109,12 @@ public class UpdateManager {
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
-        this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS + (int) (Math.random() * 10);  // respect server
+        this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS + (int) (Math.random() * 10);
     }
 
     public void onArmorChange(EntityEquipmentUpdateS2CPacket packet, MinecraftClient client) {
         if (!enabled) return;
+        if (!preBoss) return;
         if (client.world == null) return;
         Entity entity = client.world.getEntityById(packet.getId());
         if (!(entity instanceof PlayerEntity player)) return;
@@ -178,7 +194,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
         if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
         }
@@ -197,7 +213,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
-        if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) return;
+        if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {

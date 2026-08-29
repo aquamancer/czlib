@@ -21,8 +21,8 @@ public class Party {
         ZenithApiStateEvents.ROOM_REWARD.register((room, isWildcard) -> {
             players.values().forEach(player -> player.onRoomReward(room, isWildcard));
         });
-        ZenithApiStateEvents.F1_F2_BOSS_KILLED.register(() -> {
-            players.values().forEach(PartyMember::onF1F2BossKilled);
+        ZenithApiStateEvents.FLOOR_CLEARED.register((floor) -> {
+            players.values().forEach(PartyMember::onFloorCleared);
         });
         ZenithApiStateEvents.SENT_TO_LOOTROOM.register(() -> {
             players.values().forEach(PartyMember::onSentToLootroom);

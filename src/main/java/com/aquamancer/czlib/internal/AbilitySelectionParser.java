@@ -4,9 +4,8 @@ import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.gifts.CallicarpasHat;
-import com.aquamancer.czlib.api.abils.gifts.Gift;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
-import com.aquamancer.czlib.api.screens.ZenithScreens;
+import com.aquamancer.czlib.api.screens.ZenithScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
@@ -35,7 +34,7 @@ public class AbilitySelectionParser {
         Screen openedScreen = MinecraftClient.getInstance().currentScreen;
         if (openedScreen == null) return;
         String title = openedScreen.getTitle().getString();
-        ZenithScreens screen = ZenithScreens.fromString(title).orElse(null);
+        ZenithScreen screen = ZenithScreen.fromString(title).orElse(null);
         if (screen == null) return;
 
         String self = SelfIdentifier.getSelfName();

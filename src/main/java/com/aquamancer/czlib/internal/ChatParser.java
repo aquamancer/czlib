@@ -5,7 +5,7 @@ import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
-import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.api.rooms.Room;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -20,7 +20,7 @@ public class ChatParser {
     private static final Pattern ROOM = Pattern.compile("^\\[Zenith Party] Spawned new (Ability|Elite Ability|Upgrade|Elite Upgrade|Utility|Boss) room( \\(Wildcard\\))?!$");
     private static final Pattern ROOM_REWARD = Pattern.compile("^\\[Zenith Party] This room's \\w+ reward has been found!$");
     private static final Pattern TREE_SELECTION = Pattern.compile("^\\[Zenith Party] You have selected the \\w+ tree!$");
-    private static final Pattern BOSS_KILLED = Pattern.compile("^\\[Zenith Party] You received a Celestial Gift for clearing the floor! Check your Trinket to claim the gift.$");
+    private static final Pattern FLOOR_CLEARED = Pattern.compile("^\\[Zenith Party] You received a Celestial Gift for clearing the floor! Check your Trinket to claim the gift.$");
     private static final Pattern NEXT_FLOOR = Pattern.compile("^\\[Zenith Party] Your party earned \\d+ treasure score for clearing floor \\d+! Sending your party to next floor.$");
     private static final Pattern BOSS_CLEANSE_ROOM = Pattern.compile("^\\[Zenith Party] Each player must remove an ability before moving on!$");
     private static final Pattern PURGING_STONE_WHEEL = Pattern.compile("^\\[Zenith Party] (?:Unlucky! )?(\\w+) downgraded all (?:your|their) abilities by a level!$");
@@ -47,7 +47,7 @@ public class ChatParser {
         if (parseNextFloor(line)) return;
         if (parseAspect(line)) return;
         if (parseLootroom(line)) return;
-        if (parseBossKilled(line)) return;
+        if (parseFloorCleared(line)) return;
         if (parseWheel(line)) return;
         if (parseDiversity(line)) return;
     }
@@ -117,13 +117,13 @@ public class ChatParser {
     private static boolean parseRoom(String line) {
         Matcher matcher = ROOM.matcher(line);
         if (!matcher.matches()) return false;
-        Optional<Rooms> roomOptional = Rooms.toEnum(matcher.group(1));
+        Optional<Room> roomOptional = Room.toEnum(matcher.group(1));
         if (roomOptional.isEmpty()) return true;
-        Rooms room = roomOptional.get();
-        if (room == Rooms.BOSS && bossCleanseRoomFlag) {
-            room = Rooms.BOSS_CLEANSE;
-        } else if (ZenithApi.getInstance().getCurrentRoomType() == Rooms.TREE_SELECT) {
-            room = Rooms.ABILITY_SELECT;
+        Room room = roomOptional.get();
+        if (room == Room.BOSS && bossCleanseRoomFlag) {
+            room = Room.BOSS_CLEANSE;
+        } else if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) {
+            room = Room.ABILITY_SELECT;
         }
 
         ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomEvent(room, matcher.group(2) != null);
@@ -148,7 +148,7 @@ public class ChatParser {
     private static boolean parseNextFloor(String line) {
         Matcher matcher = NEXT_FLOOR.matcher(line);
         if (!matcher.matches()) return false;
-        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.invoker().onSentToNextFloor();
+        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.invoker().onFloorEvent(ZenithApi.getInstance().getCurrentFloor() + 1);
         return true;
     }
 
@@ -191,10 +191,10 @@ public class ChatParser {
         return true;
     }
 
-    private static boolean parseBossKilled(String line) {
-        Matcher matcher = BOSS_KILLED.matcher(line);
+    private static boolean parseFloorCleared(String line) {
+        Matcher matcher = FLOOR_CLEARED.matcher(line);
         if (!matcher.matches()) return false;
-        ZenithApiStateEvents.F1_F2_BOSS_KILLED.invoker().onF1F2BossKilled();
+        ZenithApiStateEvents.FLOOR_CLEARED.invoker().onFloorEvent(ZenithApi.getInstance().getCurrentFloor());
         return true;
     }
 }

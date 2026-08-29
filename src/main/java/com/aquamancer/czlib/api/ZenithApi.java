@@ -1,8 +1,8 @@
 package com.aquamancer.czlib.api;
 
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
-import com.aquamancer.czlib.api.rooms.Rooms;
-import com.aquamancer.czlib.api.screens.ZenithScreens;
+import com.aquamancer.czlib.api.rooms.Room;
+import com.aquamancer.czlib.api.screens.ZenithScreen;
 import com.aquamancer.czlib.internal.SelfIdentifier;
 import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.ApiStatus;
@@ -16,7 +16,7 @@ public class ZenithApi {
     private final Party party = new Party();
     private int room = -1;
     private int floor = 1;
-    private Rooms currentRoom = Rooms.TREE_SELECT;
+    private Room currentRoom = Room.TREE_SELECT;
     private boolean isWildcard = false;
 
     private boolean cleansed = false;
@@ -28,16 +28,16 @@ public class ZenithApi {
     private ZenithApi() {
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> this.reset());
         ZenithApiStateEvents.ROOM_SPAWNED.register((room, isWildcard) -> {
-            if (room != Rooms.BOSS_CLEANSE) {
+            if (room != Room.BOSS_CLEANSE) {
                 this.room++;
             }
             this.currentRoom = room;
             this.isWildcard = isWildcard;
         });
-        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register(() -> {
-            this.floor++;
+        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register((f) -> {
+            this.floor = f;
             this.room = 0;
-            this.currentRoom = Rooms.PRE_FLOOR;
+            this.currentRoom = Room.PRE_FLOOR;
             this.isWildcard = false;
             this.cleansed = false;
             this.mutated = false;
@@ -77,7 +77,7 @@ public class ZenithApi {
         return this.party.getPlayer(name).isPresent();
     }
 
-    public Rooms getCurrentRoomType() {
+    public Room getCurrentRoomType() {
         return this.currentRoom;
     }
 
@@ -120,7 +120,7 @@ public class ZenithApi {
     public Optional<PartyMember> getCurrentlySelectedInTrinket() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.currentScreen == null) return Optional.empty();
-        if (ZenithScreens.fromString(client.currentScreen.getTitle().getString()).orElse(null) != ZenithScreens.TRINKET) return Optional.empty();
+        if (ZenithScreen.fromString(client.currentScreen.getTitle().getString()).orElse(null) != ZenithScreen.TRINKET) return Optional.empty();
 
         return getPlayer(this.openedTrinketPlayer);
     }
@@ -139,7 +139,7 @@ public class ZenithApi {
         this.party.clear();
         this.room = -1;
         this.floor = 1;
-        this.currentRoom = Rooms.TREE_SELECT;
+        this.currentRoom = Room.TREE_SELECT;
         this.isWildcard = false;
         this.cleansed = false;
         this.mutated = false;

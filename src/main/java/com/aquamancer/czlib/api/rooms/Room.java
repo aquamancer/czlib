@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public enum Rooms {
+public enum Room {
     ABILITY,
     ABILITY_ELITE,
     UPGRADE,
@@ -17,9 +17,9 @@ public enum Rooms {
     BOSS_CLEANSE,
     PRE_FLOOR;
 
-    private static Map<String, Rooms> fromString = new HashMap<>();
+    private static Map<String, Room> fromString = new HashMap<>();
 
-    public static Optional<Rooms> toEnum(String string) {
+    public static Optional<Room> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 

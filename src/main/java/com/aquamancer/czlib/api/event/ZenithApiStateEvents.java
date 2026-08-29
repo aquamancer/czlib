@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.api.event;
 
-import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.api.bosses.Boss;
+import com.aquamancer.czlib.api.rooms.Room;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
@@ -25,22 +26,32 @@ public class ZenithApiStateEvents {
                 };
             }
     );
-    public static final Event<F1F2BossKilled> F1_F2_BOSS_KILLED = EventFactory.createArrayBacked(
-            F1F2BossKilled.class,
+    public static final Event<BossEvent> BOSS_SPAWNED = EventFactory.createArrayBacked(
+            BossEvent.class,
             (listeners) -> {
-                return () -> {
-                    for (F1F2BossKilled listener : listeners) {
-                        listener.onF1F2BossKilled();
+                return (boss) -> {
+                    for (BossEvent listener : listeners) {
+                        listener.onBossEvent(boss);
                     }
                 };
             }
     );
-    public static final Event<NextFloor> SENT_TO_NEXT_FLOOR = EventFactory.createArrayBacked(
-            NextFloor.class,
+    public static final Event<FloorEvent> FLOOR_CLEARED = EventFactory.createArrayBacked(
+            FloorEvent.class,
             (listeners) -> {
-                return () -> {
-                    for (NextFloor listener : listeners) {
-                        listener.onSentToNextFloor();
+                return (floor) -> {
+                    for (FloorEvent listener : listeners) {
+                        listener.onFloorEvent(floor);
+                    }
+                };
+            }
+    );
+    public static final Event<FloorEvent> SENT_TO_NEXT_FLOOR = EventFactory.createArrayBacked(
+            FloorEvent.class,
+            (listeners) -> {
+                return (floor) -> {
+                    for (FloorEvent listener : listeners) {
+                        listener.onFloorEvent(floor);
                     }
                 };
             }
@@ -88,15 +99,15 @@ public class ZenithApiStateEvents {
 
     @FunctionalInterface
     public interface RoomEvent {
-        void onRoomEvent(Rooms room, boolean isWildcard);
+        void onRoomEvent(Room room, boolean isWildcard);
     }
     @FunctionalInterface
-    public interface NextFloor {
-        void onSentToNextFloor();
+    public interface FloorEvent {
+        void onFloorEvent(int floor);
     }
     @FunctionalInterface
-    public interface F1F2BossKilled {
-        void onF1F2BossKilled();
+    public interface BossEvent {
+        void onBossEvent(Boss boss);
     }
     @FunctionalInterface
     public interface EnterZenithShard {

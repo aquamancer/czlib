@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public enum ZenithScreens {
+public enum ZenithScreen {
     TRINKET("Current Abilities"),
 
     TREE("Select a Tree"),
@@ -34,7 +34,7 @@ public enum ZenithScreens {
 
     private final String title;
 
-    ZenithScreens(String title) {
+    ZenithScreen(String title) {
         this.title = title;
     }
 
@@ -42,14 +42,14 @@ public enum ZenithScreens {
         return title;
     }
 
-    private static final Map<String, ZenithScreens> fromString =
+    private static final Map<String, ZenithScreen> fromString =
             Arrays.stream(values())
                     .collect(Collectors.toUnmodifiableMap(
-                            ZenithScreens::getTitle,
+                            ZenithScreen::getTitle,
                             Function.identity()
                     ));
 
-    public static Optional<ZenithScreens> fromString(String string) {
+    public static Optional<ZenithScreen> fromString(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }

@@ -5,7 +5,7 @@ import com.aquamancer.czlib.api.abils.gifts.Gift;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.abils.gifts.TreasureMap;
 import com.aquamancer.czlib.api.event.ZenithApiUpdateEvents;
-import com.aquamancer.czlib.api.rooms.Rooms;
+import com.aquamancer.czlib.api.rooms.Room;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -31,7 +31,7 @@ public class PartyMember {
         this.name = name;
     }
 
-    void onRoomSpawned(Rooms room, boolean isWildcard) {
+    void onRoomSpawned(Room room, boolean isWildcard) {
         Gift wildcard = gifts.get(Gifts.WILD_CARD);
         if (wildcard != null && isWildcard) {
             wildcard.increment();
@@ -45,9 +45,9 @@ public class PartyMember {
         }
     }
 
-    void onRoomReward(Rooms room, boolean isWildcard) {
+    void onRoomReward(Room room, boolean isWildcard) {
         Gift northernStar = gifts.get(Gifts.NORTHERN_STAR);
-        if (northernStar != null && (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE)) {
+        if (northernStar != null && (room == Room.ABILITY_ELITE || room == Room.UPGRADE_ELITE)) {
             northernStar.decrement();
             if (northernStar.getCounter() <= 0) {
                 gifts.remove(Gifts.NORTHERN_STAR);
@@ -56,7 +56,7 @@ public class PartyMember {
         }
 
         Gift hat = gifts.get(Gifts.CALLICARPAS_POINTED_HAT);
-        if (hat != null && (room == Rooms.ABILITY || room == Rooms.ABILITY_ELITE)) {
+        if (hat != null && (room == Room.ABILITY || room == Room.ABILITY_ELITE)) {
             hat.decrement();
             if (hat.getCounter() <= 0) {
                 gifts.remove(Gifts.CALLICARPAS_POINTED_HAT);
@@ -65,13 +65,13 @@ public class PartyMember {
         }
 
         Gift pendant = this.gifts.get(Gifts.AVARICIOUS_PENDANT);
-        if (pendant != null && (room == Rooms.ABILITY_ELITE || room == Rooms.UPGRADE_ELITE)) {
+        if (pendant != null && (room == Room.ABILITY_ELITE || room == Room.UPGRADE_ELITE)) {
             pendant.increment();
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
     }
 
-    void onF1F2BossKilled() {
+    void onFloorCleared() {
         if (this.gifts.remove(Gifts.BROKEN_CLOCK) != null) {
             ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
         }
