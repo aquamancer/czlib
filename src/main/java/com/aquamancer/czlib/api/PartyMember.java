@@ -459,11 +459,10 @@ public class PartyMember {
         }
         if (active.getSlot() == ActiveSlot.WILDCARD) {
             Active convergence = this.actives.get(Actives.CONVERGENCE);
-            if (convergence != null) {
-                long numWildcards = this.actives.keySet().stream().filter(a -> a.getSlot() == ActiveSlot.WILDCARD).count();
-                if (numWildcards >= Actives.getConvergenceValues(convergence.getRarity())) {
-                    return BlockReason.SLOT_TAKEN;
-                }
+            int allowedWildcards = (convergence == null) ? 1 : Actives.getConvergenceValues(convergence.getRarity());
+            long numWildcards = this.actives.keySet().stream().filter(a -> a.getSlot() == ActiveSlot.WILDCARD).count();
+            if (numWildcards >= allowedWildcards) {
+                return BlockReason.SLOT_TAKEN;
             }
         } else if (this.actives.keySet().stream().anyMatch(a -> a.getSlot() == active.getSlot())) {
             return BlockReason.SLOT_TAKEN;
