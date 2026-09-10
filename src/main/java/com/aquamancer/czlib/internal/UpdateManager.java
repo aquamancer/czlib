@@ -86,6 +86,7 @@ public class UpdateManager {
         if (!enabled) return;
         if (closedScreen == null) return;
         if (closedScreen instanceof InventoryScreen) return;
+        if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
         String title = closedScreen.getTitle().getString();
         if (title.equals("Current Abilities")) return;
 
