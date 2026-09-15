@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 @Mixin(targets = "net.minecraft.network.packet.s2c.play.BossBarS2CPacket$AddAction")
 public class BossBarMixin {
     @Unique
-    private static final Pattern GRAVE = Pattern.compile("(\\w+)'s Grave*");
+    private static final Pattern GRAVE = Pattern.compile("(\\w+)'s Grave");
 
     // boss strings have §formatting chars before the name so a leading .* must be used
     @Unique
