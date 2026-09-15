@@ -48,6 +48,13 @@ public enum Spec {
         return Optional.ofNullable(fromString.get(string));
     }
 
+    public static EnumSet<Spec> getComplement(Collection<Spec> collection) {
+        if (collection == null || collection.isEmpty()) {
+            return EnumSet.allOf(Spec.class);
+        }
+        return EnumSet.complementOf(EnumSet.copyOf(collection));
+    }
+
     public static class SpecComparator implements Comparator<Spec> {
         private final Map<Spec, Integer> priority;
         public SpecComparator(Map<Spec, Integer> priority) {

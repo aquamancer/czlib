@@ -340,9 +340,8 @@ public class PartyMember {
         return specs.clone();
     }
 
-    /** Returns a copy */
     public EnumSet<Spec> getInvertedSpecs() {
-        return EnumSet.complementOf(specs);
+        return Spec.getComplement(this.specs);
     }
 
     public Aspect getAspect() {

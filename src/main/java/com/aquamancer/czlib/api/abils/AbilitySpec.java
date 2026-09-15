@@ -138,6 +138,13 @@ public enum AbilitySpec {
         return result;
     }
 
+    public static EnumSet<AbilitySpec> getComplement(Collection<AbilitySpec> collection) {
+        if (collection == null || collection.isEmpty()) {
+            return EnumSet.allOf(AbilitySpec.class);
+        }
+        return EnumSet.complementOf(EnumSet.copyOf(collection));
+    }
+
     public static class AbilitySpecComparator implements Comparator<HasAbilitySpec> {
         private final Map<AbilitySpec, Integer> priority;
         public AbilitySpecComparator(Map<AbilitySpec, Integer> priority) {
