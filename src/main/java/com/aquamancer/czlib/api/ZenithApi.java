@@ -70,7 +70,7 @@ public class ZenithApi {
 
     public boolean isSelf(PartyMember player) {
         PartyMember self = this.getSelf().orElse(null);
-        return self != null && (player == self || isSelf(self.getName()));
+        return self != null && (player == self || isSelf(player.getName()));
     }
 
     public boolean isPartyMember(String name) {
