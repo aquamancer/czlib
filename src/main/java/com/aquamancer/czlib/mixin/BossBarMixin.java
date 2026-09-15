@@ -2,6 +2,7 @@ package com.aquamancer.czlib.mixin;
 
 import com.aquamancer.czlib.api.bosses.Boss;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,16 +24,17 @@ import java.util.regex.Pattern;
 @Mixin(targets = "net.minecraft.network.packet.s2c.play.BossBarS2CPacket$AddAction")
 public class BossBarMixin {
     @Unique
-    private static final Pattern GRAVE = Pattern.compile("^(\\w+)'s Grave.*");
+    private static final Pattern GRAVE = Pattern.compile("(\\w+)'s Grave*");
+
+    // boss strings have §formatting chars before the name so a leading .* must be used
+    @Unique
+    private static final Pattern CALLI = Pattern.compile(".*Callicarpa,.*");
 
     @Unique
-    private static final Pattern CALLI = Pattern.compile("^Callicarpa,.*");
+    private static final Pattern BROOD = Pattern.compile(".*The Broodmother.*");
 
     @Unique
-    private static final Pattern BROOD = Pattern.compile("^The Broodmother$");
-
-    @Unique
-    private static final Pattern VESP = Pattern.compile("^The Vesperidys$");
+    private static final Pattern VESP = Pattern.compile(".*The Vesperidys.*");
 
     @Unique
     private static final Map<Pattern, Consumer<Matcher>> operations = Map.of(
@@ -49,7 +51,7 @@ public class BossBarMixin {
         String title = name.getString();
         for (Map.Entry<Pattern, Consumer<Matcher>> op : operations.entrySet()) {
             Matcher matcher = op.getKey().matcher(title);
-            if (matcher.matches()) {
+            if (matcher.find()) {
                 op.getValue().accept(matcher);
                 break;
             }
