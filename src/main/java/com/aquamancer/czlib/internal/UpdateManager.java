@@ -63,12 +63,7 @@ public class UpdateManager {
             getInstance().updateSelf();
         });
         ZenithApiStateEvents.ROOM_SPAWNED.register((r, w) -> {
-            if (r == Room.ABILITY_SELECT) {
-                getInstance().updateAll();
-                getInstance().openVzc(getInstance().headNames.keySet(), true);
-            } else {
-                getInstance().openVzc(getInstance().headNames.keySet(), false);
-            }
+            getInstance().openVzc(getInstance().headNames.keySet());
         });
     }
 
@@ -122,7 +117,7 @@ public class UpdateManager {
         Stream<ItemStack> stacks = changed.stream().map(Pair::getSecond);
         if (stacks.allMatch(ItemStack::isEmpty)) return;
 
-        openVzc(Collections.singleton(name), false);
+        openVzc(Collections.singleton(name));
     }
 
 
@@ -236,11 +231,11 @@ public class UpdateManager {
         this.update(SelfIdentifier.getSelfName());
     }
 
-    public void openVzc(Collection<String> names, boolean force) {
+    public void openVzc(Collection<String> names) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
-        if (ScreenCanceler.isCancelingScreens() && !force) return;
+        if (ScreenCanceler.isCancelingScreens()) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
