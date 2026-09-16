@@ -51,7 +51,7 @@ public class UpdateManager {
             getInstance().enabled = true;
             getInstance().preBoss = false;
         });
-        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
+        ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.register((p, c) -> {
             getInstance().ticksSinceParse.clear();
             getInstance().headNames.clear();
             getInstance().enabled = false;

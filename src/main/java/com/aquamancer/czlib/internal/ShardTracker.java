@@ -42,19 +42,34 @@ public class ShardTracker {
         if (remainingAttempts <= 0) return;
         if (ticksUntilAttempt > 0) {
             ticksUntilAttempt--;
-        } else {
-            remainingAttempts--;
-            currentShard = parseShard();
-            if (currentShard != null) {
-                remainingAttempts = 0;
-                if (!currentShard.equals(previousValidShard) && isZenithShard(previousValidShard)) {
-                    ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onExitZenithShard(previousValidShard, currentShard);
-                }
-                if (isZenithShard(currentShard)) {
-                    ZenithApiStateEvents.ENTER_ZENITH_SHARD.invoker().onEnteredZenithShard(previousValidShard, currentShard);
-                }
+            return;
+        }
+        remainingAttempts--;
+        ticksUntilAttempt = ATTEMPT_INTERVAL_TICKS;
+
+        currentShard = parseShard();
+        if (currentShard == null) {
+            if (remainingAttempts > 0) return;
+            // exhausted all attempts
+            if (isZenithShard(previousValidShard)) {
+                ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onShardChange(previousValidShard, null);
             }
-            ticksUntilAttempt = ATTEMPT_INTERVAL_TICKS;
+            ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.invoker().onShardChange(previousValidShard, null);
+            return;
+        }
+
+        remainingAttempts = 0;
+        if (isZenithShard(currentShard)) {
+            if (currentShard.equals(previousValidShard)) {
+                ZenithApiStateEvents.REJOIN_ZENITH_SHARD.invoker().onRejoinZenithShard(currentShard);
+            } else {
+                ZenithApiStateEvents.ENTER_ZENITH_SHARD.invoker().onShardChange(previousValidShard, currentShard);
+            }
+        } else {
+            if (isZenithShard(previousValidShard)) {
+                ZenithApiStateEvents.EXIT_ZENITH_SHARD.invoker().onShardChange(previousValidShard, currentShard);
+            }
+            ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.invoker().onShardChange(previousValidShard, currentShard);
         }
     }
 

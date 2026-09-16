@@ -33,7 +33,7 @@ public class Party {
                 return player;
             });
         });
-        ZenithApiStateEvents.EXIT_ZENITH_SHARD.register((p, c) -> {
+        ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.register((p, c) -> {
             this.clear();
         });
         ClientTickEvents.START_CLIENT_TICK.register(client -> {

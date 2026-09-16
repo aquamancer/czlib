@@ -67,22 +67,42 @@ public class ZenithApiStateEvents {
                 };
             }
     );
-    public static final Event<EnterZenithShard> ENTER_ZENITH_SHARD = EventFactory.createArrayBacked(
-            EnterZenithShard.class,
+    public static final Event<ShardChangeEvent> ENTER_ZENITH_SHARD = EventFactory.createArrayBacked(
+            ShardChangeEvent.class,
             (listeners) -> {
                 return (previous, current) -> {
-                    for (EnterZenithShard listener : listeners) {
-                        listener.onEnteredZenithShard(previous, current);
+                    for (ShardChangeEvent listener : listeners) {
+                        listener.onShardChange(previous, current);
                     }
                 };
             }
     );
-    public static final Event<ExitZenithShard> EXIT_ZENITH_SHARD = EventFactory.createArrayBacked(
-            ExitZenithShard.class,
+    public static final Event<ShardChangeEvent> EXIT_ZENITH_SHARD = EventFactory.createArrayBacked(
+            ShardChangeEvent.class,
             (listeners) -> {
                 return (previous, current) -> {
-                    for (ExitZenithShard listener : listeners) {
-                        listener.onExitZenithShard(previous, current);
+                    for (ShardChangeEvent listener : listeners) {
+                        listener.onShardChange(previous, current);
+                    }
+                };
+            }
+    );
+    public static final Event<ShardChangeEvent> ENTER_NON_ZENITH_SHARD = EventFactory.createArrayBacked(
+            ShardChangeEvent.class,
+            (listeners) -> {
+                return (previous, current) -> {
+                    for (ShardChangeEvent listener : listeners) {
+                        listener.onShardChange(previous, current);
+                    }
+                };
+            }
+    );
+    public static final Event<RejoinZenithShard> REJOIN_ZENITH_SHARD = EventFactory.createArrayBacked(
+            RejoinZenithShard.class,
+            (listeners) -> {
+                return (shard) -> {
+                    for (RejoinZenithShard listener : listeners) {
+                        listener.onRejoinZenithShard(shard);
                     }
                 };
             }
@@ -125,12 +145,12 @@ public class ZenithApiStateEvents {
         void onBossEvent(Boss boss);
     }
     @FunctionalInterface
-    public interface EnterZenithShard {
-        void onEnteredZenithShard(String previous, String current);
+    public interface ShardChangeEvent {
+        void onShardChange(String previous, String current);
     }
     @FunctionalInterface
-    public interface ExitZenithShard {
-        void onExitZenithShard(String previous, String current);
+    public interface RejoinZenithShard {
+        void onRejoinZenithShard(String shard);
     }
     @FunctionalInterface
     public interface GraveSpawned {
