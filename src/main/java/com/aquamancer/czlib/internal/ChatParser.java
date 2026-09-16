@@ -132,13 +132,14 @@ public class ChatParser {
         Optional<Room> roomOptional = Room.toEnum(matcher.group(1));
         if (roomOptional.isEmpty()) return true;
         Room room = roomOptional.get();
+        boolean isWildcard = matcher.group(2) != null;
         if (room == Room.BOSS && bossCleanseRoomFlag) {
             room = Room.BOSS_CLEANSE;
-        } else if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) {
+        } else if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT && room == Room.ABILITY && !isWildcard) {
             room = Room.ABILITY_SELECT;
         }
 
-        ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomEvent(room, matcher.group(2) != null);
+        ZenithApiStateEvents.ROOM_SPAWNED.invoker().onRoomEvent(room, isWildcard);
         bossCleanseRoomFlag = false;
         return true;
     }
