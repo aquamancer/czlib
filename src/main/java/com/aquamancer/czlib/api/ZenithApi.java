@@ -19,6 +19,7 @@ public class ZenithApi {
     private Room currentRoom = Room.TREE_SELECT;
     private boolean isWildcard = false;
     private boolean preBoss = false;
+    private boolean roomRewardFound = false;
 
     private boolean cleansed = false;
     private boolean mutated = false;
@@ -46,6 +47,7 @@ public class ZenithApi {
             this.currentRoom = room;
             this.isWildcard = isWildcard;
             this.preBoss = room == Room.BOSS_CLEANSE || room == Room.BOSS;
+            this.roomRewardFound = false;
         });
         ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register((f) -> {
             this.floor = f;
@@ -58,6 +60,9 @@ public class ZenithApi {
         });
         ZenithApiStateEvents.BOSS_SPAWNED.register((b) -> {
             this.preBoss = false;
+        });
+        ZenithApiStateEvents.ROOM_REWARD.register((r, w) -> {
+            this.roomRewardFound = true;
         });
     }
 
@@ -104,6 +109,10 @@ public class ZenithApi {
 
     public boolean isPreBoss() {
         return this.preBoss;
+    }
+
+    public boolean roomRewardFound() {
+        return this.roomRewardFound;
     }
     
     public int getCurrentRoom() {

@@ -191,6 +191,7 @@ public class UpdateManager {
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
         if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
+        if (ZenithApi.getInstance().roomRewardFound()) return;
         if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
             return;
