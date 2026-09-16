@@ -18,6 +18,7 @@ public class ZenithApi {
     private int floor = 1;
     private Room currentRoom = Room.TREE_SELECT;
     private boolean isWildcard = false;
+    private boolean preBoss = false;
 
     private boolean cleansed = false;
     private boolean mutated = false;
@@ -26,21 +27,37 @@ public class ZenithApi {
     private String openedTrinketPlayer = "";
 
     private ZenithApi() {
-        ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> this.reset());
+        ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
+            this.party.clear();
+            this.room = -1;
+            this.floor = 1;
+            this.currentRoom = Room.TREE_SELECT;
+            this.isWildcard = false;
+            this.preBoss = false;
+            this.cleansed = false;
+            this.mutated = false;
+            this.diversityAchieved = false;
+        });
+
         ZenithApiStateEvents.ROOM_SPAWNED.register((room, isWildcard) -> {
             if (room != Room.BOSS_CLEANSE) {
                 this.room++;
             }
             this.currentRoom = room;
             this.isWildcard = isWildcard;
+            this.preBoss = room == Room.BOSS_CLEANSE || room == Room.BOSS;
         });
         ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register((f) -> {
             this.floor = f;
             this.room = 0;
             this.currentRoom = Room.PRE_FLOOR;
             this.isWildcard = false;
+            this.preBoss = false;
             this.cleansed = false;
             this.mutated = false;
+        });
+        ZenithApiStateEvents.BOSS_SPAWNED.register((b) -> {
+            this.preBoss = false;
         });
     }
 
@@ -83,6 +100,10 @@ public class ZenithApi {
 
     public boolean isCurrentRoomWildcard() {
         return this.isWildcard;
+    }
+
+    public boolean isPreBoss() {
+        return this.preBoss;
     }
     
     public int getCurrentRoom() {
@@ -133,16 +154,5 @@ public class ZenithApi {
     @ApiStatus.Internal
     public Party getPartyManager() {
         return this.party;
-    }
-
-    private void reset() {
-        this.party.clear();
-        this.room = -1;
-        this.floor = 1;
-        this.currentRoom = Room.TREE_SELECT;
-        this.isWildcard = false;
-        this.cleansed = false;
-        this.mutated = false;
-        this.diversityAchieved = false;
     }
 }

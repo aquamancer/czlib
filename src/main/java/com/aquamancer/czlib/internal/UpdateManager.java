@@ -41,7 +41,6 @@ public class UpdateManager {
     private int ticksSinceFullUpdate = 0;
     private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
 
-    private boolean preBoss = false;
     private int ticksUntilCloseVzc = -1;
 
     public static void init() {
@@ -49,7 +48,6 @@ public class UpdateManager {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
             getInstance().enabled = true;
-            getInstance().preBoss = false;
         });
         ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.register((p, c) -> {
             getInstance().ticksSinceParse.clear();
@@ -71,13 +69,6 @@ public class UpdateManager {
             } else {
                 getInstance().openVzc(getInstance().headNames.keySet(), false);
             }
-            getInstance().preBoss = r == Room.BOSS_CLEANSE || r == Room.BOSS;
-        });
-        ZenithApiStateEvents.SENT_TO_NEXT_FLOOR.register((f) -> {
-            getInstance().preBoss = false;
-        });
-        ZenithApiStateEvents.BOSS_SPAWNED.register((b) -> {
-            getInstance().preBoss = false;
         });
     }
 
@@ -119,7 +110,7 @@ public class UpdateManager {
 
     public void onArmorChange(EntityEquipmentUpdateS2CPacket packet, MinecraftClient client) {
         if (!enabled) return;
-        if (!preBoss) return;
+        if (!ZenithApi.getInstance().isPreBoss()) return;
         if (client.world == null) return;
         Entity entity = client.world.getEntityById(packet.getId());
         if (!(entity instanceof PlayerEntity player)) return;
