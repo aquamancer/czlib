@@ -154,6 +154,8 @@ public class ChatParser {
     private static boolean parseBossCleanseRoom(String line) {
         Matcher matcher = BOSS_CLEANSE_ROOM.matcher(line);
         if (!matcher.matches()) return false;
+        // same message gets sent when trying to open the boss room and not everyone has cleansed. prevent the flag from being set again
+        if (ZenithApi.getInstance().getCurrentRoomType() == Room.BOSS_CLEANSE) return true;
         bossCleanseRoomFlag = true;
         return true;
     }
