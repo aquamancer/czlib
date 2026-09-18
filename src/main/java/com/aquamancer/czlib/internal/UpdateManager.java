@@ -32,26 +32,38 @@ public class UpdateManager {
     private Map<String, Integer> headNames = new HashMap<>(4);
     private int lastScreenSyncId = 0;
 
-    private static final int CHAT_UPDATE_DELAY_TICKS = 4*20;
+    // trinket open
+    private static final int CHAT_UPDATE_DELAY_TICKS = 2*20;
     private static final int MIN_TICKS_BETWEEN_FULL_UPDATE = 8*20;
-    private static final int MIN_TICKS_BETWEEN_PARSE = 1;
-    private static final int CLOSE_VZC_DELAY_TICKS = 2;
-
     private int ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS;
     private int ticksSinceFullUpdate = 0;
+
+    // parsing inventory packets
+    private static final int MIN_TICKS_BETWEEN_PARSE = 1;
     private final Map<String, Integer> ticksSinceParse = new HashMap<>(4);
 
+    // vzc open
+    private static final int VZC_POLL_DELAY_TICKS = 21;
+    private int ticksUntilVzcPoll = VZC_POLL_DELAY_TICKS;
+    private final Set<String> vzcQueue = new LinkedHashSet<>();
+    // vzc close
+    private static final int CLOSE_VZC_DELAY_TICKS = 2;
     private int ticksUntilCloseVzc = -1;
 
     public static void init() {
-        ZenithApiInternalEvents.WORLD_CHANGED.register(() -> getInstance().onWorldChange());
-        ClientTickEvents.START_CLIENT_TICK.register((client) -> getInstance().onTick());
+        ZenithApiInternalEvents.WORLD_CHANGED.register(() -> {
+            getInstance().onWorldChange();
+        });
+        ClientTickEvents.START_CLIENT_TICK.register((client) -> {
+            getInstance().onTick();
+        });
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
             getInstance().enabled = true;
         });
         ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.register((p, c) -> {
             getInstance().ticksSinceParse.clear();
             getInstance().headNames.clear();
+            getInstance().vzcQueue.clear();
             getInstance().enabled = false;
         });
         ZenithApiStateEvents.SENT_TO_LOOTROOM.register(() -> {
@@ -117,11 +129,10 @@ public class UpdateManager {
         Stream<ItemStack> stacks = changed.stream().map(Pair::getSecond);
         if (stacks.allMatch(ItemStack::isEmpty)) return;
 
-        openVzc(Collections.singleton(name));
+        openVzcWithSpacing(Collections.singleton(name));
     }
 
-
-    public void onTick() {
+    private void onTick() {
         if (!enabled) return;
         if (!ShardTracker.inZenithShard()) return;
 
@@ -135,6 +146,20 @@ public class UpdateManager {
         for (Map.Entry<String, Integer> entry : ticksSinceParse.entrySet()) {
             entry.setValue(entry.getValue() + 1);
         }
+
+        if (ticksUntilVzcPoll <= 0) {
+            if (!vzcQueue.isEmpty()) {
+                // vzcQueue is a LinkedHashSet which preserves order
+                Iterator<String> iterator = vzcQueue.iterator();
+                String head = iterator.next();
+                iterator.remove();
+                openVzc(Collections.singleton(head));
+                ticksUntilVzcPoll = VZC_POLL_DELAY_TICKS;
+            }
+        } else {
+            ticksUntilVzcPoll--;
+        }
+
         if (ticksUntilUpdate == 0) {
             this.updateAll();
             ticksUntilUpdate--;  // go to -1 to indicate idling
@@ -185,6 +210,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
+        if (ticksUntilCloseVzc >= 0) return;
         if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
         if (ZenithApi.getInstance().getCurrentRoomType() == Room.UTILITY) return;
         if (ZenithApi.getInstance().roomRewardFound()) return;
@@ -207,6 +233,7 @@ public class UpdateManager {
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
+        if (ticksUntilCloseVzc >= 0) return;
 
         Set<Integer> slotsToClick;
         if (SelfIdentifier.isSelf(player)) {
@@ -219,12 +246,8 @@ public class UpdateManager {
 
         int trinketSlot = TrinketLocator.getTrinketSlot();
         if (trinketSlot == -1) {
-            // todo remove this debugging
-            client.player.sendMessage(Text.literal("Could not find Depths Trinket in inventory"));
             return;
         }
-//        client.player.sendMessage(Text.literal("Attempting trinket update for: " + player +", clicking slots: "+slotsToClick));
-
         this.lastScreenSyncId = TrinketOpener.openAndClickHeads(slotsToClick, trinketSlot, this.lastScreenSyncId);
     }
 
@@ -232,11 +255,17 @@ public class UpdateManager {
         this.update(SelfIdentifier.getSelfName());
     }
 
+    /** Note that insertion order is not affected if an element is re-inserted into the LinkedHashSet */
+    private void openVzcWithSpacing(Collection<String> names) {
+        this.vzcQueue.addAll(names);
+    }
+
     public void openVzc(Collection<String> names) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
+        if (ticksUntilCloseVzc >= 0) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
@@ -247,9 +276,6 @@ public class UpdateManager {
         // server defers commands to main thread instead of handling in network thread
         // so sending closescreens2cpacket instantly is too early
         ticksUntilCloseVzc = CLOSE_VZC_DELAY_TICKS;
-        if (names.size() > 1) {
-            this.ticksSinceFullUpdate = 0;
-        }
     }
 
     public static void sendPacket(Packet<?> packet) {
