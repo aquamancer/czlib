@@ -6,12 +6,22 @@ import java.util.Map;
 
 
 public enum ActiveSlot {
-    COMBO,
-    RIGHT,
-    LEFT_SHIFT,
-    RIGHT_SHIFT,
-    WILDCARD,
-    BOW,
-    SWAP,
-    LIFELINE
+    COMBO("Combo"),
+    RIGHT("Right"),
+    LEFT_SHIFT("Left Shift"),
+    RIGHT_SHIFT("Right Shift"),
+    WILDCARD("Wildcard"),
+    BOW("Bow"),
+    SWAP("Swap"),
+    LIFELINE("Lifeline");
+
+    private final String displayName;
+
+    ActiveSlot(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getDisplayName() {
+        return this.displayName;
+    }
 }

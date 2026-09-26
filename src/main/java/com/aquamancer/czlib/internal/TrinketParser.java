@@ -44,12 +44,12 @@ public class TrinketParser {
     private static final Pattern GRAVE_TIMER = Pattern.compile("Grave Timer:\\s+(\\d+\\.\\d+)s");
 
     public static void onInventoryS2CPacket(InventoryS2CPacket packet, MinecraftClient client) {
-        if (client.player != null && packet.getSyncId() != 0) {
+//        if (client.player != null && packet.getSyncId() != 0) {
 //            List<ItemStack> inv = packet.getContents();
 //            client.player.sendMessage(Text.literal("Inventory packet, syncId="+packet.getSyncId()+",size=" + inv.size() + ": " + inv.stream().map((stack) -> {return stack.getName().getString();}).toList().toString()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
 //            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size()));
-        }
+//        }
         List<ItemStack> inv = packet.getContents();
         if (inv.size() < EXPECTED_INV_SIZE) return;  // player's inventory
         if (!isDepthsTrinket(inv)) return;
@@ -65,10 +65,9 @@ public class TrinketParser {
         String player = headParseResult.currentlySelected.orElse(null);
         if (player == null) return;  // also guarantees Party.players contains the current player after setMembers()
         ZenithApi.getInstance().setCurrentlySelected(player);
-        if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
-        SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player));
-//        client.player.sendMessage(Text.literal("Inventory packet received for " + player));
+        SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player), packet.getSyncId());
 
+        if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
         PassiveParseResult passiveParseResult = parsePassives(inv);
         party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
 

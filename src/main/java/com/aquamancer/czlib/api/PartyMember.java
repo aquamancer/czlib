@@ -448,27 +448,29 @@ public class PartyMember {
         return charmLines.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey);
     }
 
+    public boolean slotTaken(ActiveSlot slot) {
+        if (slot == ActiveSlot.SWAP && this.curses.contains(Curse.ANCHORING)) {
+            return true;
+        }
+        if (slot == ActiveSlot.WILDCARD) {
+            Active convergence = this.actives.get(Actives.CONVERGENCE);
+            int allowedWildcards = (convergence == null) ? 1 : Actives.getConvergenceValues(convergence.getRarity());
+            long numWildcards = this.actives.keySet().stream().filter(a -> a.getSlot() == ActiveSlot.WILDCARD && a != Actives.CONVERGENCE).count();
+            return numWildcards >= allowedWildcards;
+        } else {
+            return this.actives.keySet().stream().anyMatch(a -> a.getSlot() == slot);
+        }
+    }
+
     public enum BlockReason { NOT_BLOCKED, MORE_THAN_4, SLOT_TAKEN, ALREADY_HAS }
     public BlockReason isBlocked(Actives active, boolean limit4PerSpec) {
         if (this.actives.containsKey(active)) {
             return BlockReason.ALREADY_HAS;
         }
-        if (active.getSlot() == ActiveSlot.SWAP && this.curses.contains(Curse.ANCHORING)) {
+        if (this.slotTaken(active.getSlot())) {
             return BlockReason.SLOT_TAKEN;
         }
-        if (active.getSlot() == ActiveSlot.WILDCARD) {
-            Active convergence = this.actives.get(Actives.CONVERGENCE);
-            int allowedWildcards = (convergence == null) ? 1 : Actives.getConvergenceValues(convergence.getRarity());
-            long numWildcards = this.actives.keySet().stream().filter(a -> a.getSlot() == ActiveSlot.WILDCARD).count();
-            if (numWildcards >= allowedWildcards) {
-                return BlockReason.SLOT_TAKEN;
-            }
-        } else if (this.actives.keySet().stream().anyMatch(a -> a.getSlot() == active.getSlot())) {
-            return BlockReason.SLOT_TAKEN;
-        }
-
-        if (!limit4PerSpec) return BlockReason.NOT_BLOCKED;
-        if (this.actives.keySet().stream().filter(a -> a.getSpec() == active.getSpec()).count() >= 4) {
+        if (limit4PerSpec && this.getActiveCount(active.getSpec()) >= 4) {
             return BlockReason.MORE_THAN_4;
         }
         return BlockReason.NOT_BLOCKED;
