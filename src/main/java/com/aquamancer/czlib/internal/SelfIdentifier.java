@@ -3,7 +3,6 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 
 /**

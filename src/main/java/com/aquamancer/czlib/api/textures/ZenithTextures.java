@@ -1,6 +1,9 @@
 package com.aquamancer.czlib.api.textures;
 
-import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.Actives;
+import com.aquamancer.czlib.api.abils.Aspect;
+import com.aquamancer.czlib.api.abils.Curse;
+import com.aquamancer.czlib.api.abils.Passives;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

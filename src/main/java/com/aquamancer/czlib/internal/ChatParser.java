@@ -6,7 +6,6 @@ import com.aquamancer.czlib.api.abils.*;
 import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Room;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.ApiStatus;
 

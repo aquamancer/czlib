@@ -2,7 +2,6 @@ package com.aquamancer.czlib.internal;
 
 import com.aquamancer.czlib.api.abils.AbilitySpec;
 import com.aquamancer.czlib.api.abils.Rarity;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 

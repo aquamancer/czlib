@@ -1,10 +1,5 @@
 package com.aquamancer.czlib.api.abils;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-
-
 public enum ActiveSlot {
     COMBO("Combo"),
     RIGHT("Right"),
