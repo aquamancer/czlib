@@ -18,7 +18,6 @@ class ScreenCancelerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (screen == null || client == null || client.player == null) return;
         if (ScreenCanceler.shouldCancelScreen(screen)) {
-//            client.player.sendMessage(Text.literal("canceled screen syncid="+client.player.currentScreenHandler.syncId));
             ci.cancel();
             if (client.currentScreen instanceof HandledScreen<?> && !(client.currentScreen instanceof InventoryScreen)) {
                 client.currentScreen.close();

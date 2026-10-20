@@ -16,9 +16,6 @@ class ClientPlayNetworkHandlerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         client.execute(() -> {
             if (packet != null && client.player != null) {
-//                client.execute(() -> client.player.sendMessage(Text.literal("Open screen packet: " + packet.getName() + ", syncId: " + packet.getSyncId()+"type="+packet.getScreenHandlerType())));
-//                long now = System.nanoTime();
-//                client.execute(() -> client.player.sendMessage(Text.literal("open screen "+packet.getName()+": "+now+",syncid="+packet.getSyncId())));
                 UpdateManager.getInstance().onOpenScreenPacket(packet);
                 SelfIdentifier.onOpenScreenPacket(packet);
                 VzcParser.onOpenScreenPacket(packet);
@@ -41,8 +38,7 @@ class ClientPlayNetworkHandlerMixin {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client != null) {
             client.execute(() -> {
-//                client.player.sendMessage(Text.literal("inventory packet received syncId="+packet.getSyncId()+", size="+packet.getContents().size()));
-                TrinketParser.onInventoryS2CPacket(packet, client);
+                TrinketParser.onInventoryS2CPacket(packet);
                 TrinketLocator.onInventoryS2CPacket(packet);
                 VzcParser.onInventoryPacket(packet);
             });

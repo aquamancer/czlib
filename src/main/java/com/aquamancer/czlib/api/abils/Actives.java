@@ -8,7 +8,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Actives implements Ability<Actives>, HasAbilitySpec {
-    // Combo
     SOOTHING("Soothing Combos", ActiveSlot.COMBO, AbilitySpec.DAWN),
     EARTHEN("Earthen Combos", ActiveSlot.COMBO, AbilitySpec.EARTH),
     VOLCANIC("Volcanic Combos", ActiveSlot.COMBO, AbilitySpec.FLAME),
@@ -17,7 +16,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     FOCUSED("Focused Combos", ActiveSlot.COMBO, AbilitySpec.STEEL),
     WINDSWEPT("Windswept Combos", ActiveSlot.COMBO, AbilitySpec.WIND),
 
-    // Right
     WARD_OF_LIGHT("Ward of Light", ActiveSlot.RIGHT, AbilitySpec.DAWN),
     BEASTS_CLAW("Beast's Claw", ActiveSlot.RIGHT, AbilitySpec.EARTH),
     FIREBALL("Fireball", ActiveSlot.RIGHT, AbilitySpec.FLAME),
@@ -27,7 +25,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     WIND_WALK("Wind Walk", ActiveSlot.RIGHT, AbilitySpec.WIND),
     SOLAR_RAY("Solar Ray", ActiveSlot.RIGHT, AbilitySpec.PRISMATIC),
 
-    // Left Shift
     RADIANT_BLESSING("Radiant Blessing", ActiveSlot.LEFT_SHIFT, AbilitySpec.DAWN),
     TAUNT("Taunt", ActiveSlot.LEFT_SHIFT, AbilitySpec.EARTH),
     IGNEOUS_RUNE("Igneous Rune", ActiveSlot.LEFT_SHIFT, AbilitySpec.FLAME),
@@ -37,7 +34,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     GUARDING_BOLT("Guarding Bolt", ActiveSlot.LEFT_SHIFT, AbilitySpec.WIND),
     ENCORE("Encore", ActiveSlot.LEFT_SHIFT, AbilitySpec.PRISMATIC),
 
-    // Right Shift
     BOTTLED_SUNLIGHT("Bottled Sunlight", ActiveSlot.RIGHT_SHIFT, AbilitySpec.DAWN),
     IRON_GRIP("Iron Grip", ActiveSlot.RIGHT_SHIFT, AbilitySpec.EARTH),
     FLAMESTRIKE("Flamestrike", ActiveSlot.RIGHT_SHIFT, AbilitySpec.FLAME),
@@ -47,7 +43,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     AEROBLAST("Aeroblast", ActiveSlot.RIGHT_SHIFT, AbilitySpec.WIND),
     CHROMA_BLADE("Chroma Blade", ActiveSlot.RIGHT_SHIFT, AbilitySpec.PRISMATIC),
 
-    // Wildcard
     LIGHTNING_BOTTLE("Lightning Bottle", ActiveSlot.WILDCARD, AbilitySpec.DAWN),
     ENTRENCH("Entrench", ActiveSlot.WILDCARD, AbilitySpec.EARTH),
     FLAME_SPIRIT("Flame Spirit", ActiveSlot.WILDCARD, AbilitySpec.FLAME),
@@ -57,7 +52,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     WHIRLWIND("Whirlwind", ActiveSlot.WILDCARD, AbilitySpec.WIND),
     CONVERGENCE("Convergence", ActiveSlot.WILDCARD, AbilitySpec.PRISMATIC),
 
-    // Bow
     DIVINE_BEAM("Divine Beam", ActiveSlot.BOW, AbilitySpec.DAWN),
     EARTHQUAKE("Earthquake", ActiveSlot.BOW, AbilitySpec.EARTH),
     PYROBLAST("Pyroblast", ActiveSlot.BOW, AbilitySpec.FLAME),
@@ -67,7 +61,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     SKYHOOK("Skyhook", ActiveSlot.BOW, AbilitySpec.WIND),
     DISCO_BALL("Disco Ball", ActiveSlot.BOW, AbilitySpec.PRISMATIC),
 
-    // Swap
     SPARK_OF_INSPIRATION("Spark of Inspiration", ActiveSlot.SWAP, AbilitySpec.DAWN),
     EARTHEN_WRATH("Earthen Wrath", ActiveSlot.SWAP, AbilitySpec.EARTH),
     VOLCANIC_METEOR("Volcanic Meteor", ActiveSlot.SWAP, AbilitySpec.FLAME),
@@ -78,7 +71,6 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     REFRACTION("Refraction", ActiveSlot.SWAP, AbilitySpec.PRISMATIC),
     COLOR_SPLASH("Color Splash", ActiveSlot.SWAP, AbilitySpec.PRISMATIC),
 
-    // Lifeline
     ETERNAL_SAVIOR("Eternal Savior", ActiveSlot.LIFELINE, AbilitySpec.DAWN),
     APOCALYPSE("Apocalypse", ActiveSlot.LIFELINE, AbilitySpec.FLAME),
     CRYOBOX("Cryobox", ActiveSlot.LIFELINE, AbilitySpec.FROST),

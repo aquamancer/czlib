@@ -41,7 +41,6 @@ public class ZenithTextures {
     }
 
     static {
-        // Actives.Combo
         register(Actives.SOOTHING, Items.HONEYCOMB, "Soothing Combos");
         register(Actives.EARTHEN, Items.WOODEN_SWORD, "Earthen Combos");
         register(Actives.VOLCANIC, Items.BLAZE_ROD, "Volcanic Combos");
@@ -50,7 +49,6 @@ public class ZenithTextures {
         register(Actives.FOCUSED, Items.SPECTRAL_ARROW, "Focused Combos");
         register(Actives.WINDSWEPT, Items.WHITE_CANDLE, "Windswept Combos");
 
-        // Actives.Right
         register(Actives.WARD_OF_LIGHT, Items.LANTERN, "Ward of Light");
         register(Actives.BEASTS_CLAW, Items.WOODEN_HOE, "Beast's Claw");
         register(Actives.FIREBALL, Items.FIREWORK_STAR, "Fireball");
@@ -60,7 +58,6 @@ public class ZenithTextures {
         register(Actives.WIND_WALK, Items.WHITE_DYE, "Wind Walk");
         register(Actives.SOLAR_RAY, Items.END_ROD, "Solar Ray");
 
-        // Actives.LeftShift
         register(Actives.RADIANT_BLESSING, Items.SUNFLOWER, "Radiant Blessing");
         register(Actives.TAUNT, Items.GOLDEN_CHESTPLATE, "Taunt");
         register(Actives.IGNEOUS_RUNE, Items.BLAZE_POWDER, "Igneous Rune");
@@ -70,7 +67,6 @@ public class ZenithTextures {
         register(Actives.GUARDING_BOLT, Items.HORN_CORAL, "Guarding Bolt");
         register(Actives.ENCORE, Items.JUKEBOX, "Encore");
 
-        // Actives.RightShift
         register(Actives.BOTTLED_SUNLIGHT, Items.HONEY_BOTTLE, "Bottled Sunlight");
         register(Actives.IRON_GRIP, Items.IRON_ORE, "Iron Grip");
         register(Actives.FLAMESTRIKE, Items.FLINT_AND_STEEL, "Flamestrike");
@@ -80,7 +76,6 @@ public class ZenithTextures {
         register(Actives.AEROBLAST, Items.PHANTOM_MEMBRANE, "Aeroblast");
         register(Actives.CHROMA_BLADE, Items.DIAMOND_SWORD, "Chroma Blade");
 
-        // Actives.Wildcard
         register(Actives.LIGHTNING_BOTTLE, Items.BREWING_STAND, "Lightning Bottle");
         register(Actives.ENTRENCH, Items.SOUL_SAND, "Entrench");
         register(Actives.FLAME_SPIRIT, Items.SOUL_CAMPFIRE, "Flame Spirit");
@@ -90,7 +85,6 @@ public class ZenithTextures {
         register(Actives.WHIRLWIND, Items.IRON_PICKAXE, "Whirlwind");
         register(Actives.CONVERGENCE, Items.RECOVERY_COMPASS, "Convergence");
 
-        // Actives.Bow
         register(Actives.DIVINE_BEAM, Items.YELLOW_CANDLE, "Divine Beam");
         register(Actives.EARTHQUAKE, Items.COARSE_DIRT, "Earthquake");
         register(Actives.PYROBLAST, Items.TNT_MINECART, "Pyroblast");
@@ -100,7 +94,6 @@ public class ZenithTextures {
         register(Actives.SKYHOOK, Items.FISHING_ROD, "Skyhook");
         register(Actives.DISCO_BALL, Items.PEARLESCENT_FROGLIGHT, "Disco Ball");
 
-        // Actives.Swap
         register(Actives.SPARK_OF_INSPIRATION, Items.BELL, "Spark of Inspiration");
         register(Actives.EARTHEN_WRATH, Items.TURTLE_HELMET, "Earthen Wrath");
         register(Actives.VOLCANIC_METEOR, Items.MAGMA_BLOCK, "Volcanic Meteor");
@@ -111,7 +104,6 @@ public class ZenithTextures {
         register(Actives.REFRACTION, Items.SPYGLASS, "Refraction");
         register(Actives.COLOR_SPLASH, Items.BEACON, "Color Splash");
 
-        // Actives.Lifeline
         register(Actives.ETERNAL_SAVIOR, Items.YELLOW_GLAZED_TERRACOTTA, "Eternal Savior");
         register(Actives.APOCALYPSE, Items.ORANGE_DYE, "Apocalypse");
         register(Actives.CRYOBOX, Items.GHAST_TEAR, "Cryobox");
@@ -119,7 +111,6 @@ public class ZenithTextures {
         register(Actives.STEEL_STALLION, Items.IRON_HORSE_ARMOR, "Steel Stallion");
         register(Actives.LAST_BREATH, Items.DRAGON_BREATH, "Last Breath");
 
-        // Aspect
         register(Aspect.BOX, Items.BARREL, "Mystery Box");
         register(Aspect.AXE, Items.IRON_AXE, "Aspect of the Axe");
         register(Aspect.BOW, Items.BOW, "Aspect of the Bow");
@@ -127,7 +118,6 @@ public class ZenithTextures {
         register(Aspect.SWORD, Items.IRON_SWORD, "Aspect of the Sword");
         register(Aspect.WAND, Items.STICK, "Aspect of the Wand");
 
-        // Curse
         register(Curse.ANCHORING, Items.BEDROCK, "Curse of Anchoring");
         register(Curse.ARACHNOPHOBIA, Items.SPIDER_EYE, "Curse of Arachnophobia");
         register(Curse.CHAOS, Items.MUSIC_DISC_11, "Curse of Chaos");
@@ -146,7 +136,6 @@ public class ZenithTextures {
         register(Curse.SLOTH, Items.MOSSY_COBBLESTONE, "Curse of Sloth");
         register(Curse.SOBRIETY, Items.GLASS_BOTTLE, "Curse of Sobriety");
 
-        // Gifts
         register(Gifts.TWISTED_SCROLL, Items.PAPER, "Twisted Scroll");
         register(Gifts.FORSAKEN_GRIMOIRE, Items.BOOK, "Forsaken Grimoire");
         register(Gifts.PRISMATIC_CUBE, Items.DIAMOND_BLOCK, "Prismatic Cube");
@@ -171,7 +160,6 @@ public class ZenithTextures {
         register(Gifts.CRACKED_IDOL, Items.EMERALD, "Cracked Idol");
         register(Gifts.ORB_OF_DARKNESS, Items.ENDER_PEARL, "Orb of Darkness");
 
-        // Passives
         register(Passives.ENLIGHTENMENT, Items.EXPERIENCE_BOTTLE, "Enlightenment");
         register(Passives.REJUVENATION, Items.NETHER_STAR, "Rejuvenation");
         register(Passives.SUNDROPS, Items.HONEYCOMB_BLOCK, "Sundrops");

@@ -17,7 +17,7 @@ public enum Room {
     BOSS_CLEANSE,
     PRE_FLOOR;
 
-    private static Map<String, Room> fromString = new HashMap<>();
+    private static final Map<String, Room> fromString = new HashMap<>();
 
     public static Optional<Room> toEnum(String string) {
         return Optional.ofNullable(fromString.get(string));

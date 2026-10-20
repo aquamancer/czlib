@@ -3,7 +3,6 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -43,13 +42,7 @@ public class TrinketParser {
 
     private static final Pattern GRAVE_TIMER = Pattern.compile("Grave Timer:\\s+(\\d+\\.\\d+)s");
 
-    public static void onInventoryS2CPacket(InventoryS2CPacket packet, MinecraftClient client) {
-//        if (client.player != null && packet.getSyncId() != 0) {
-//            List<ItemStack> inv = packet.getContents();
-//            client.player.sendMessage(Text.literal("Inventory packet, syncId="+packet.getSyncId()+",size=" + inv.size() + ": " + inv.stream().map((stack) -> {return stack.getName().getString();}).toList().toString()));
-//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
-//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size()));
-//        }
+    public static void onInventoryS2CPacket(InventoryS2CPacket packet) {
         List<ItemStack> inv = packet.getContents();
         if (inv.size() < EXPECTED_INV_SIZE) return;  // player's inventory
         if (!isDepthsTrinket(inv)) return;
@@ -80,16 +73,6 @@ public class TrinketParser {
 
         Set<Active> actives = parseActives(inv);
         party.setActives(player, actives);
-
-        if (client.player != null && packet.getSyncId() != 0) {
-////            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", size: " + packet.getContents().size()));
-//            client.player.sendMessage(Text.literal("inventory packet syncid: " + packet.getSyncId() + ", revision: " + packet.getRevision() + "\nsize: " + inv.size() + "\n" + inv.stream().map((stack) -> {
-////                return stack.getName().getString();
-////                return stack.toHoverableText().getString();
-//                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.getString()).toList().toString();
-////                return stack.getTooltip(null, TooltipContext.BASIC).stream().map(text -> text.toString()).toList();
-//            }).toList().toString()));
-        }
     }
 
     private static boolean isDepthsTrinket(List<ItemStack> inv) {

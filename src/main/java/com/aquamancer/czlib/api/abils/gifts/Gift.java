@@ -1,17 +1,11 @@
 package com.aquamancer.czlib.api.abils.gifts;
 
 import com.aquamancer.czlib.api.abils.Ability;
-import com.aquamancer.czlib.api.rooms.Room;
 import net.minecraft.text.MutableText;
-
-import java.util.EnumSet;
 
 public class Gift implements Ability<Gifts> {
     private final Gifts ability;
     private int counter;
-
-    // dont want to make more classes
-    private EnumSet<Room> treasureMap;
 
     public Gift(Gifts gift) {
         this.ability = gift;
