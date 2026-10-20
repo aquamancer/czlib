@@ -1,3 +1,15 @@
+# czlib
+An API that provides information and events about the player's current Celestial Zenith run
+
+#### Information
+* All info presented in the Depths Trinket (teammates and their abilities and grave timer)
+* Party members' equipped charms
+* Current room type and number
+
+#### Events
+See the [events](src/main/java/com/aquamancer/czlib/api/event) package
+
+
 ## Building
 
 Windows:
@@ -31,3 +43,7 @@ The following example uses **Gradle**, whose mod template was generated [here](h
 6. (Optional) If using IntelliJ, you can get czlib's comments/documentation:
    1. Copy `czlib-X.X.X-sources.jar` to a stable directory if you haven't already
    2. File > Project Structure > Find `remapped.unspecified:czlib-<...>` > Add > Select `czlib-X.X.X-sources.jar`
+
+### Using the API
+1. Get the state: `ZenithApi.getInstance()`
+2. Register events, e.g.: `ZenithApiStateEvents.ROOM_SPAWNED.register((room, isWildcard) -> {})`. All changes to the state of the API have an associated event.
