@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
-public class ScreenCancelerMixin {
+class ScreenCancelerMixin {
     @Inject(at = @At("HEAD"), cancellable=true, method = "setScreen(Lnet/minecraft/client/gui/screen/Screen;)V")
     private void setScreen(@Nullable Screen screen, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();

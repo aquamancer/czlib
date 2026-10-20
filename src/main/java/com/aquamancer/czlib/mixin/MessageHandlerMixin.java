@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MessageHandler.class)
-public class MessageHandlerMixin {
+class MessageHandlerMixin {
     @Inject(at = @At("HEAD"), method = "onGameMessage(Lnet/minecraft/text/Text;Z)V")
     private void onGameMessage(Text message, boolean overlay, CallbackInfo ci) {
         MinecraftClient.getInstance().execute(() -> {

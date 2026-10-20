@@ -2,9 +2,10 @@ package com.aquamancer.czlib.internal.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class ZenithApiInternalEvents {
-
     public static final Event<WorldChanged> WORLD_CHANGED = EventFactory.createArrayBacked(
             WorldChanged.class,
             (listeners) -> {

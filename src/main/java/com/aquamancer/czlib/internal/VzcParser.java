@@ -11,6 +11,7 @@ import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@ApiStatus.Internal
 public class VzcParser {
     private static final Pattern TITLE = Pattern.compile("(\\w+)'s Charms$");
     private static final int EXPECTED_INV_SIZE = 90;

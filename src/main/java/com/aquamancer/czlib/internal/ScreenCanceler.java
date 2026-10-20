@@ -2,9 +2,11 @@ package com.aquamancer.czlib.internal;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.screen.Screen;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.EnumMap;
 
+@ApiStatus.Internal
 public class ScreenCanceler {
     public enum Type { TRINKET, VZC }
     private static final int TICKS_UNTIL_TIMEOUT = 40;

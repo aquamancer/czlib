@@ -4,7 +4,9 @@ import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class WorldChangeTracker {
     private static World lastWorld;
 

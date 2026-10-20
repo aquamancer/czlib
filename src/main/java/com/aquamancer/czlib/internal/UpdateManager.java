@@ -199,7 +199,6 @@ public class UpdateManager {
 
     // internals
 
-    // todo make package-private
     public static UpdateManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new UpdateManager();
@@ -251,8 +250,8 @@ public class UpdateManager {
         this.ticksUntilUpdate = -1;
         this.ticksSinceFullUpdate = 0;
     }
-    // todo make private
-    public void update(String player) {
+
+    private void update(String player) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
@@ -284,7 +283,7 @@ public class UpdateManager {
         this.vzcQueue.addAll(names);
     }
 
-    public void openVzc(Collection<String> names) {
+    private void openVzc(Collection<String> names) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player == null || client.player.networkHandler == null) return;
         if (client.currentScreen instanceof HandledScreen) return;
@@ -303,16 +302,11 @@ public class UpdateManager {
         ticksUntilCloseVzc = CLOSE_VZC_DELAY_TICKS;
     }
 
-    public static void sendPacket(Packet<?> packet) {
+    static void sendPacket(Packet<?> packet) {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection() != null) {
             client.getNetworkHandler().getConnection().send(packet);
         }
-    }
-
-    // todo remove
-    public boolean isEnabled() {
-        return enabled;
     }
 
     private UpdateManager() {}
