@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
-public class ClientPlayNetworkHandlerMixin {
+class ClientPlayNetworkHandlerMixin {
     @Inject(at = @At("HEAD"), method = "onOpenScreen(Lnet/minecraft/network/packet/s2c/play/OpenScreenS2CPacket;)V")
     private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -25,6 +25,16 @@ public class ClientPlayNetworkHandlerMixin {
                 VzcParser.onOpenScreenPacket(packet);
             }
         });
+    }
+
+    @Inject(at = @At("HEAD"), method = "onCloseScreen(Lnet/minecraft/network/packet/s2c/play/CloseScreenS2CPacket;)V")
+    private void onCloseScreenPacket(CloseScreenS2CPacket packet, CallbackInfo ci) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client != null) {
+            client.execute(() -> {
+                UpdateManager.getInstance().onCloseScreenPacket(packet);
+            });
+        }
     }
 
     @Inject(at = @At("HEAD"), method = "onInventory(Lnet/minecraft/network/packet/s2c/play/InventoryS2CPacket;)V")

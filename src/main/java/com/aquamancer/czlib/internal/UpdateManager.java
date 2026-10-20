@@ -3,6 +3,7 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Room;
+import com.aquamancer.czlib.api.screens.ZenithScreen;
 import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -16,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket;
+import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.text.Text;
@@ -49,6 +51,11 @@ public class UpdateManager {
     // vzc close
     private static final int CLOSE_VZC_DELAY_TICKS = 2;
     private int ticksUntilCloseVzc = -1;
+
+    // don't update on a close screen packet since the server might reopen another screen immediately after
+    private String lastScreenTitle = "";
+    private static final int ABILITY_SELECT_DELAY_TICKS = 3;
+    private int abilitySelectDelayTicks = 0;
 
     public static void init() {
         ZenithApiInternalEvents.WORLD_CHANGED.register(() -> {
@@ -147,6 +154,13 @@ public class UpdateManager {
             entry.setValue(entry.getValue() + 1);
         }
 
+        if (abilitySelectDelayTicks > 0) {
+            abilitySelectDelayTicks--;
+            if (MinecraftClient.getInstance().currentScreen != null) {
+                abilitySelectDelayTicks = 0;
+            }
+        }
+
         if (ticksUntilVzcPoll <= 0) {
             if (!vzcQueue.isEmpty()) {
                 // vzcQueue is a LinkedHashSet which preserves order
@@ -195,6 +209,15 @@ public class UpdateManager {
 
     public void onOpenScreenPacket(OpenScreenS2CPacket packet) {
         this.lastScreenSyncId = packet.getSyncId();
+        this.lastScreenTitle = packet.getName().getString();
+    }
+
+    public void onCloseScreenPacket(CloseScreenS2CPacket packet) {
+        if (!enabled) return;
+        if (packet.getSyncId() != lastScreenSyncId) return;
+        ZenithScreen lastScreen = ZenithScreen.fromString(lastScreenTitle).orElse(null);
+        if (lastScreen != ZenithScreen.ABILITY && lastScreen != ZenithScreen.UPGRADE && lastScreen != ZenithScreen.TRINKET) return;
+        abilitySelectDelayTicks = ABILITY_SELECT_DELAY_TICKS;
     }
 
     private void onWorldChange() {
@@ -218,6 +241,7 @@ public class UpdateManager {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
             return;
         }
+        if (abilitySelectDelayTicks > 0) return;
 
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
@@ -266,6 +290,7 @@ public class UpdateManager {
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
         if (ticksUntilCloseVzc >= 0) return;
+        if (abilitySelectDelayTicks > 0) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
