@@ -1,13 +1,22 @@
 # czlib
-An API that provides information and events about the player's current Celestial Zenith run
+An API that provides party information and events during runs of the Celestial Zenith in Monumenta MMO
 
-#### Information
+**You must have a Depths Trinket in your inventory for czlib to update**
+
+**For Fabric 1.20.4 only**
+
+
+### Provided Information
 * All info presented in the Depths Trinket (teammates and their abilities and grave timer)
 * Party members' equipped charms
 * Current room type and number
 
-#### Events
-See the [events](src/main/java/com/aquamancer/czlib/api/event) package
+### Events
+Refer to the [events](src/main/java/com/aquamancer/czlib/api/event) package
+
+
+## Installation
+Move the czlib JAR file into your Minecraft profile's `mods` folder
 
 
 ## Building
@@ -31,7 +40,7 @@ The following example uses **Gradle**, whose mod template was generated [here](h
       modCompileOnly files("libs/czlib-X.X.X.jar")
       ...
    }
-4. In `src/main/resources/fabric.mod.json` under `depends`, add czlib to prevent Fabric from launching if czlib is not in its `mods` folder:
+4. (Optional) In `src/main/resources/fabric.mod.json` under `depends`, you may add czlib to prevent Fabric from launching if czlib is not present:
    ```json
    "depends": {
       ...
