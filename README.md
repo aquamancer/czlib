@@ -1,22 +1,28 @@
+> [!Important]
+> **Inventory Desync**
+>
+> In extremely rare circumstances, the mod may cause a newly opened inventory screen to arrive unresponsive due to a race condition with the server. This will not happen outside of Zenith.
+>
+> It is not possible to eliminate this possibility entirely. However, many safeguards are implemented and virtually no desync has been observed in recent testing.
+>
+> If desync becomes apparent, please contact me.
+
 # czlib
-An API that provides party information and events during runs of the Celestial Zenith in Monumenta MMO
-
-**You must have a Depths Trinket in your inventory for czlib to update**
-
-**For Fabric 1.20.4 only**
-
-
-### Provided Information
+An API that provides party information and events during runs of the Celestial Zenith in Monumenta MMO:
 * All info presented in the Depths Trinket (teammates and their abilities and grave timer)
 * Party members' equipped charms
 * Current room type and number
+* Various events: see the [events](src/main/java/com/aquamancer/czlib/api/event) package
 
-### Events
-Refer to the [events](src/main/java/com/aquamancer/czlib/api/event) package
+**The player's inventory must contain a Depths Trinket for czlib to update**
 
+**For Fabric 1.20.4 only**
 
 ## Installation
-Move the czlib JAR file into your Minecraft profile's `mods` folder
+### Dependencies
+* Fabric API
+
+Move czlib and any missing dependencies into your Minecraft profile's `mods` folder
 
 
 ## Building
