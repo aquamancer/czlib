@@ -1,12 +1,3 @@
-> [!Important]
-> **Inventory Desync**
->
-> In extremely rare circumstances, the mod may cause a newly opened inventory screen to arrive unresponsive due to a race condition with the server. This will not happen outside of Zenith.
->
-> It is not possible to eliminate this possibility entirely. However, many safeguards are implemented and virtually no desync has been observed in recent testing.
->
-> If desync becomes apparent, please contact me.
-
 # czlib
 An API that provides party information and events during runs of the Celestial Zenith in Monumenta MMO:
 * All info presented in the Depths Trinket (teammates and their abilities and grave timer)
@@ -24,6 +15,14 @@ An API that provides party information and events during runs of the Celestial Z
 
 Move czlib and any missing dependencies into your Minecraft profile's `mods` folder
 
+> [!Important]
+> **Inventory Desync**
+>
+> In rare circumstances, the mod may cause a newly opened inventory screen to arrive unresponsive due to a race condition with the server. This will not happen outside of Zenith.
+>
+> It is not possible to eliminate this possibility entirely. However, many safeguards are implemented and no desync has been observed in recent testing.
+>
+> If you experience desync, please contact me.
 
 ## Building
 
