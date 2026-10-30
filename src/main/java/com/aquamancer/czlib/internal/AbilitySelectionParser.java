@@ -29,7 +29,7 @@ public class AbilitySelectionParser {
 
     public static void onSlotClicked(int slot, ScreenHandler screenHandler, int button, SlotActionType slotActionType) {
         if (slot < MIDDLE_ROW_START || slot > MIDDLE_ROW_END) return;
-        if (slot < 0 || slot >= screenHandler.getStacks().size()) return;
+        if (slot >= screenHandler.getStacks().size()) return;
         if (button != 0 || slotActionType != SlotActionType.PICKUP) return;
         ItemStack item = screenHandler.getSlot(slot).getStack();
         if (item.getItem() == EMPTY_SLOT || item.isEmpty()) return;
@@ -41,66 +41,46 @@ public class AbilitySelectionParser {
 
         String self = SelfIdentifier.getSelfName();
         Party party = ZenithApi.getInstance().getPartyManager();
+        party.createMember(self);
         switch (screen) {
-            case ABILITY, UPGRADE, GENEROSITY, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD: {
-                String ability = item.getName().getString();
-                party.createMember(self);
-
-                Optional<Actives> active = Actives.fromString(ability);
-                Optional<Passives> passive = (active.isPresent()) ? Optional.empty() : Passives.fromString(ability);
-                if (active.isPresent() || passive.isPresent()) {
-                    List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
-                    if (tooltip.size() < 2) return;
-                    String line2 = tooltip.get(1).getString();
-                    TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
-                    Optional<AbilitySpec> spec = specAndRarity.spec();
-                    Optional<Rarity> rarity = specAndRarity.rarity();
-                    if (spec.isEmpty() || rarity.isEmpty()) return;
-
-                    if (active.isPresent()) {
-                        party.addAbility(self, new Active(active.get(), spec.get(), rarity.get()));
-                    } else if (passive.isPresent()) {
-                        party.addAbility(self, new Passive(passive.get(), spec.get(), rarity.get()));
-                    }
+            case ABILITY, UPGRADE, GENEROSITY, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD -> {
+                Optional<Active> active = Active.fromItem(item);
+                if (active.isPresent()) {
+                    party.addAbility(self, active.get());
                     return;
                 }
-
-                Optional<Curse> curse = Curse.fromString(ability);
+                Optional<Passive> passive = Passive.fromItem(item);
+                if (passive.isPresent()) {
+                    party.addAbility(self, passive.get());
+                    return;
+                }
+                Optional<Curse> curse = Curse.fromItem(item);
                 if (curse.isPresent()) {
                     party.addAbility(self, curse.get());
                     return;
                 }
-                Optional<Gifts> gift = Gifts.fromString(ability);
+                Optional<Gifts> gift = Gifts.fromItem(item);
                 if (gift.isPresent()) {
                     party.addGift(self, gift.get());
                     return;
                 }
-                break;
             }
-            case ASPECT:
-                String ability = item.getName().getString();
-                party.createMember(self);
-
-                Optional<Aspect> aspect = Aspect.fromString(ability);
-                if (aspect.isPresent()) party.setAspect(self, aspect.get());
-                break;
-            case QUILL_REMOVE: {
+            case ASPECT -> {
+                Optional<Aspect> aspect = Aspect.fromItem(item);
+                aspect.ifPresent(value -> party.setAspect(self, value));
+            }
+            case QUILL_REMOVE -> {
                 Optional<Spec> removed = Spec.fromString(item.getName().getString());
-                if (removed.isEmpty()) return;
-                party.loseSpec(self, removed.get());
-                break;
+                removed.ifPresent(spec -> party.loseSpec(self, spec));
             }
-            case QUILL_REPLACE: {
+            case QUILL_REPLACE -> {
                 Optional<Spec> gained = Spec.fromString(item.getName().getString());
-                if (gained.isEmpty()) return;
-                party.addSpec(self, gained.get());
-                break;
+                gained.ifPresent(spec -> party.addSpec(self, spec));
             }
-            case POINTED_HAT:
+            case POINTED_HAT -> {
                 Optional<Spec> tree = Spec.fromString(item.getName().getString());
-                if (tree.isEmpty()) return;
-                party.addGift(self, new CallicarpasHat(tree.get().toAbilitySpec()));
-                break;
+                tree.ifPresent(spec -> party.addGift(self, new CallicarpasHat(spec.toAbilitySpec())));
+            }
         }
     }
 }
