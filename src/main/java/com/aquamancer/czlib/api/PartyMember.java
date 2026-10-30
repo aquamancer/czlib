@@ -110,13 +110,16 @@ public class PartyMember {
         }
     }
 
-    void setPassives(EnumMap<Passives, Passive> passives) {
-        EnumMap<Passives, Passive> old = this.passives;
-        this.passives = passives;
+    void setPassives(Set<Passive> passives) {
+        EnumMap<Passives, Passive> newPassives = new EnumMap<>(Passives.class);
+        passives.forEach(p -> newPassives.put(p.getAbility(), p));
 
-        boolean changed = this.passives.size() != old.size()
+        EnumMap<Passives, Passive> oldPassives = this.passives;
+        this.passives = newPassives;
+
+        boolean changed = this.passives.size() != oldPassives.size()
                 || this.passives.entrySet().stream().anyMatch((entry) -> {
-                    Passive other = old.get(entry.getKey());
+                    Passive other = oldPassives.get(entry.getKey());
                     return other == null || !entry.getValue().deepEquals(other);
                 });
         if (changed) {
@@ -151,19 +154,9 @@ public class PartyMember {
         }
     }
 
-    public void setActives(Set<Active> actives) {
+    void setActives(Set<Active> actives) {
         EnumMap<Actives, Active> newActives = new EnumMap<>(Actives.class);
-        if (this.actives.containsKey(Actives.CONVERGENCE)) {
-            // retain current wildcards
-            this.actives.forEach((k, v) -> {
-                if (k.getSlot() == ActiveSlot.WILDCARD) {
-                    newActives.put(k, v);
-                }
-            });
-        }
-        for (Active active : actives) {
-            newActives.put(active.getAbility(), active);
-        }
+        actives.forEach(a -> newActives.put(a.getAbility(), a));
 
         EnumMap<Actives, Active> oldActives = this.actives;
         this.actives = newActives;
@@ -217,10 +210,6 @@ public class PartyMember {
 
     void loseAbility(Actives active) {
         if (this.actives.remove(active) != null) {
-            if (active == Actives.CONVERGENCE) {
-                // removing convergence removes all wildcards
-                this.actives.entrySet().removeIf(e -> e.getKey().getSlot() == ActiveSlot.WILDCARD);
-            }
             ZenithApiUpdateEvents.ACTIVE.invoker().onUpdate(this);
         }
     }
@@ -246,11 +235,8 @@ public class PartyMember {
     }
 
     private void replaceAll(Function<Active, Active> newActive, Function<Passive, Passive> newPassive) {
-        this.actives.replaceAll((k, v) -> newActive.apply(v));
-        this.passives.replaceAll((k, v) -> newPassive.apply(v));
-
-        ZenithApiUpdateEvents.ACTIVE.invoker().onUpdate(this);
-        ZenithApiUpdateEvents.PASSIVE.invoker().onUpdate(this);
+        this.setActives(new HashSet<>(this.actives.values().stream().map(newActive).toList()));
+        this.setPassives(new HashSet<>(this.passives.values().stream().map(newPassive).toList()));
     }
 
     private void replaceAll(Function<Rarity, Rarity> newRarity) {

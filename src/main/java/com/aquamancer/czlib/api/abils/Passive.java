@@ -1,6 +1,13 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.internal.TooltipParser;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Passive implements Ability<Passives>, HasAbilitySpec, HasRarity {
     private final Passives ability;
@@ -66,5 +73,17 @@ public class Passive implements Ability<Passives>, HasAbilitySpec, HasRarity {
     @Override
     public String toString() {
         return "Ability=" + ability + ", spec=" + spec + ", rarity=" + rarity;
+    }
+
+    public static Optional<Passive> fromItem(ItemStack item) {
+        Optional<Passives> ability = Passives.fromString(item.getName().getString());
+        if (ability.isEmpty()) return Optional.empty();
+        List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
+        if (tooltip.size() < 2) return Optional.empty();
+        String line2 = tooltip.get(1).getString();
+        TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
+        if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) return Optional.empty();
+
+        return Optional.of(new Passive(ability.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
     }
 }

@@ -84,7 +84,7 @@ public class Party {
         }
     }
 
-    public void setPassives(String player, EnumMap<Passives, Passive> passives, EnumSet<Curse> curses) {
+    public void setPassives(String player, Set<Passive> passives, EnumSet<Curse> curses) {
         PartyMember p = players.get(player);
         p.setPassives(passives);
         p.setCurses(curses);

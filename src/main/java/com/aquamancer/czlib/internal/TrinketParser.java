@@ -16,8 +16,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.aquamancer.czlib.internal.TooltipParser.parseSpecRarity;
-
 @ApiStatus.Internal
 public class TrinketParser {
     private static final int TRINKET_SIZE = 6*9;
@@ -28,6 +26,7 @@ public class TrinketParser {
 
     private static final int ASPECT_SLOT = 9;
 
+    private static final int WILDCARD_SLOT = 14;
     private static final int SWAP_SLOT = 16;
     private static final Set<Integer> activeSlots = Set.of(10, 11, 12, 13, 14, 15, 16, 17);
 
@@ -61,7 +60,9 @@ public class TrinketParser {
         SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player), packet.getSyncId());
 
         if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
-        PassiveParseResult passiveParseResult = parsePassives(inv);
+        boolean hasConvergence = Actives.fromString(inv.get(WILDCARD_SLOT).getName().getString()).orElse(null) == Actives.CONVERGENCE;
+
+        PassiveParseResult passiveParseResult = parsePassives(inv, hasConvergence);
         party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
 
         EnumSet<Spec> specs = parseSpecs(inv);
@@ -71,6 +72,7 @@ public class TrinketParser {
         party.setAspect(player, aspect.orElse(null));
 
         Set<Active> actives = parseActives(inv);
+        actives.addAll(passiveParseResult.convergenceWildcards);
         party.setActives(player, actives);
     }
 
@@ -129,23 +131,20 @@ public class TrinketParser {
         return Optional.empty();
     }
 
-    private record PassiveParseResult(EnumMap<Passives, Passive> passives, EnumSet<Curse> curses) {}
-    private static PassiveParseResult parsePassives(List<ItemStack> inv) {
-        EnumMap<Passives, Passive> passives = new EnumMap<>(Passives.class);
+    private record PassiveParseResult(Set<Passive> passives, EnumSet<Curse> curses, List<Active> convergenceWildcards) {}
+    private static PassiveParseResult parsePassives(List<ItemStack> inv, boolean parseConvergence) {
+        Set<Passive> passives = new HashSet<>();
         EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
+        List<Active> convergenceWildcards = new ArrayList<>();
+
         for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
             ItemStack item = inv.get(slot);
             if (item.getItem() == EMPTY_SLOT || item.isEmpty()) break;
             String line1 = item.getName().getString();
 
-            Optional<Passives> passiveName = Passives.fromString(line1);
-            if (passiveName.isPresent()) {
-                List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
-                if (tooltip.size() < 2) continue;
-                String line2 = tooltip.get(1).getString();
-                TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
-                if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) continue;
-                passives.put(passiveName.get(), new Passive(passiveName.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
+            Optional<Passive> passive = Passive.fromItem(item);
+            if (passive.isPresent()) {
+                passives.add(passive.get());
                 continue;
             }
 
@@ -154,11 +153,21 @@ public class TrinketParser {
                 curses.add(curse.get());
                 continue;
             }
+
+            // wildcards stored by convergence are displayed under passives
+            if (parseConvergence) {
+                Optional<Active> active = Active.fromItem(item);
+                if (active.isPresent()) {
+                    convergenceWildcards.add(active.get());
+                    continue;
+                }
+            }
         }
+
         if (Curse.fromString(inv.get(SWAP_SLOT).getName().getString()).orElse(null) == Curse.ANCHORING) {
             curses.add(Curse.ANCHORING);
         }
-        return new PassiveParseResult(passives, curses);
+        return new PassiveParseResult(passives, curses, convergenceWildcards);
     }
 
     private static EnumSet<Spec> parseSpecs(List<ItemStack> inv) {
@@ -177,22 +186,13 @@ public class TrinketParser {
         return Aspect.fromString(inv.get(ASPECT_SLOT).getName().getString());
     }
 
-    // multiple wildcards via convergence is handled by not having convergence replace previous wildcards
-    // parsed via gui/chat
     private static Set<Active> parseActives(List<ItemStack> inv) {
         Set<Active> actives = new HashSet<>();
         for (Integer slot : activeSlots) {
             if (inv.get(slot).getItem() == NO_ACTIVE) continue;
             ItemStack item = inv.get(slot);
-            Optional<Actives> ability = Actives.fromString(item.getName().getString());
-            if (ability.isEmpty()) continue;
-            List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
-            if (tooltip.size() < 2) continue;
-            String line2 = tooltip.get(1).getString();
-            TooltipParser.SpecRarityParseResult specAndRarity = parseSpecRarity(line2);
-            if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) continue;
-
-            actives.add(new Active(ability.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
+            Optional<Active> ability = Active.fromItem(item);
+            ability.ifPresent(actives::add);
         }
         return actives;
     }

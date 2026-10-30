@@ -1,6 +1,13 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.internal.TooltipParser;
+import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+
+import java.util.List;
+import java.util.Optional;
 
 public class Active implements Ability<Actives>, HasAbilitySpec, HasRarity {
     private final Actives ability;
@@ -71,5 +78,17 @@ public class Active implements Ability<Actives>, HasAbilitySpec, HasRarity {
     @Override
     public String toString() {
         return "Active=" + ability + ", Spec=" + spec + ", Rarity=" + rarity;
+    }
+
+    public static Optional<Active> fromItem(ItemStack item) {
+        Optional<Actives> ability = Actives.fromString(item.getName().getString());
+        if (ability.isEmpty()) return Optional.empty();
+        List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
+        if (tooltip.size() < 2) return Optional.empty();
+        String line2 = tooltip.get(1).getString();
+        TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
+        if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) return Optional.empty();
+
+        return Optional.of(new Active(ability.get(), specAndRarity.spec().get(), specAndRarity.rarity().get()));
     }
 }
