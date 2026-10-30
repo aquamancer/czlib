@@ -67,6 +67,9 @@ public class UpdateManager {
         ZenithApiStateEvents.ENTER_ZENITH_SHARD.register((p, c) -> {
             getInstance().enabled = true;
         });
+        ZenithApiStateEvents.REJOIN_ZENITH_SHARD.register((c) -> {
+            getInstance().enabled = true;
+        });
         ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.register((p, c) -> {
             getInstance().ticksSinceParse.clear();
             getInstance().headNames.clear();
