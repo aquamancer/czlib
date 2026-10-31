@@ -19,7 +19,7 @@ public enum Room {
 
     private static final Map<String, Room> fromString = new HashMap<>();
 
-    public static Optional<Room> toEnum(String string) {
+    public static Optional<Room> from(String string) {
         return Optional.ofNullable(fromString.get(string));
     }
 

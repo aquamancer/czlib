@@ -60,7 +60,7 @@ public class TrinketParser {
         SelfIdentifier.onInventoryPacketParsed(player, headParseResult.names.get(player), packet.getSyncId());
 
         if (!UpdateManager.getInstance().shouldParseTrinketPacket(player)) return;
-        boolean hasConvergence = Actives.from(inv.get(WILDCARD_SLOT).getName().getString()).orElse(null) == Actives.CONVERGENCE;
+        boolean hasConvergence = Actives.from(inv.get(WILDCARD_SLOT)).orElse(null) == Actives.CONVERGENCE;
 
         PassiveParseResult passiveParseResult = parsePassives(inv, hasConvergence);
         party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
@@ -140,15 +140,13 @@ public class TrinketParser {
         for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
             ItemStack item = inv.get(slot);
             if (item.getItem() == EMPTY_SLOT || item.isEmpty()) break;
-            String line1 = item.getName().getString();
-
             Optional<Passive> passive = Passive.from(item);
             if (passive.isPresent()) {
                 passives.add(passive.get());
                 continue;
             }
 
-            Optional<Curse> curse = Curse.from(line1);
+            Optional<Curse> curse = Curse.from(item);
             if (curse.isPresent()) {
                 curses.add(curse.get());
                 continue;
@@ -164,7 +162,7 @@ public class TrinketParser {
             }
         }
 
-        if (Curse.from(inv.get(SWAP_SLOT).getName().getString()).orElse(null) == Curse.ANCHORING) {
+        if (Curse.from(inv.get(SWAP_SLOT)).orElse(null) == Curse.ANCHORING) {
             curses.add(Curse.ANCHORING);
         }
         return new PassiveParseResult(passives, curses, convergenceWildcards);
@@ -173,8 +171,7 @@ public class TrinketParser {
     private static EnumSet<Spec> parseSpecs(List<ItemStack> inv) {
         EnumSet<Spec> specs = EnumSet.noneOf(Spec.class);
         for (Integer slot : SPEC_SLOTS) {
-            String line1 = inv.get(slot).getName().getString();
-            Optional<Spec> spec = Spec.from(line1);
+            Optional<Spec> spec = Spec.from(inv.get(slot));
             if (spec.isPresent()) {
                 specs.add(spec.get());
             }
@@ -183,7 +180,7 @@ public class TrinketParser {
     }
 
     private static Optional<Aspect> parseAspect(List<ItemStack> inv) {
-        return Aspect.from(inv.get(ASPECT_SLOT).getName().getString());
+        return Aspect.from(inv.get(ASPECT_SLOT));
     }
 
     private static Set<Active> parseActives(List<ItemStack> inv) {

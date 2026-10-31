@@ -30,7 +30,7 @@ public enum Spec {
     }
 
     public AbilitySpec toAbilitySpec() {
-        return AbilitySpec.fromSpec(this);
+        return AbilitySpec.from(this);
     }
 
     public int getColor() {

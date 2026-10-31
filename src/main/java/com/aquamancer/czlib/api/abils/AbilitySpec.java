@@ -90,7 +90,7 @@ public enum AbilitySpec {
         return Optional.ofNullable(fromString.get(string));
     }
 
-    public static AbilitySpec fromSpec(Spec spec) {
+    public static AbilitySpec from(Spec spec) {
         return fromSpec.get(spec);
     }
 

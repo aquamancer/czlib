@@ -67,15 +67,15 @@ public class AbilitySelectionParser {
                 aspect.ifPresent(value -> party.setAspect(self, value));
             }
             case QUILL_REMOVE -> {
-                Optional<Spec> removed = Spec.from(item.getName().getString());
+                Optional<Spec> removed = Spec.from(item);
                 removed.ifPresent(spec -> party.loseSpec(self, spec));
             }
             case QUILL_REPLACE -> {
-                Optional<Spec> gained = Spec.from(item.getName().getString());
+                Optional<Spec> gained = Spec.from(item);
                 gained.ifPresent(spec -> party.addSpec(self, spec));
             }
             case POINTED_HAT -> {
-                Optional<Spec> tree = Spec.from(item.getName().getString());
+                Optional<Spec> tree = Spec.from(item);
                 tree.ifPresent(spec -> party.addGift(self, new CallicarpasHat(spec.toAbilitySpec())));
             }
         }

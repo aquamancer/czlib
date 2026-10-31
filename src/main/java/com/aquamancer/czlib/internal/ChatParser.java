@@ -128,7 +128,7 @@ public class ChatParser {
     private static boolean parseRoom(String line) {
         Matcher matcher = ROOM.matcher(line);
         if (!matcher.matches()) return false;
-        Optional<Room> roomOptional = Room.toEnum(matcher.group(1));
+        Optional<Room> roomOptional = Room.from(matcher.group(1));
         if (roomOptional.isEmpty()) return true;
         Room room = roomOptional.get();
         boolean isWildcard = matcher.group(2) != null;
