@@ -80,8 +80,8 @@ public class Active implements Ability<Actives>, HasAbilitySpec, HasRarity {
         return "Active=" + ability + ", Spec=" + spec + ", Rarity=" + rarity;
     }
 
-    public static Optional<Active> fromItem(ItemStack item) {
-        Optional<Actives> ability = Actives.fromString(item.getName().getString());
+    public static Optional<Active> from(ItemStack item) {
+        Optional<Actives> ability = Actives.from(item.getName().getString());
         if (ability.isEmpty()) return Optional.empty();
         List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
         if (tooltip.size() < 2) return Optional.empty();

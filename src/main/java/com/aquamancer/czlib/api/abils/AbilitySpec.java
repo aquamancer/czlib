@@ -85,7 +85,7 @@ public enum AbilitySpec {
         }
     }
 
-    public static Optional<AbilitySpec> fromString(String string) {
+    public static Optional<AbilitySpec> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }

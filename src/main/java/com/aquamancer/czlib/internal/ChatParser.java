@@ -63,13 +63,13 @@ public class ChatParser {
         }
         String verb = matcher.group(2);
         String ability = matcher.group(3);
-        Optional<Rarity> rarity = Rarity.fromString(matcher.group(4));
+        Optional<Rarity> rarity = Rarity.from(matcher.group(4));
         Optional<AbilitySpec> spec = AbilitySpec.fromAbilityName(ability);
 
-        Optional<Passives> passive = Passives.fromString(ability);
-        Optional<Curse> curse = (passive.isPresent()) ? Optional.empty() : Curse.fromString(ability);
-        Optional<Actives> active = (curse.isPresent()) ? Optional.empty() : Actives.fromString(ability);
-        Optional<Gifts> gift = (active.isPresent()) ? Optional.empty() : Gifts.fromString(ability);
+        Optional<Passives> passive = Passives.from(ability);
+        Optional<Curse> curse = (passive.isPresent()) ? Optional.empty() : Curse.from(ability);
+        Optional<Actives> active = (curse.isPresent()) ? Optional.empty() : Actives.from(ability);
+        Optional<Gifts> gift = (active.isPresent()) ? Optional.empty() : Gifts.from(ability);
 
         Party party = ZenithApi.getInstance().getPartyManager();
         party.createMember(player);
@@ -106,7 +106,7 @@ public class ChatParser {
         Matcher matcher = ASPECT.matcher(line);
         if (!matcher.matches()) return false;
         String player = matcher.group(1);
-        Optional<Aspect> aspect = Aspect.fromString(matcher.group(2));
+        Optional<Aspect> aspect = Aspect.from(matcher.group(2));
         if (aspect.isEmpty()) return true;
 
         Party party = ZenithApi.getInstance().getPartyManager();
@@ -119,7 +119,7 @@ public class ChatParser {
         Matcher matcher = TREE_SELECTION.matcher(line);
         if (!matcher.matches()) return false;
         String tree = matcher.group(1);
-        Spec spec = Spec.fromString(tree).orElse(null);
+        Spec spec = Spec.from(tree).orElse(null);
         if (spec == null) return true;
         ZenithApiStateEvents.TREE_SELECT.invoker().onTreeSelect(spec);
         return true;
@@ -183,7 +183,7 @@ public class ChatParser {
         Matcher matcher3 = WHEEL_SPEC.matcher(line);
         if (matcher3.matches()) {
             String player = matcher3.group(1);
-            Optional<Spec> spec = Spec.fromString(matcher3.group(2));
+            Optional<Spec> spec = Spec.from(matcher3.group(2));
             if (spec.isEmpty()) return true;
             party.addSpec(player, spec.get());
             return true;

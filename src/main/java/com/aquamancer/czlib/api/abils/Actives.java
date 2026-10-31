@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -136,9 +137,14 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
         }
     }
 
-    public static Optional<Actives> fromString(String string) {
+    public static Optional<Actives> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static Optional<Actives> from(ItemStack item) {
+        if (item == null) return Optional.empty();
+        return from(item.getName().getString());
     }
 
     public static Map<AbilitySpec, EnumSet<Actives>> getActives(ActiveSlot slot) {
@@ -150,7 +156,7 @@ public enum Actives implements Ability<Actives>, HasAbilitySpec {
     }
 
     public static Optional<AbilitySpec> getSpec(String string) {
-        return fromString(string).map(Actives::getSpec);
+        return from(string).map(Actives::getSpec);
     }
 
     public static int getConvergenceValues(Rarity rarity) {

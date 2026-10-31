@@ -49,7 +49,7 @@ public enum ZenithScreen {
                             Function.identity()
                     ));
 
-    public static Optional<ZenithScreen> fromString(String string) {
+    public static Optional<ZenithScreen> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }

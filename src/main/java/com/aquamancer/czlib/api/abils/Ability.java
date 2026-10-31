@@ -11,15 +11,15 @@ public interface Ability<E extends Enum<E>> {
     MutableText getText();
 
     static Optional<Ability<?>> fromString(String displayName) {
-        Optional<Actives> a = Actives.fromString(displayName);
+        Optional<Actives> a = Actives.from(displayName);
         if (a.isPresent()) return Optional.of(a.get());
-        Optional<Curse> c = Curse.fromString(displayName);
+        Optional<Curse> c = Curse.from(displayName);
         if (c.isPresent()) return Optional.of(c.get());
-        Optional<Passives> p = Passives.fromString(displayName);
+        Optional<Passives> p = Passives.from(displayName);
         if (p.isPresent()) return Optional.of(p.get());
-        Optional<Gifts> g = Gifts.fromString(displayName);
+        Optional<Gifts> g = Gifts.from(displayName);
         if (g.isPresent()) return Optional.of(g.get());
-        Optional<Aspect> aspect = Aspect.fromString(displayName);
+        Optional<Aspect> aspect = Aspect.from(displayName);
         if (aspect.isPresent()) return Optional.of(aspect.get());
 
         return Optional.empty();

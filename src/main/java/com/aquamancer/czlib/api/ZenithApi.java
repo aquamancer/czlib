@@ -150,7 +150,7 @@ public class ZenithApi {
     public Optional<PartyMember> getCurrentlySelectedInTrinket() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.currentScreen == null) return Optional.empty();
-        if (ZenithScreen.fromString(client.currentScreen.getTitle().getString()).orElse(null) != ZenithScreen.TRINKET) return Optional.empty();
+        if (ZenithScreen.from(client.currentScreen.getTitle().getString()).orElse(null) != ZenithScreen.TRINKET) return Optional.empty();
 
         return getPlayer(this.openedTrinketPlayer);
     }

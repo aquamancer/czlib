@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -81,12 +82,17 @@ public enum Passives implements Ability<Passives>, HasAbilitySpec {
     private static final Map<String, Passives> fromString = Arrays.stream(values())
             .collect(Collectors.toMap(Passives::getDisplayName, Function.identity()));
 
-    public static Optional<Passives> fromString(String string) {
+    public static Optional<Passives> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }
 
+    public static Optional<Passives> from(ItemStack item) {
+        if (item == null) return Optional.empty();
+        return from(item.getName().getString());
+    }
+
     public static Optional<AbilitySpec> getSpec(String string) {
-        return fromString(string).map(Passives::getSpec);
+        return from(string).map(Passives::getSpec);
     }
 }

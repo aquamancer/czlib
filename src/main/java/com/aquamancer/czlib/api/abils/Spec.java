@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -43,9 +44,14 @@ public enum Spec {
     private static final Map<String, Spec> fromString = Arrays.stream(values())
             .collect(Collectors.toMap(Spec::getDisplayName, Function.identity()));
 
-    public static Optional<Spec> fromString(String string) {
+    public static Optional<Spec> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static Optional<Spec> from(ItemStack item) {
+        if (item == null) return Optional.empty();
+        return from(item.getName().getString());
     }
 
     public static EnumSet<Spec> getComplement(Collection<Spec> collection) {

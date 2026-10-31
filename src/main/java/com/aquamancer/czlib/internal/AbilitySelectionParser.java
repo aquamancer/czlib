@@ -8,17 +8,14 @@ import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import com.aquamancer.czlib.api.screens.ZenithScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.List;
 import java.util.Optional;
 
 @ApiStatus.Internal
@@ -36,7 +33,7 @@ public class AbilitySelectionParser {
         Screen openedScreen = MinecraftClient.getInstance().currentScreen;
         if (openedScreen == null) return;
         String title = openedScreen.getTitle().getString();
-        ZenithScreen screen = ZenithScreen.fromString(title).orElse(null);
+        ZenithScreen screen = ZenithScreen.from(title).orElse(null);
         if (screen == null) return;
 
         String self = SelfIdentifier.getSelfName();
@@ -44,41 +41,41 @@ public class AbilitySelectionParser {
         party.createMember(self);
         switch (screen) {
             case ABILITY, UPGRADE, GENEROSITY, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD -> {
-                Optional<Active> active = Active.fromItem(item);
+                Optional<Active> active = Active.from(item);
                 if (active.isPresent()) {
                     party.addAbility(self, active.get());
                     return;
                 }
-                Optional<Passive> passive = Passive.fromItem(item);
+                Optional<Passive> passive = Passive.from(item);
                 if (passive.isPresent()) {
                     party.addAbility(self, passive.get());
                     return;
                 }
-                Optional<Curse> curse = Curse.fromItem(item);
+                Optional<Curse> curse = Curse.from(item);
                 if (curse.isPresent()) {
                     party.addAbility(self, curse.get());
                     return;
                 }
-                Optional<Gifts> gift = Gifts.fromItem(item);
+                Optional<Gifts> gift = Gifts.from(item);
                 if (gift.isPresent()) {
                     party.addGift(self, gift.get());
                     return;
                 }
             }
             case ASPECT -> {
-                Optional<Aspect> aspect = Aspect.fromItem(item);
+                Optional<Aspect> aspect = Aspect.from(item);
                 aspect.ifPresent(value -> party.setAspect(self, value));
             }
             case QUILL_REMOVE -> {
-                Optional<Spec> removed = Spec.fromString(item.getName().getString());
+                Optional<Spec> removed = Spec.from(item.getName().getString());
                 removed.ifPresent(spec -> party.loseSpec(self, spec));
             }
             case QUILL_REPLACE -> {
-                Optional<Spec> gained = Spec.fromString(item.getName().getString());
+                Optional<Spec> gained = Spec.from(item.getName().getString());
                 gained.ifPresent(spec -> party.addSpec(self, spec));
             }
             case POINTED_HAT -> {
-                Optional<Spec> tree = Spec.fromString(item.getName().getString());
+                Optional<Spec> tree = Spec.from(item.getName().getString());
                 tree.ifPresent(spec -> party.addGift(self, new CallicarpasHat(spec.toAbilitySpec())));
             }
         }

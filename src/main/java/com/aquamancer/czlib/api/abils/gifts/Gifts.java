@@ -1,6 +1,7 @@
 package com.aquamancer.czlib.api.abils.gifts;
 
 import com.aquamancer.czlib.api.abils.Ability;
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -71,8 +72,13 @@ public enum Gifts implements Ability<Gifts> {
             Arrays.stream(values())
                     .collect(Collectors.toMap(Gifts::getDisplayName, Function.identity()));
 
-    public static Optional<Gifts> fromString(String string) {
+    public static Optional<Gifts> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static Optional<Gifts> from(ItemStack item) {
+        if (item == null) return Optional.empty();
+        return from(item.getName().getString());
     }
 }

@@ -58,11 +58,11 @@ public enum Rarity {
                             Function.identity()
                     ));
 
-    public static Optional<Rarity> fromInt(int level) {
+    public static Optional<Rarity> from(int level) {
         return Optional.ofNullable(fromInt.get(level));
     }
 
-    public static Optional<Rarity> fromString(String string) {
+    public static Optional<Rarity> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
     }

@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
@@ -41,8 +42,13 @@ public enum Aspect implements Ability<Aspect> {
             Arrays.stream(values())
                     .collect(Collectors.toMap(Aspect::getDisplayName, Function.identity()));
 
-    public static Optional<Aspect> fromString(String string) {
+    public static Optional<Aspect> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static Optional<Aspect> from(ItemStack item) {
+        if (item == null) return Optional.empty();
+        return from(item.getName().getString());
     }
 }

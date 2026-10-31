@@ -217,7 +217,7 @@ public class UpdateManager {
     public void onCloseScreenPacket(CloseScreenS2CPacket packet) {
         if (!enabled) return;
         if (packet.getSyncId() != lastScreenSyncId) return;
-        ZenithScreen lastScreen = ZenithScreen.fromString(lastScreenTitle).orElse(null);
+        ZenithScreen lastScreen = ZenithScreen.from(lastScreenTitle).orElse(null);
         if (lastScreen != ZenithScreen.ABILITY && lastScreen != ZenithScreen.UPGRADE && lastScreen != ZenithScreen.TRINKET) return;
         abilitySelectDelayTicks = ABILITY_SELECT_DELAY_TICKS;
     }
