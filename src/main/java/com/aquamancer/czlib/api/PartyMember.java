@@ -40,6 +40,9 @@ public class PartyMember {
 
         if (gifts.get(Gifts.TREASURE_MAP) instanceof TreasureMap map) {
             if (map.onRoomSpawned(room, isWildcard)) {
+                if (map.getCounter() <= 0) {
+                    gifts.remove(Gifts.TREASURE_MAP);
+                }
                 ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
             }
         }
