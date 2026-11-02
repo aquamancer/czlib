@@ -42,6 +42,8 @@ public class TrinketParser {
     private static final Pattern GRAVE_TIMER = Pattern.compile("Grave Timer:\\s+(\\d+\\.\\d+)s");
 
     public static void onInventoryS2CPacket(InventoryS2CPacket packet) {
+        if (!ShardTracker.inZenithShard()) return;
+
         List<ItemStack> inv = packet.getContents();
         if (inv.size() < EXPECTED_INV_SIZE) return;  // player's inventory
         if (!isDepthsTrinket(inv)) return;
