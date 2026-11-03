@@ -25,6 +25,7 @@ public class AbilitySelectionParser {
     private static final int MIDDLE_ROW_END = 17;
 
     public static void onSlotClicked(int slot, ScreenHandler screenHandler, int button, SlotActionType slotActionType) {
+        if (!ShardTracker.inZenithShard()) return;
         if (slot < MIDDLE_ROW_START || slot > MIDDLE_ROW_END) return;
         if (slot >= screenHandler.getStacks().size()) return;
         if (button != 0 || slotActionType != SlotActionType.PICKUP) return;

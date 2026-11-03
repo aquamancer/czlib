@@ -82,9 +82,11 @@ public class UpdateManager {
             getInstance().enabled = false;
         });
         ZenithApiStateEvents.TREE_SELECT.register((spec) -> {
+            if (!getInstance().enabled) return;
             getInstance().updateSelf();
         });
         ZenithApiStateEvents.ROOM_SPAWNED.register((r, w) -> {
+            if (!getInstance().enabled) return;
             getInstance().openVzc(getInstance().headNames.keySet());
         });
     }
