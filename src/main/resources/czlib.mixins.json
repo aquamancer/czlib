@@ -6,9 +6,9 @@
 		"AbilitySelectionMixin",
 		"BossBarMixin",
 		"ClientPlayNetworkHandlerMixin",
-		"PlayerListHudAccessor",
 		"ScreenCancelerMixin",
-		"ScreenCloseMixin"
+		"ScreenCloseMixin",
+		"WorldChangeListener"
 	],
 	"injectors": {
 		"defaultRequire": 1

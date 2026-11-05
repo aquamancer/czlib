@@ -64,6 +64,6 @@ class ClientPlayNetworkHandlerMixin {
     @Inject(method = "onPlayerListHeader(Lnet/minecraft/network/packet/s2c/play/PlayerListHeaderS2CPacket;)V",
             at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onTabListHeader(PlayerListHeaderS2CPacket packet, CallbackInfo ci) {
-
+        ShardTracker.onTabListHeader(packet.getHeader().getString());
     }
 }

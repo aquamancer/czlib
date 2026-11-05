@@ -4,7 +4,6 @@ import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import com.aquamancer.czlib.api.rooms.Room;
 import com.aquamancer.czlib.api.screens.ZenithScreen;
-import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
@@ -58,7 +57,7 @@ public class UpdateManager {
     private int abilitySelectDelayTicks = 0;
 
     public static void init() {
-        ZenithApiInternalEvents.WORLD_CHANGED.register(() -> {
+        ZenithApiStateEvents.WORLD_CHANGED.register((w) -> {
             getInstance().onWorldChange();
         });
         ClientTickEvents.START_CLIENT_TICK.register((client) -> {

@@ -1,6 +1,6 @@
 package com.aquamancer.czlib.internal;
 
-import com.aquamancer.czlib.internal.event.ZenithApiInternalEvents;
+import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import org.jetbrains.annotations.ApiStatus;
@@ -19,7 +19,7 @@ public class SelfIdentifier {
     private static String selfName = "";
 
     public static void init() {
-        ZenithApiInternalEvents.WORLD_CHANGED.register(() -> {
+        ZenithApiStateEvents.WORLD_CHANGED.register((w) -> {
             listeningId = -1;
         });
     }

@@ -5,6 +5,8 @@ import com.aquamancer.czlib.api.bosses.Boss;
 import com.aquamancer.czlib.api.rooms.Room;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.minecraft.client.world.ClientWorld;
+import org.jetbrains.annotations.Nullable;
 
 public class ZenithApiStateEvents {
     public static final Event<TreeSelectEvent> TREE_SELECT = EventFactory.createArrayBacked(
@@ -67,17 +69,27 @@ public class ZenithApiStateEvents {
                 };
             }
     );
-    public static final Event<ShardChangeEvent> ENTER_ZENITH_SHARD = EventFactory.createArrayBacked(
-            ShardChangeEvent.class,
+    public static final Event<GraveSpawned> GRAVE_SPAWNED = EventFactory.createArrayBacked(
+            GraveSpawned.class,
             (listeners) -> {
-                return (previous, current) -> {
-                    for (ShardChangeEvent listener : listeners) {
-                        listener.onShardChange(previous, current);
+                return (deadPlayer) -> {
+                    for (GraveSpawned listener : listeners) {
+                        listener.onGraveSpawn(deadPlayer);
                     }
                 };
             }
     );
-    public static final Event<ShardChangeEvent> EXIT_ZENITH_SHARD = EventFactory.createArrayBacked(
+    public static final Event<SentToLootroom> SENT_TO_LOOTROOM = EventFactory.createArrayBacked(
+            SentToLootroom.class,
+            (listeners) -> {
+                return () -> {
+                    for (SentToLootroom listener : listeners) {
+                        listener.onSentToLootroom();
+                    }
+                };
+            }
+    );
+    public static final Event<ShardChangeEvent> ENTER_ZENITH_SHARD = EventFactory.createArrayBacked(
             ShardChangeEvent.class,
             (listeners) -> {
                 return (previous, current) -> {
@@ -107,22 +119,12 @@ public class ZenithApiStateEvents {
                 };
             }
     );
-    public static final Event<GraveSpawned> GRAVE_SPAWNED = EventFactory.createArrayBacked(
-            GraveSpawned.class,
+    public static final Event<WorldChangeEvent> WORLD_CHANGED = EventFactory.createArrayBacked(
+            WorldChangeEvent.class,
             (listeners) -> {
-                return (deadPlayer) -> {
-                    for (GraveSpawned listener : listeners) {
-                        listener.onGraveSpawn(deadPlayer);
-                    }
-                };
-            }
-    );
-    public static final Event<SentToLootroom> SENT_TO_LOOTROOM = EventFactory.createArrayBacked(
-            SentToLootroom.class,
-            (listeners) -> {
-                return () -> {
-                    for (SentToLootroom listener : listeners) {
-                        listener.onSentToLootroom();
+                return (newWorld) -> {
+                    for (WorldChangeEvent listener : listeners) {
+                        listener.onWorldChange(newWorld);
                     }
                 };
             }
@@ -143,6 +145,10 @@ public class ZenithApiStateEvents {
     @FunctionalInterface
     public interface BossEvent {
         void onBossEvent(Boss boss);
+    }
+    @FunctionalInterface
+    public interface WorldChangeEvent {
+        void onWorldChange(@Nullable ClientWorld newWorld);
     }
     @FunctionalInterface
     public interface ShardChangeEvent {

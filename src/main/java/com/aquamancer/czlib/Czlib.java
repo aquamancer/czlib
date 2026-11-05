@@ -1,9 +1,9 @@
 package com.aquamancer.czlib;
 
 import com.aquamancer.czlib.internal.ScreenCanceler;
+import com.aquamancer.czlib.internal.SelfIdentifier;
 import com.aquamancer.czlib.internal.ShardTracker;
 import com.aquamancer.czlib.internal.UpdateManager;
-import com.aquamancer.czlib.internal.WorldChangeTracker;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ public class Czlib implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		WorldChangeTracker.init();
+		SelfIdentifier.init();
 		UpdateManager.init();
 		ShardTracker.init();
 		ScreenCanceler.init();
