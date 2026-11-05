@@ -11,48 +11,33 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 class ClientPlayNetworkHandlerMixin {
-    @Inject(at = @At("HEAD"), method = "onOpenScreen(Lnet/minecraft/network/packet/s2c/play/OpenScreenS2CPacket;)V")
+    @Inject(method = "onOpenScreen(Lnet/minecraft/network/packet/s2c/play/OpenScreenS2CPacket;)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onOpenScreen(OpenScreenS2CPacket packet, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        client.execute(() -> {
-            if (packet != null && client.player != null) {
-                UpdateManager.getInstance().onOpenScreenPacket(packet);
-                SelfIdentifier.onOpenScreenPacket(packet);
-                VzcParser.onOpenScreenPacket(packet);
-            }
-        });
+        UpdateManager.getInstance().onOpenScreenPacket(packet);
+        SelfIdentifier.onOpenScreenPacket(packet);
+        VzcParser.onOpenScreenPacket(packet);
     }
 
-    @Inject(at = @At("HEAD"), method = "onCloseScreen(Lnet/minecraft/network/packet/s2c/play/CloseScreenS2CPacket;)V")
+    @Inject(method = "onCloseScreen(Lnet/minecraft/network/packet/s2c/play/CloseScreenS2CPacket;)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onCloseScreenPacket(CloseScreenS2CPacket packet, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client != null) {
-            client.execute(() -> {
-                UpdateManager.getInstance().onCloseScreenPacket(packet);
-            });
-        }
+        UpdateManager.getInstance().onCloseScreenPacket(packet);
     }
 
-    @Inject(at = @At("HEAD"), method = "onInventory(Lnet/minecraft/network/packet/s2c/play/InventoryS2CPacket;)V")
+    @Inject(method = "onInventory(Lnet/minecraft/network/packet/s2c/play/InventoryS2CPacket;)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onInventory(InventoryS2CPacket packet, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client != null) {
-            client.execute(() -> {
-                TrinketParser.onInventoryS2CPacket(packet);
-                TrinketLocator.onInventoryS2CPacket(packet);
-                VzcParser.onInventoryPacket(packet);
-            });
-        }
+        // for some reason the server sends 2 of the same inventory packets on a non-command opened gui
+        TrinketParser.onInventoryS2CPacket(packet);
+        TrinketLocator.onInventoryS2CPacket(packet);
+        VzcParser.onInventoryPacket(packet);
     }
 
-    @Inject(at = @At("HEAD"), method = "onOverlayMessage(Lnet/minecraft/network/packet/s2c/play/OverlayMessageS2CPacket;)V")
+    @Inject(method = "onOverlayMessage(Lnet/minecraft/network/packet/s2c/play/OverlayMessageS2CPacket;)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
     private void onActionBarMessage(OverlayMessageS2CPacket packet, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client != null) {
-            client.execute(() -> {
-                UpdateManager.getInstance().onActionBarMessage(packet.getMessage());
-            });
-        }
+        UpdateManager.getInstance().onActionBarMessage(packet.getMessage());
     }
 
     // called on armor/mainhand swaps for other players and entering render distance
@@ -60,11 +45,25 @@ class ClientPlayNetworkHandlerMixin {
             method = "onEntityEquipmentUpdate(Lnet/minecraft/network/packet/s2c/play/EntityEquipmentUpdateS2CPacket;)V"
     )
     private void onArmorChange(EntityEquipmentUpdateS2CPacket packet, CallbackInfo ci) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client != null) {
-            client.execute(() -> {
-                UpdateManager.getInstance().onArmorChange(packet, client);
-            });
-        }
+        UpdateManager.getInstance().onArmorChange(packet);
+    }
+
+    @Inject(method = "onGameMessage(Lnet/minecraft/network/packet/s2c/play/GameMessageS2CPacket;)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
+    private void onGameMessage(GameMessageS2CPacket packet, CallbackInfo ci) {
+        if (packet.overlay()) return;
+        // after selecting a tree in room 0, the server sends the chat and close screen packet at the same time
+        // but the chat packet is always first, causing TREE_SELECT event to be fired while the screen is still opened
+        // client.send() is used here as a hack to enqueue the TREE_SELECT invocation to the main thread executor queue
+        // which will cause it to run after the close screen handling
+        MinecraftClient.getInstance().send(() -> {
+            ChatParser.onChatMessage(packet.content());
+        });
+    }
+
+    @Inject(method = "onPlayerListHeader(Lnet/minecraft/network/packet/s2c/play/PlayerListHeaderS2CPacket;)V",
+            at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/network/NetworkThreadUtils;forceMainThread(Lnet/minecraft/network/packet/Packet;Lnet/minecraft/network/listener/PacketListener;Lnet/minecraft/util/thread/ThreadExecutor;)V"))
+    private void onTabListHeader(PlayerListHeaderS2CPacket packet, CallbackInfo ci) {
+
     }
 }

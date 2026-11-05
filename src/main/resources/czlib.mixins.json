@@ -6,7 +6,6 @@
 		"AbilitySelectionMixin",
 		"BossBarMixin",
 		"ClientPlayNetworkHandlerMixin",
-		"MessageHandlerMixin",
 		"PlayerListHudAccessor",
 		"ScreenCancelerMixin",
 		"ScreenCloseMixin"

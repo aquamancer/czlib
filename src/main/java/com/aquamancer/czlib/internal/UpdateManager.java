@@ -127,9 +127,10 @@ public class UpdateManager {
         this.ticksUntilUpdate = CHAT_UPDATE_DELAY_TICKS + (int) (Math.random() * 10);
     }
 
-    public void onArmorChange(EntityEquipmentUpdateS2CPacket packet, MinecraftClient client) {
+    public void onArmorChange(EntityEquipmentUpdateS2CPacket packet) {
         if (!enabled) return;
         if (!ZenithApi.getInstance().isPreBoss()) return;
+        MinecraftClient client = MinecraftClient.getInstance();
         if (client.world == null) return;
         Entity entity = client.world.getEntityById(packet.getId());
         if (!(entity instanceof PlayerEntity player)) return;
