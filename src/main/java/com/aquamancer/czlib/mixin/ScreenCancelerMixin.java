@@ -19,10 +19,10 @@ class ScreenCancelerMixin {
         if (screen == null || client == null || client.player == null) return;
         if (ScreenCanceler.shouldCancelScreen(screen)) {
             ci.cancel();
-            if (client.currentScreen instanceof HandledScreen<?> && !(client.currentScreen instanceof InventoryScreen)) {
-                client.currentScreen.close();
-            }
             client.player.currentScreenHandler = client.player.playerScreenHandler;
+            if (client.currentScreen instanceof HandledScreen<?> && !(client.currentScreen instanceof InventoryScreen)) {
+                client.setScreen(null);
+            }
         }
     }
 }
