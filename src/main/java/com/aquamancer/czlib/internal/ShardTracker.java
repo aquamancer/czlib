@@ -19,6 +19,12 @@ public class ShardTracker {
     private static @Nullable String currentShard;
     private static @Nullable String lastValidShard;
 
+    // the server resends all recent chat messages on each shard change
+    // add a delay after world change before notifying listeners so they do not see these messages
+    private static final int WORLD_CHANGE_DELAY_TICKS = 2;
+    private static int worldChangeDelayTicks = 0;
+    private static boolean shardChangeQueued = false;
+
     public static void init() {
         ClientTickEvents.START_CLIENT_TICK.register((client) -> onTick());
         ZenithApiStateEvents.WORLD_CHANGED.register((w) -> {
@@ -28,15 +34,26 @@ public class ShardTracker {
             }
             listening = true;
             ticksUntilTimeout = TICKS_UNTIL_TIMEOUT;
+            worldChangeDelayTicks = WORLD_CHANGE_DELAY_TICKS;
         });
     }
 
     public static void onTick() {
-        if (!listening) return;
-        ticksUntilTimeout--;
-        if (ticksUntilTimeout <= 0) {
-            listening = false;
-            ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.invoker().onShardChange(lastValidShard, null);
+        if (worldChangeDelayTicks > 0) {
+            worldChangeDelayTicks--;
+        }
+        if (worldChangeDelayTicks <= 0 && shardChangeQueued) {
+            shardChangeQueued = false;
+            invokeEvents();
+        }
+
+        // timeout protocol
+        if (listening) {
+            ticksUntilTimeout--;
+            if (ticksUntilTimeout <= 0) {
+                listening = false;
+                ZenithApiStateEvents.ENTER_NON_ZENITH_SHARD.invoker().onShardChange(lastValidShard, null);
+            }
         }
     }
 
@@ -46,6 +63,19 @@ public class ShardTracker {
         if (shard == null) return;
         listening = false;
         currentShard = shard;
+        shardChanged();
+    }
+
+    private static void shardChanged() {
+        if (worldChangeDelayTicks > 0) {
+            shardChangeQueued = true;
+        } else {
+            shardChangeQueued = false;
+            invokeEvents();
+        }
+    }
+
+    private static void invokeEvents() {
         if (isZenithShard(currentShard)) {
             if (currentShard.equals(lastValidShard)) {
                 ZenithApiStateEvents.REJOIN_ZENITH_SHARD.invoker().onRejoinZenithShard(currentShard);
