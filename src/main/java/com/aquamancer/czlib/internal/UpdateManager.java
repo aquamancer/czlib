@@ -6,6 +6,9 @@ import com.aquamancer.czlib.api.rooms.Room;
 import com.aquamancer.czlib.api.screens.ZenithScreen;
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.block.Block;
+import net.minecraft.block.ButtonBlock;
+import net.minecraft.block.LeverBlock;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -20,6 +23,7 @@ import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityEquipmentUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
@@ -55,6 +59,10 @@ public class UpdateManager {
     private String lastScreenTitle = "";
     private static final int ABILITY_SELECT_DELAY_TICKS = 3;
     private int abilitySelectDelayTicks = 0;
+
+    // don't update after the player right-clicks a minecraft:button
+    private static final int BUTTON_PRESS_DELAY_TICKS = 20;
+    private int buttonPressDelayTicks = 0;
 
     public static void init() {
         ZenithApiStateEvents.WORLD_CHANGED.register((w) -> {
@@ -144,6 +152,24 @@ public class UpdateManager {
         openVzcWithSpacing(Collections.singleton(name));
     }
 
+    public void onCloseScreenPacket(CloseScreenS2CPacket packet) {
+        if (!enabled) return;
+        if (packet.getSyncId() != lastScreenSyncId) return;
+        ZenithScreen lastScreen = ZenithScreen.from(lastScreenTitle).orElse(null);
+        if (lastScreen != ZenithScreen.ABILITY && lastScreen != ZenithScreen.UPGRADE && lastScreen != ZenithScreen.TRINKET) return;
+        abilitySelectDelayTicks = ABILITY_SELECT_DELAY_TICKS;
+    }
+
+    public void onInteractBlock(BlockHitResult hitResult) {
+        if (!enabled) return;
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.world == null) return;
+        Block block = client.world.getBlockState(hitResult.getBlockPos()).getBlock();
+        if (block instanceof ButtonBlock || block instanceof LeverBlock) {
+            buttonPressDelayTicks = BUTTON_PRESS_DELAY_TICKS;
+        }
+    }
+
     private void onTick() {
         if (!enabled) return;
         if (!ShardTracker.inZenithShard()) return;
@@ -161,9 +187,10 @@ public class UpdateManager {
 
         if (abilitySelectDelayTicks > 0) {
             abilitySelectDelayTicks--;
-            if (MinecraftClient.getInstance().currentScreen != null) {
-                abilitySelectDelayTicks = 0;
-            }
+        }
+
+        if (buttonPressDelayTicks > 0) {
+            buttonPressDelayTicks--;
         }
 
         if (ticksUntilVzcPoll <= 0) {
@@ -202,8 +229,6 @@ public class UpdateManager {
         return false;
     }
 
-    // internals
-
     public static UpdateManager getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new UpdateManager();
@@ -214,14 +239,8 @@ public class UpdateManager {
     public void onOpenScreenPacket(OpenScreenS2CPacket packet) {
         this.lastScreenSyncId = packet.getSyncId();
         this.lastScreenTitle = packet.getName().getString();
-    }
-
-    public void onCloseScreenPacket(CloseScreenS2CPacket packet) {
-        if (!enabled) return;
-        if (packet.getSyncId() != lastScreenSyncId) return;
-        ZenithScreen lastScreen = ZenithScreen.from(lastScreenTitle).orElse(null);
-        if (lastScreen != ZenithScreen.ABILITY && lastScreen != ZenithScreen.UPGRADE && lastScreen != ZenithScreen.TRINKET) return;
-        abilitySelectDelayTicks = ABILITY_SELECT_DELAY_TICKS;
+        this.abilitySelectDelayTicks = 0;
+        this.buttonPressDelayTicks = 0;
     }
 
     private void onWorldChange() {
@@ -246,6 +265,7 @@ public class UpdateManager {
             return;
         }
         if (abilitySelectDelayTicks > 0) return;
+        if (this.buttonPressDelayTicks > 0) return;
 
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
@@ -294,6 +314,7 @@ public class UpdateManager {
         if (ScreenCanceler.isCancelingScreens()) return;
         if (ticksUntilCloseVzc >= 0) return;
         if (abilitySelectDelayTicks > 0) return;
+        if (this.buttonPressDelayTicks > 0) return;
 
         ScreenCanceler.cancelFutureScreens(names.size(), ScreenCanceler.Type.VZC);
         for (String name : names) {
