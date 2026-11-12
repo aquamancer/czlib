@@ -1,5 +1,6 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.api.util.TextUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -76,6 +77,9 @@ public enum Passives implements Ability<Passives>, HasAbilitySpec {
 
     @Override
     public MutableText getText() {
+        if (this.spec == AbilitySpec.PRISMATIC) {
+            return TextUtils.applyGradient(getDisplayName(), AbilitySpec.PRISMATIC_GRADIENT);
+        }
         return Text.literal(getDisplayName()).withColor(this.getColor());
     }
 

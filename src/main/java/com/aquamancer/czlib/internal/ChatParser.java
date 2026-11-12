@@ -29,6 +29,7 @@ public class ChatParser {
     private static final Pattern WHEEL_SPEC = Pattern.compile("^\\[Zenith Party] (\\w+) unlocked the (\\w+) tree!$");
     private static final Pattern SENT_TO_LOOTROOM = Pattern.compile("^\\[Zenith Party] Sending you to loot room.*");
     private static final Pattern DIVERSITY_ACHIEVED = Pattern.compile("^\\[Zenith Party] Due to achieving your Diversity goal.*");
+    private static final Pattern REBIRTH = Pattern.compile("^\\[Zenith Party] (\\w+) (?:have|has) been reborn!$");
 
     // BOSS_CLEANSE_ROOM message is always sent with but always before "Spawned new Boss room" when opening the cleanse room
     // set a flag to indicate the next "Spawned new Boss room" is the cleanse room, not an actual boss room
@@ -51,16 +52,14 @@ public class ChatParser {
         if (parseFloorCleared(line)) return;
         if (parseWheel(line)) return;
         if (parseDiversity(line)) return;
+        if (parseRebirth(line)) return;
     }
 
     private static boolean parseAbility(String line) {
         Matcher matcher = ABILITY.matcher(line);
         if (!matcher.matches()) return false;
 
-        String player = matcher.group(1);
-        if (player.equals("You")) {
-            player = SelfIdentifier.getSelfName();
-        }
+        String player = convertName(matcher.group(1));
         String verb = matcher.group(2);
         String ability = matcher.group(3);
         Optional<Rarity> rarity = Rarity.from(matcher.group(4));
@@ -170,21 +169,24 @@ public class ChatParser {
         Matcher matcher1 = PURGING_STONE_WHEEL.matcher(line);
         Party party = ZenithApi.getInstance().getPartyManager();
         if (matcher1.matches()) {
-            String player = matcher1.group(1);
+            String player = convertName(matcher1.group(1));
+            party.createMember(player);  // creating a member to downgradeAll doesn't do anything but just to be consistent
             party.downgradeAll(player);
             return true;
         }
         Matcher matcher2 = WHEEL_UPGRADE_2.matcher(line);
         if (matcher2.matches()) {
-            String player = matcher2.group(1);
+            String player = convertName(matcher2.group(1));
+            party.createMember(player);
             party.upgradeBy2(player);
             return true;
         }
         Matcher matcher3 = WHEEL_SPEC.matcher(line);
         if (matcher3.matches()) {
-            String player = matcher3.group(1);
+            String player = convertName(matcher3.group(1));
             Optional<Spec> spec = Spec.from(matcher3.group(2));
             if (spec.isEmpty()) return true;
+            party.createMember(player);
             party.addSpec(player, spec.get());
             return true;
         }
@@ -210,5 +212,21 @@ public class ChatParser {
         if (!matcher.matches()) return false;
         ZenithApiStateEvents.FLOOR_CLEARED.invoker().onFloorEvent(ZenithApi.getInstance().getCurrentFloor());
         return true;
+    }
+
+    private static boolean parseRebirth(String line) {
+        Matcher matcher = REBIRTH.matcher(line);
+        if (!matcher.matches()) return false;
+        String name = convertName(matcher.group(1));
+        Party party = ZenithApi.getInstance().getPartyManager();
+        party.createMember(name);
+        party.loseAbility(name, Passives.REBIRTH);
+
+        UpdateManager.getInstance().onRebirth(name);
+        return true;
+    }
+
+    private static String convertName(String name) {
+        return (name.equals("You")) ? SelfIdentifier.getSelfName() : name;
     }
 }

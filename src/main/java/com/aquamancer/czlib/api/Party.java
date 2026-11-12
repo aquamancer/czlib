@@ -133,31 +133,19 @@ public class Party {
     }
 
     public void addSpec(String player, Spec spec) {
-        players.computeIfPresent(player, (k, v) -> {
-            v.addSpec(spec);
-            return v;
-        });
+        players.get(player).addSpec(spec);
     }
 
     public void loseSpec(String player, Spec spec) {
-        players.computeIfPresent(player, (k, v) -> {
-            v.loseSpec(spec);
-            return v;
-        });
+        players.get(player).loseSpec(spec);
     }
 
     public void downgradeAll(String player) {
-        players.computeIfPresent(player, (k, v) -> {
-            v.downgradeAll();
-            return v;
-        });
+        players.get(player).downgradeAll();
     }
 
     public void upgradeBy2(String player) {
-        players.computeIfPresent(player, (k, v) -> {
-            v.upgradeBy2();
-            return v;
-        });
+        players.get(player).upgradeBy2();
     }
 
     public void addGift(String player, Gifts gift) {

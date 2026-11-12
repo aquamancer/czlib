@@ -152,6 +152,11 @@ public class UpdateManager {
         openVzcWithSpacing(Collections.singleton(name));
     }
 
+    public void onRebirth(String player) {
+        if (!enabled) return;
+        update(player);
+    }
+
     public void onCloseScreenPacket(CloseScreenS2CPacket packet) {
         if (!enabled) return;
         if (packet.getSyncId() != lastScreenSyncId) return;

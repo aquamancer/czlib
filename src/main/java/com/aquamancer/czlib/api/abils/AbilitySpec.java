@@ -1,7 +1,7 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.api.util.TextUtils;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -45,7 +45,9 @@ public enum AbilitySpec {
     }
 
     public MutableText getText() {
-        if (this.spec == null) return Text.literal(PRISMATIC.getDisplayName()).withColor(PRISMATIC.getColor());
+        if (this.spec == null) {
+            return TextUtils.applyGradient(PRISMATIC.displayName, PRISMATIC_GRADIENT);
+        }
         return this.spec.getText();
     }
 
