@@ -4,6 +4,7 @@ import com.aquamancer.czlib.api.bosses.Boss;
 import com.aquamancer.czlib.api.event.ZenithApiStateEvents;
 import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 import net.minecraft.text.Text;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -40,8 +41,9 @@ class BossBarMixin {
             VESP, (matcher) -> ZenithApiStateEvents.BOSS_SPAWNED.invoker().onBossEvent(Boss.VESPERIDYS)
     );
 
-    @Shadow
+    @Shadow @Final
     private Text name;
+
     @Inject(at=@At("HEAD"), method="accept")
     private void onBossBarAdd(UUID uuid, BossBarS2CPacket.Consumer consumer, CallbackInfo ci) {
         String title = name.getString();

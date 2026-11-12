@@ -18,6 +18,8 @@ public enum AbilitySpec {
     WIND("Windwalker", Spec.WIND),
     PRISMATIC("Prismatic", null);
 
+    public static final int[] PRISMATIC_GRADIENT = {0xe2ff9c, 0x25f6f5, 0xff9cf0};
+
     private final String displayName;
     private final Spec spec;
 

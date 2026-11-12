@@ -1,8 +1,8 @@
 package com.aquamancer.czlib.api.abils;
 
+import com.aquamancer.czlib.api.util.TextUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -30,6 +30,7 @@ public enum Curse implements Ability<Curse> {
     SOBRIETY("Curse of Sobriety");
 
     public static final int COLOR = 0xc41300;
+    public static final int[] GRADIENT = {0xc41300, 0xa9112b, 0x8e013e};
 
     private final String displayName;
 
@@ -49,7 +50,7 @@ public enum Curse implements Ability<Curse> {
 
     @Override
     public MutableText getText() {
-        return Text.literal(getDisplayName()).withColor(COLOR);
+        return TextUtils.applyGradient(getDisplayName(), GRADIENT);
     }
 
     private static final Map<String, Curse> fromString =
