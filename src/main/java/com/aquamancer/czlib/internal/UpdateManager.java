@@ -84,6 +84,9 @@ public class UpdateManager {
             getInstance().enabled = false;
         });
         ZenithApiStateEvents.SENT_TO_LOOTROOM.register(() -> {
+            // prevent chat messages from previous run from disabling
+            if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
+
             getInstance().ticksSinceParse.clear();
             getInstance().headNames.clear();
             getInstance().enabled = false;
