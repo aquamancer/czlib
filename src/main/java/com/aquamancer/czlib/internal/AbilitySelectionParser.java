@@ -39,7 +39,6 @@ public class AbilitySelectionParser {
 
         String self = SelfIdentifier.getSelfName();
         Party party = ZenithApi.getInstance().getPartyManager();
-        party.createMember(self);
         switch (screen) {
             case ABILITY, UPGRADE, GENEROSITY, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD -> {
                 Optional<Active> active = Active.from(item);

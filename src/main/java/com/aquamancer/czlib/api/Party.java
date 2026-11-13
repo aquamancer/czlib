@@ -73,11 +73,36 @@ public class Party {
         if (changed) ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
     }
 
+    private PartyMember createMember(String name) {
+        PartyMember newMember = new PartyMember(name);
+        PartyMember after = players.computeIfAbsent(name, (n) -> {
+            return newMember;
+        });
+
+        if (after == newMember) {
+            ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
+        }
+        return after;
+    }
+
+    private void createMembers(Collection<String> names) {
+        boolean changed = false;
+        for (String name : names) {
+            if (players.putIfAbsent(name, new PartyMember(name)) == null) {
+                changed = true;
+            }
+        }
+        if (changed) {
+            ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
+        }
+    }
+
     public void setGraveTimer(String player, double timer) {
-        this.players.get(player).setGraveTimer(timer);
+        createMember(player).setGraveTimer(timer);
     }
 
     public void setGraveTimers(Map<String, Optional<Double>> timers) {
+        createMembers(timers.keySet());
         for (Map.Entry<String, Optional<Double>> timer : timers.entrySet()) {
             if (timer.getValue().isEmpty()) continue;
             players.get(timer.getKey()).setGraveTimer(timer.getValue().get());
@@ -85,79 +110,91 @@ public class Party {
     }
 
     public void setPassives(String player, Set<Passive> passives, EnumSet<Curse> curses) {
-        PartyMember p = players.get(player);
+        PartyMember p = createMember(player);
         p.setPassives(passives);
         p.setCurses(curses);
     }
 
     public void setSpecs(String player, EnumSet<Spec> specs) {
-        players.get(player).setSpecs(specs);
+        createMember(player).setSpecs(specs);
     }
 
     public void setAspect(String player, Aspect aspect) {
-        players.get(player).setAspect(aspect);
+        createMember(player).setAspect(aspect);
     }
 
     public void setActives(String player, Set<Active> actives) {
-        players.get(player).setActives(actives);
-    }
-
-    public void createMember(String name) {
-        if (players.putIfAbsent(name, new PartyMember(name)) == null) {
-            ZenithApiUpdateEvents.PARTY_MEMBER.invoker().onPartyUpdate(players.keySet());
-        }
+        createMember(player).setActives(actives);
     }
 
     public void addAbility(String player, Passive passive) {
-        players.get(player).addAbility(passive);
+        createMember(player).addAbility(passive);
     }
 
     public void addAbility(String player, Curse curse) {
-        players.get(player).addAbility(curse);
+        createMember(player).addAbility(curse);
     }
 
     public void addAbility(String player, Active active) {
-        players.get(player).addAbility(active);
+        createMember(player).addAbility(active);
     }
 
     public void loseAbility(String player, Passives passive) {
-        players.get(player).loseAbility(passive);
+        players.computeIfPresent(player, (n, p) -> {
+            p.loseAbility(passive);
+            return p;
+        });
     }
 
     public void loseAbility(String player, Curse curse) {
-        players.get(player).loseAbility(curse);
+        players.computeIfPresent(player, (n, p) -> {
+            p.loseAbility(curse);
+            return p;
+        });
     }
 
     public void loseAbility(String player, Actives active) {
-        players.get(player).loseAbility(active);
+        players.computeIfPresent(player, (n, p) -> {
+            p.loseAbility(active);
+            return p;
+        });
     }
 
     public void addSpec(String player, Spec spec) {
-        players.get(player).addSpec(spec);
+        createMember(player).addSpec(spec);
     }
 
     public void loseSpec(String player, Spec spec) {
-        players.get(player).loseSpec(spec);
+        players.computeIfPresent(player, (n, p) -> {
+            p.loseSpec(spec);
+            return p;
+        });
     }
 
     public void downgradeAll(String player) {
-        players.get(player).downgradeAll();
+        players.computeIfPresent(player, (n, p) -> {
+            p.downgradeAll();
+            return p;
+        });
     }
 
     public void upgradeBy2(String player) {
-        players.get(player).upgradeBy2();
+        players.computeIfPresent(player, (n, p) -> {
+            p.upgradeBy2();
+            return p;
+        });
     }
 
     public void addGift(String player, Gifts gift) {
-        players.get(player).addGift(gift);
+        createMember(player).addGift(gift);
     }
 
     public void addGift(String player, Gift gift) {
-        players.get(player).addGift(gift);
+        createMember(player).addGift(gift);
     }
 
     public void setCharmLines(String player, EnumMap<Spec, Integer> charmLines) {
-        players.get(player).setCharmLines(charmLines);
+        createMember(player).setCharmLines(charmLines);
     }
 
     void clear() {

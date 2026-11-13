@@ -71,7 +71,6 @@ public class ChatParser {
         Optional<Gifts> gift = (active.isPresent()) ? Optional.empty() : Gifts.from(ability);
 
         Party party = ZenithApi.getInstance().getPartyManager();
-        party.createMember(player);
         switch (verb) {
             case "now has":
             case "now have":
@@ -109,7 +108,6 @@ public class ChatParser {
         if (aspect.isEmpty()) return true;
 
         Party party = ZenithApi.getInstance().getPartyManager();
-        party.createMember(player);
         party.setAspect(player, aspect.get());
         return true;
     }
@@ -170,14 +168,12 @@ public class ChatParser {
         Party party = ZenithApi.getInstance().getPartyManager();
         if (matcher1.matches()) {
             String player = convertName(matcher1.group(1));
-            party.createMember(player);  // creating a member to downgradeAll doesn't do anything but just to be consistent
             party.downgradeAll(player);
             return true;
         }
         Matcher matcher2 = WHEEL_UPGRADE_2.matcher(line);
         if (matcher2.matches()) {
             String player = convertName(matcher2.group(1));
-            party.createMember(player);
             party.upgradeBy2(player);
             return true;
         }
@@ -186,7 +182,6 @@ public class ChatParser {
             String player = convertName(matcher3.group(1));
             Optional<Spec> spec = Spec.from(matcher3.group(2));
             if (spec.isEmpty()) return true;
-            party.createMember(player);
             party.addSpec(player, spec.get());
             return true;
         }
@@ -219,7 +214,6 @@ public class ChatParser {
         if (!matcher.matches()) return false;
         String name = convertName(matcher.group(1));
         Party party = ZenithApi.getInstance().getPartyManager();
-        party.createMember(name);
         party.loseAbility(name, Passives.REBIRTH);
 
         UpdateManager.getInstance().onRebirth(name);
