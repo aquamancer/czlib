@@ -170,10 +170,12 @@ public class UpdateManager {
 
     public void onInteractBlock(BlockHitResult hitResult) {
         if (!enabled) return;
+        Room currentRoom = ZenithApi.getInstance().getCurrentRoomType();
+        if (currentRoom == Room.TREE_SELECT || currentRoom == Room.ABILITY_SELECT) return;
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.world == null) return;
         Block block = client.world.getBlockState(hitResult.getBlockPos()).getBlock();
-        if (block instanceof ButtonBlock || block instanceof LeverBlock) {
+        if (block instanceof ButtonBlock) {
             buttonPressDelayTicks = BUTTON_PRESS_DELAY_TICKS;
         }
     }
@@ -265,8 +267,8 @@ public class UpdateManager {
         if (client.currentScreen instanceof HandledScreen) return;
         if (ScreenCanceler.isCancelingScreens()) return;
         if (ticksUntilCloseVzc >= 0) return;
-        if (ZenithApi.getInstance().getCurrentRoomType() == Room.TREE_SELECT) return;
-        if (ZenithApi.getInstance().getCurrentRoomType() == Room.UTILITY) return;
+        Room room = ZenithApi.getInstance().getCurrentRoomType();
+        if (room == Room.TREE_SELECT || room == Room.UTILITY) return;
         if (ZenithApi.getInstance().roomRewardFound()) return;
         if (ticksSinceFullUpdate < MIN_TICKS_BETWEEN_FULL_UPDATE) {
             ticksUntilUpdate = MIN_TICKS_BETWEEN_FULL_UPDATE - ticksSinceFullUpdate;
@@ -274,6 +276,7 @@ public class UpdateManager {
         }
         if (abilitySelectDelayTicks > 0) return;
         if (this.buttonPressDelayTicks > 0) return;
+        if (isLookingAtButton() && room != Room.TREE_SELECT && room != Room.ABILITY_SELECT) return;
 
         int trinketSlot = TrinketLocator.getTrinketSlot();
         Set<Integer> slotsToClick = new HashSet<>(headNames.values());
@@ -340,6 +343,15 @@ public class UpdateManager {
         if (client.getNetworkHandler() != null && client.getNetworkHandler().getConnection() != null) {
             client.getNetworkHandler().getConnection().send(packet);
         }
+    }
+
+    private boolean isLookingAtButton() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client == null || client.player == null || client.world == null) return false;
+        if (!(client.crosshairTarget instanceof BlockHitResult lookingAt)) return false;
+        Block block = client.world.getBlockState(lookingAt.getBlockPos()).getBlock();
+
+        return block instanceof ButtonBlock;
     }
 
     private UpdateManager() {}
