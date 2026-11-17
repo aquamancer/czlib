@@ -6,6 +6,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -75,6 +76,11 @@ public enum Gifts implements Ability<Gifts> {
     public static Optional<Gifts> from(String string) {
         if (string == null) return Optional.empty();
         return Optional.ofNullable(fromString.get(string));
+    }
+
+    public static Optional<Gifts> from(List<Text> tooltip) {
+        if (tooltip.isEmpty()) return Optional.empty();
+        return from(tooltip.get(0).getString());
     }
 
     public static Optional<Gifts> from(ItemStack item) {

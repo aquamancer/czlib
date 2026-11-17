@@ -76,10 +76,13 @@ public class Passive implements Ability<Passives>, HasAbilitySpec, HasRarity {
     }
 
     public static Optional<Passive> from(ItemStack item) {
-        Optional<Passives> ability = Passives.from(item);
-        if (ability.isEmpty()) return Optional.empty();
-        List<Text> tooltip = item.getTooltip(null, TooltipContext.BASIC);
+        return from(item.getTooltip(null, TooltipContext.BASIC));
+    }
+
+    public static Optional<Passive> from(List<Text> tooltip) {
         if (tooltip.size() < 2) return Optional.empty();
+        Optional<Passives> ability = Passives.from(tooltip.get(0).getString());
+        if (ability.isEmpty()) return Optional.empty();
         String line2 = tooltip.get(1).getString();
         TooltipParser.SpecRarityParseResult specAndRarity = TooltipParser.parseSpecRarity(line2);
         if (specAndRarity.spec().isEmpty() || specAndRarity.rarity().isEmpty()) return Optional.empty();
