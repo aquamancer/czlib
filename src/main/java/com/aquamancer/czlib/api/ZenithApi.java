@@ -7,6 +7,7 @@ import com.aquamancer.czlib.internal.SelfIdentifier;
 import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
@@ -72,6 +73,10 @@ public class ZenithApi {
 
     public Map<String, PartyMember> getParty() {
         return this.party.getPlayers();
+    }
+
+    public Collection<PartyMember> getPlayers() {
+        return getParty().values();
     }
 
     public Optional<PartyMember> getPlayer(String name) {
