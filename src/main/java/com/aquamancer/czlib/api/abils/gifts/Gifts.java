@@ -5,10 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,38 +14,49 @@ public enum Gifts implements Ability<Gifts> {
     FORSAKEN_GRIMOIRE("Forsaken Grimoire"),
     PRISMATIC_CUBE("Prismatic Cube"),
     NORTHERN_STAR("Northern Star", 4),
-    BOTTOMLESS_BOWL("Bottomless Bowl"),
+    BOTTOMLESS_BOWL("Bottomless Bowl", true),
     POETS_QUILL("Poet's Quill"),
     PURGING_STONE("Purging Stone"),
-    WILD_CARD("Wild Card"),
-    AVARICIOUS_PENDANT("Avaricious Pendant"),
+    WILD_CARD("Wild Card", true),
+    AVARICIOUS_PENDANT("Avaricious Pendant", true),
     CELESTIAL_SURPRISE("Celestial Surprise"),
-    COMB_OF_SELECTION("Comb of Selection"),
-    PILLAR_OF_LIGHT("Pillar of Light"),
-    BROKEN_CLOCK("Broken Clock"),
-    TREASURE_MAP("Treasure Map"),
+    COMB_OF_SELECTION("Comb of Selection", true),
+    PILLAR_OF_LIGHT("Pillar of Light", true),
+    BROKEN_CLOCK("Broken Clock", true),
+    TREASURE_MAP("Treasure Map", true),
     MEGA_HAMMER("Mega Hammer"),
     KALEIDOSCOPIC_LENS("Kaleidoscopic Lens"),
     CALLICARPAS_POINTED_HAT("Callicarpa's Pointed Hat", 3),
     VENOM_OF_THE_BROODMOTHER("Venom of the Broodmother"),
-    BROODMOTHERS_WEBBING("Broodmother's Webbing"),
+    BROODMOTHERS_WEBBING("Broodmother's Webbing"),  // in-game is persistent but it shouldn't be
     STATUE_OF_REGRET("Statue of Regret"),
-    RAINBOW_GEODE("Rainbow Geode"),
-    CRACKED_IDOL("Cracked Idol"),
+    RAINBOW_GEODE("Rainbow Geode", true),
+    CRACKED_IDOL("Cracked Idol", true),
     ORB_OF_DARKNESS("Orb of Darkness");
 
     public static final int COLOR = 0x25f6f5;
 
     private final String displayName;
     private final int defaultCounter;
+    private final boolean isPersistent;
 
     Gifts(String displayName) {
-        this(displayName, 0);
+        this.displayName = displayName;
+        this.defaultCounter = 0;
+        this.isPersistent = false;
+    }
+
+    Gifts(String displayName, boolean isPersistent) {
+        this.displayName = displayName;
+        this.defaultCounter = 0;
+        this.isPersistent = isPersistent;
     }
 
     Gifts(String displayName, int defaultCounter) {
         this.displayName = displayName;
         this.defaultCounter = defaultCounter;
+        // assume isPersistent is true if defaultCounter is manually set
+        this.isPersistent = true;
     }
 
     public String getDisplayName() {
@@ -57,6 +65,10 @@ public enum Gifts implements Ability<Gifts> {
 
     public int getDefaultValue() {
         return defaultCounter;
+    }
+
+    public boolean isPersistent() {
+        return isPersistent;
     }
 
     @Override

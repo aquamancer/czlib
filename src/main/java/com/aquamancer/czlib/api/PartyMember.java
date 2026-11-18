@@ -262,35 +262,20 @@ public class PartyMember {
     }
 
     void addGift(Gifts gift) {
-        switch (gift) {
-            // gifts that are passives
-            case NORTHERN_STAR:
-            case BOTTOMLESS_BOWL:
-            case WILD_CARD:
-            case AVARICIOUS_PENDANT:
-            case COMB_OF_SELECTION:
-            case PILLAR_OF_LIGHT:
-            case BROKEN_CLOCK:
-            case RAINBOW_GEODE:
-            case CALLICARPAS_POINTED_HAT:  // other players' tree selection unknown, but self gui for selecting a tree will also call addGift(Gift) and replace this
-            case CRACKED_IDOL:
-                this.gifts.put(gift, new Gift(gift, gift.getDefaultValue()));
-                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
-                break;
-            case TREASURE_MAP:
+        if (gift.isPersistent()) {
+            if (gift == Gifts.TREASURE_MAP) {
                 this.gifts.put(Gifts.TREASURE_MAP, new TreasureMap());
-                ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
-                break;
-            // gifts not fully handled by chat or gui
-            case KALEIDOSCOPIC_LENS:
-                this.invertSpecs();
-                break;
-            case VENOM_OF_THE_BROODMOTHER:
-                break;
-            case MEGA_HAMMER:
-                this.megaHammer();
-                break;
-            // all other gifts are handled by separate chat messages or gui screens
+            } else {
+                this.gifts.put(gift, new Gift(gift));
+            }
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        } else {
+            switch (gift) {
+                case MEGA_HAMMER -> this.megaHammer();
+                case KALEIDOSCOPIC_LENS -> this.invertSpecs();
+                case VENOM_OF_THE_BROODMOTHER -> { /* todo need ascension value to determine the effect */ }
+                // all other gifts are handled by chat messages or gui screens
+            }
         }
     }
 
@@ -415,7 +400,8 @@ public class PartyMember {
         return Collections.unmodifiableMap(gifts);
     }
 
-    public boolean hasAbility(Ability<?> ability) {
+    public boolean hasAbility(Ability<?> a) {
+        Enum<?> ability = a.getAbility();
         if (ability instanceof Aspect) return this.aspect == ability;
         if (ability instanceof Curse) return this.curses.contains(ability);
         if (ability instanceof Gifts) return this.gifts.containsKey(ability);
