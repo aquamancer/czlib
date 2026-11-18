@@ -217,6 +217,12 @@ public class PartyMember {
         }
     }
 
+    void loseAbility(Gifts gift) {
+        if (this.gifts.remove(gift) != null) {
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+    }
+
     void addSpec(Spec spec) {
         if (this.specs.add(spec)) {
             ZenithApiUpdateEvents.SPEC.invoker().onUpdate(this);

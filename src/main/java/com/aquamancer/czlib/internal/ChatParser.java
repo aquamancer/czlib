@@ -94,6 +94,8 @@ public class ChatParser {
                     party.loseAbility(player, curse.get());
                 } else if (active.isPresent()) {
                     party.loseAbility(player, active.get());
+                } else if (gift.isPresent()) {
+                    party.loseAbility(player, gift.get());
                 }
                 break;
         }

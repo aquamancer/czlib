@@ -160,6 +160,13 @@ public class Party {
         });
     }
 
+    public void loseAbility(String player, Gifts gift) {
+        players.computeIfPresent(player, (n, p) -> {
+            p.loseAbility(gift);
+            return p;
+        });
+    }
+
     public void addSpec(String player, Spec spec) {
         createMember(player).addSpec(spec);
     }
