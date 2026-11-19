@@ -3,6 +3,7 @@ package com.aquamancer.czlib.internal;
 import com.aquamancer.czlib.api.Party;
 import com.aquamancer.czlib.api.ZenithApi;
 import com.aquamancer.czlib.api.abils.*;
+import com.aquamancer.czlib.api.abils.gifts.Gifts;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -65,7 +66,7 @@ public class TrinketParser {
         boolean hasConvergence = Actives.from(inv.get(WILDCARD_SLOT)).orElse(null) == Actives.CONVERGENCE;
 
         PassiveParseResult passiveParseResult = parsePassives(inv, hasConvergence);
-        party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses);
+        party.setPassives(player, passiveParseResult.passives, passiveParseResult.curses, passiveParseResult.gifts);
 
         EnumSet<Spec> specs = parseSpecs(inv);
         party.setSpecs(player, specs);
@@ -133,10 +134,11 @@ public class TrinketParser {
         return Optional.empty();
     }
 
-    private record PassiveParseResult(Set<Passive> passives, EnumSet<Curse> curses, List<Active> convergenceWildcards) {}
+    private record PassiveParseResult(Set<Passive> passives, EnumSet<Curse> curses, Set<Gifts> gifts, List<Active> convergenceWildcards) {}
     private static PassiveParseResult parsePassives(List<ItemStack> inv, boolean parseConvergence) {
         Set<Passive> passives = new HashSet<>();
         EnumSet<Curse> curses = EnumSet.noneOf(Curse.class);
+        Set<Gifts> gifts = EnumSet.noneOf(Gifts.class);
         List<Active> convergenceWildcards = new ArrayList<>();
 
         for (int slot = PASSIVES_START; slot <= PASSIVES_END; slot++) {
@@ -154,6 +156,12 @@ public class TrinketParser {
                 continue;
             }
 
+            Optional<Gifts> gift = Gifts.from(item);
+            if (gift.isPresent()) {
+                gifts.add(gift.get());
+                continue;
+            }
+
             // wildcards stored by convergence are displayed under passives
             if (parseConvergence) {
                 Optional<Active> active = Active.from(item);
@@ -167,7 +175,7 @@ public class TrinketParser {
         if (Curse.from(inv.get(SWAP_SLOT)).orElse(null) == Curse.ANCHORING) {
             curses.add(Curse.ANCHORING);
         }
-        return new PassiveParseResult(passives, curses, convergenceWildcards);
+        return new PassiveParseResult(passives, curses, gifts, convergenceWildcards);
     }
 
     private static EnumSet<Spec> parseSpecs(List<ItemStack> inv) {

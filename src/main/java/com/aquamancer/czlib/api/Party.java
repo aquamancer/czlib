@@ -109,10 +109,11 @@ public class Party {
         }
     }
 
-    public void setPassives(String player, Set<Passive> passives, EnumSet<Curse> curses) {
+    public void setPassives(String player, Set<Passive> passives, EnumSet<Curse> curses, Set<Gifts> gifts) {
         PartyMember p = createMember(player);
         p.setPassives(passives);
         p.setCurses(curses);
+        p.setGifts(gifts);
     }
 
     public void setSpecs(String player, EnumSet<Spec> specs) {

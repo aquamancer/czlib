@@ -28,7 +28,7 @@ public enum Gifts implements Ability<Gifts> {
     KALEIDOSCOPIC_LENS("Kaleidoscopic Lens"),
     CALLICARPAS_POINTED_HAT("Callicarpa's Pointed Hat", 3),
     VENOM_OF_THE_BROODMOTHER("Venom of the Broodmother"),
-    BROODMOTHERS_WEBBING("Broodmother's Webbing"),  // in-game is persistent but it shouldn't be
+    BROODMOTHERS_WEBBING("Broodmother's Webbing"),
     STATUE_OF_REGRET("Statue of Regret"),
     RAINBOW_GEODE("Rainbow Geode", true),
     CRACKED_IDOL("Cracked Idol", true),

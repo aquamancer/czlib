@@ -139,6 +139,12 @@ public class PartyMember {
         }
     }
 
+    void setGifts(Set<Gifts> gifts) {
+        if (this.gifts.keySet().retainAll(gifts)) {
+            ZenithApiUpdateEvents.GIFT.invoker().onUpdate(this);
+        }
+    }
+
     void setSpecs(EnumSet<Spec> specs) {
         EnumSet<Spec> old = this.specs;
         this.specs = specs;
