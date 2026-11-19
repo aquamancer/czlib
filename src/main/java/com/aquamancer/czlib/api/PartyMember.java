@@ -454,7 +454,7 @@ public class PartyMember {
         if (this.actives.containsKey(active)) {
             return BlockReason.ALREADY_HAS;
         }
-        if (this.slotTaken(active.getSlot())) {
+        if (this.slotTaken(active.getSlot()) && active != Actives.CONVERGENCE) {
             return BlockReason.SLOT_TAKEN;
         }
         if (limit4PerSpec && this.getActiveCount(active.getSpec()) >= 4) {
