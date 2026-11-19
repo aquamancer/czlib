@@ -309,8 +309,8 @@ public class PartyMember {
         }
     }
 
-    public PlayerEntity getEntity() {
-        return this.entity;
+    public Optional<PlayerEntity> getEntity() {
+        return Optional.ofNullable(this.entity);
     }
 
     public String getName() {
@@ -330,13 +330,22 @@ public class PartyMember {
         return Spec.getComplement(this.specs);
     }
 
-    public Aspect getAspect() {
-        return aspect;
+    public boolean hasSpec(Spec spec) {
+        return specs.contains(spec);
+    }
+
+    public Optional<Aspect> getAspect() {
+        return Optional.ofNullable(aspect);
     }
 
     /** Returns a copy */
     public EnumSet<Curse> getCurses() {
         return curses.clone();
+    }
+
+    /** Returns a reference */
+    public Optional<Passive> getPassive(Passives passive) {
+        return Optional.ofNullable(passives.get(passive));
     }
 
     /** Returns an unmodifiable view */
@@ -365,6 +374,11 @@ public class PartyMember {
 
     public long getPassiveCount(AbilitySpec spec) {
         return this.passives.keySet().stream().filter(p -> p.getSpec() == spec).count();
+    }
+
+    /** Returns a reference */
+    public Optional<Active> getActive(Actives active) {
+        return Optional.ofNullable(actives.get(active));
     }
 
     /** Returns an unmodifiable view */
@@ -405,6 +419,11 @@ public class PartyMember {
             result.put(spec, getAbilityCount(spec));
         }
         return result;
+    }
+
+    /** Returns a reference */
+    public Optional<Gift> getGift(Gifts gift) {
+        return Optional.ofNullable(gifts.get(gift));
     }
 
     /** Returns an unmodifiable view */

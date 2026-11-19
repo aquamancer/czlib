@@ -38,12 +38,8 @@ public class Party {
         });
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (client.player == null || client.world == null) return;
-            boolean shouldUpdateEntities = false;
-            for (PartyMember player : this.players.values()) {
-                if (player.getEntity() == null || player.getEntity().isRemoved()) {
-                    shouldUpdateEntities = true;
-                }
-            }
+            boolean shouldUpdateEntities = this.players.values().stream()
+                    .anyMatch(p -> p.getEntity().isEmpty() || p.getEntity().get().isRemoved());
             if (shouldUpdateEntities) {
                 client.world.getPlayers().forEach(entity -> {
                     this.players.computeIfPresent(entity.getName().getString(), (k, v) -> {
