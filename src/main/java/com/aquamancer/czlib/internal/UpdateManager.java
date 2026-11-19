@@ -155,6 +155,11 @@ public class UpdateManager {
         openVzcWithSpacing(Collections.singleton(name));
     }
 
+    public void onArmoryCharmSwap() {
+        if (!enabled) return;
+        openVzcWithSpacing(SelfIdentifier.getSelfName());
+    }
+
     public void onRebirth(String player) {
         if (!enabled) return;
         update(player);
@@ -311,6 +316,11 @@ public class UpdateManager {
 
     private void updateSelf() {
         this.update(SelfIdentifier.getSelfName());
+    }
+
+    /** Note that insertion order is not affected if an element is re-inserted into the LinkedHashSet */
+    private void openVzcWithSpacing(String name) {
+        this.vzcQueue.add(name);
     }
 
     /** Note that insertion order is not affected if an element is re-inserted into the LinkedHashSet */

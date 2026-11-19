@@ -30,6 +30,7 @@ public class ChatParser {
     private static final Pattern SENT_TO_LOOTROOM = Pattern.compile("^\\[Zenith Party] Sending you to loot room.*");
     private static final Pattern DIVERSITY_ACHIEVED = Pattern.compile("^\\[Zenith Party] Due to achieving your Diversity goal.*");
     private static final Pattern REBIRTH = Pattern.compile("^\\[Zenith Party] (\\w+) (?:have|has) been reborn!$");
+    private static final Pattern ARMORY_CHARM_SWAP = Pattern.compile("^Swapped.*charms.*\\.$");
 
     // BOSS_CLEANSE_ROOM message is always sent with but always before "Spawned new Boss room" when opening the cleanse room
     // set a flag to indicate the next "Spawned new Boss room" is the cleanse room, not an actual boss room
@@ -53,6 +54,7 @@ public class ChatParser {
         if (parseWheel(line)) return;
         if (parseDiversity(line)) return;
         if (parseRebirth(line)) return;
+        if (parseArmoryCharmSwap(line)) return;
     }
 
     private static boolean parseAbility(String line) {
@@ -219,6 +221,14 @@ public class ChatParser {
         party.loseAbility(name, Passives.REBIRTH);
 
         UpdateManager.getInstance().onRebirth(name);
+        return true;
+    }
+
+    private static boolean parseArmoryCharmSwap(String line) {
+        Matcher matcher = ARMORY_CHARM_SWAP.matcher(line);
+        if (!matcher.matches()) return false;
+
+        UpdateManager.getInstance().onArmoryCharmSwap();
         return true;
     }
 
