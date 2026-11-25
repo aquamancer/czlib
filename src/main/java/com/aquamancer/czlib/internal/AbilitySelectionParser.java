@@ -41,19 +41,10 @@ public class AbilitySelectionParser {
         String self = SelfIdentifier.getSelfName();
         Party party = ZenithApi.getInstance().getPartyManager();
         switch (screen) {
-            case ABILITY, UPGRADE, GENEROSITY, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD -> {
-                Active active = Active.from(item).orElse(null);
-                if (active != null) {
-                    PartyMember s = ZenithApi.getInstance().getSelf().orElse(null);
-                    if (s != null && screen == ZenithScreen.GENEROSITY) {
-                        // accepting a gift has no effect if the slot is taken by a different active
-                        PartyMember.BlockReason blockReason = s.isBlocked(active.getAbility(), false);
-                        if (blockReason != PartyMember.BlockReason.NOT_BLOCKED && blockReason != PartyMember.BlockReason.ALREADY_HAS) return;
-                        // accepting a gift of the same active has no effect if the existing is equal or higher rarity
-                        Active existing = s.getActive(active.getAbility()).orElse(null);
-                        if (existing != null && existing.getRarity().compareTo(active.getRarity()) >= 0) return;
-                    }
-                    party.addAbility(self, active);
+            case ABILITY, UPGRADE, GRIMOIRE_ABILITY, STATUE_OF_REGRET_ADD -> {
+                Optional<Active> active = Active.from(item);
+                if (active.isPresent()) {
+                    party.addAbility(self, active.get());
                     return;
                 }
                 Optional<Passive> passive = Passive.from(item);
@@ -69,6 +60,37 @@ public class AbilitySelectionParser {
                 Optional<Gifts> gift = Gifts.from(item);
                 if (gift.isPresent()) {
                     party.addGift(self, gift.get());
+                    return;
+                }
+            }
+            case GENEROSITY -> {
+                PartyMember s = ZenithApi.getInstance().getSelf().orElse(null);
+                Active active = Active.from(item).orElse(null);
+                if (active != null) {
+                    if (s != null) {
+                        // accepting a gift has no effect if the slot is taken by a different active
+                        PartyMember.BlockReason blockReason = s.isBlocked(active.getAbility(), false);
+                        if (blockReason != PartyMember.BlockReason.NOT_BLOCKED && blockReason != PartyMember.BlockReason.ALREADY_HAS) return;
+                        // accepting a gift of the same active has no effect if the existing is equal or higher rarity
+                        Active existing = s.getActive(active.getAbility()).orElse(null);
+                        if (existing != null && existing.getRarity().compareTo(active.getRarity()) >= 0) return;
+                    }
+                    party.addAbility(self, active);
+                    return;
+                }
+                Passive passive = Passive.from(item).orElse(null);
+                if (passive != null) {
+                    if (s != null) {
+                        Passive existing = s.getPassive(passive.getAbility()).orElse(null);
+                        if (existing != null && existing.getRarity().compareTo(passive.getRarity()) >= 0) return;
+                    }
+                    party.addAbility(self, passive);
+                    return;
+                }
+                Gifts gift = Gifts.from(item).orElse(null);
+                if (gift != null) {
+                    if (s != null && s.getGift(gift).isPresent()) return;
+                    party.addGift(self, gift);
                     return;
                 }
             }
